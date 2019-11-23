@@ -11,6 +11,9 @@ import QuartzCore
 import SceneKit
 
 class GameViewController: UIViewController {
+    
+    var missileEmitterLocation = SCNVector3(x: -6, y: 2.5, z: 0)
+    var missileNode:SCNNode!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,12 +60,24 @@ class GameViewController: UIViewController {
         // add a tap gesture recognizer
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         scnView.addGestureRecognizer(tapGesture)
+        
+        // Load in our missile node
+        let missileScene = SCNScene(named: "art.scnassets/Missile.scn")
+        
+        // get our missile node
+        missileNode = missileScene?.rootNode.childNode(withName: "missile", recursively: true)
+        
+        scene.rootNode.addChildNode(missileNode)
+        
+        missileNode.position = missileEmitterLocation
+//        missileNode.rotation = SCNVector4(
+        
     }
     
     @objc
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
         // retrieve the SCNView
-        let scnView = self.view as! SCNView
+        // let scnView = self.view as! SCNView
         
     }
     
