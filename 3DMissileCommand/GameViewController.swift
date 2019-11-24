@@ -35,11 +35,15 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     
     let missileSpawnInterval: Double = 0.5
     var lastMissileSpawn: Double = 0.0
-    let missileSpawnHeight:Double = 10
+    var missileSpawnHeight:Float = 10
+    var missileSpawnMinZ:Float = -1.0
+    var missileSpawnMaxZ:Float = 1.0
+    var missileSpawnArea:SCNNode!
     // let missileEmitterLocation = SCNVector3(x: -6, y: 2.5, z: 0)
     var missileNode:SCNNode!
     var gameScene: SCNScene!
-    var randomDistribution: GKRandomDistribution!
+    var randomHouseDist: GKRandomDistribution!
+    var randomSpawnDist: GKRandomDistribution!
     
     var houseList: Array<SCNNode> = []
 
@@ -101,7 +105,23 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             }
         }
         
-        randomDistribution = GKRandomDistribution(lowestValue: 0, highestValue: houseList.count - 1)
+        randomHouseDist = GKRandomDistribution(lowestValue: 0, highestValue: houseList.count - 1)
+        
+        missileSpawnArea = gameScene.rootNode.childNode(withName: "missile spawn", recursively: true)
+        
+        missileSpawnHeight = missileSpawnArea.position.y
+
+        let spawnPlane:SCNPlane = missileSpawnArea.geometry as! SCNPlane
+        
+        missileSpawnMinZ = missileSpawnArea.worldPosition.z - Float(spawnPlane.height / 2)
+        
+        missileSpawnMaxZ = missileSpawnArea.worldPosition.z + Float(spawnPlane.height / 2)
+        
+        randomSpawnDist = GKRandomDistribution(lowestValue:0, highestValue: 100)
+        
+        print("mssile spawn min/max: \(missileSpawnMinZ)/\(missileSpawnMaxZ)")
+        
+
     }
     
     @objc
@@ -120,10 +140,13 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         else if (time - lastMissileSpawn > missileSpawnInterval) {
             lastMissileSpawn = time
             // get random location along spawn pane
-            let spawnLocation = SCNVector3(x: -20, y: Float(missileSpawnHeight), z: 0)
+            
+            let spawnZ:Float = missileSpawnMinZ + (Float(randomSpawnDist.nextInt()) / 100.0) * (missileSpawnMaxZ - missileSpawnMinZ)
+            
+            let spawnLocation = SCNVector3(x: -20, y: Float(missileSpawnHeight), z: spawnZ)
             // choose random target
             
-            let houseIndex: Int = randomDistribution.nextInt()
+            let houseIndex: Int = randomHouseDist.nextInt()
             var target:SCNVector3 = SCNVector3(0, 0, 0)
             if (houseIndex < houseList.count) {
                 target = houseList[houseIndex].position
