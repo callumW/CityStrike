@@ -98,7 +98,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         
         // get our missile node
         missileNode = missileScene?.rootNode.childNode(withName: "missile", recursively: true)
-        missileNode.physicsBody?.contactTestBitMask = 2
+        // missileNode.physicsBody?.contactTestBitMask = 2
         
         // get our houses
         for node in gameScene.rootNode.childNodes {
@@ -107,18 +107,18 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             }
         }
         
-        if houseList.count > 0 {
-            if let house = houseList[0].childNode(withName: "house", recursively: true) {
-                if let physicsBody = house.physicsBody {
-                    
-                    let houseCollisioMask = physicsBody.categoryBitMask
-                    print("setting house physics body (mask = \(houseCollisioMask))")
-                    missileNode.physicsBody?.contactTestBitMask |= houseCollisioMask
-                    
-                    print("missile contact bitmask: \(missileNode.physicsBody?.contactTestBitMask ?? -1)")
-                }
-            }
-        }
+//        if houseList.count > 0 {
+//            if let house = houseList[0].childNode(withName: "house", recursively: true) {
+//                if let physicsBody = house.physicsBody {
+//
+//                    let houseCollisioMask = physicsBody.categoryBitMask
+//                    / print("setting house physics body (mask = \(houseCollisioMask))")
+//                    // missileNode.physicsBody?.contactTestBitMask |= houseCollisioMask
+//
+//                    print("missile contact bitmask: \(missileNode.physicsBody?.contactTestBitMask ?? -1)")
+//                }
+//            }
+//        }
 
         
         randomHouseDist = GKRandomDistribution(lowestValue: 0, highestValue: houseList.count - 1)
@@ -174,6 +174,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         // spawn and apply force
 
         let newMissile:SCNNode = missileNode.clone()
+        
+        print("Firing missile with contactTestBitMask: \(newMissile.physicsBody?.contactTestBitMask)")
 
         newMissile.physicsBody?.applyForce(force, asImpulse: false)
         newMissile.position = spawnLocation
