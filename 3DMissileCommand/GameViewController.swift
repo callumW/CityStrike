@@ -175,7 +175,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         let newMissile:SCNNode = missileNode.clone()
         
-        print("Firing missile with contactTestBitMask: \(newMissile.physicsBody?.contactTestBitMask)")
+        print("Firing missile with contactTestBitMask: \(newMissile.physicsBody?.contactTestBitMask ?? -1)")
 
         newMissile.physicsBody?.applyForce(force, asImpulse: false)
         newMissile.position = spawnLocation
@@ -202,7 +202,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         if (contact.nodeA.name == "missile") {
             contact.nodeA.removeFromParentNode()
             if (contact.nodeB.name == "house") {
-                
                 contact.nodeB.removeFromParentNode()
             }
         }
@@ -210,7 +209,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             contact.nodeB.removeFromParentNode()
             if (contact.nodeA.name == "house") {
                 contact.nodeA.removeFromParentNode()
-                
             }
         }
     }
