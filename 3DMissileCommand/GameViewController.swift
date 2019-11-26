@@ -39,6 +39,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     var missileSpawnMinZ:Float = -1.0
     var missileSpawnMaxZ:Float = 1.0
     var missileSpawnArea:SCNNode!
+    
+    
     // let missileEmitterLocation = SCNVector3(x: -6, y: 2.5, z: 0)
     var missileNode:SCNNode!
     var gameScene: SCNScene!
@@ -46,13 +48,13 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     var randomSpawnDist: GKRandomDistribution!
     
     var houseList: Array<SCNNode> = []
-
+    var houseContactMask: Int = 0
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // create a new scene
         gameScene = SCNScene(named: "art.scnassets/Theatre.scn")!
-        gameScene?.physicsWorld.contactDelegate = self
+        gameScene?.physicsWorld.contactDelegate = self  // register for phsysics contact callback
         
         
         // create and add a light to the scene
@@ -96,14 +98,28 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         
         // get our missile node
         missileNode = missileScene?.rootNode.childNode(withName: "missile", recursively: true)
-        missileNode.physicsBody?.contactTestBitMask = 2
+        // missileNode.physicsBody?.contactTestBitMask = 2
         
         // get our houses
         for node in gameScene.rootNode.childNodes {
-            if node.name == "House reference" {
+            if node.name == "house" {
                 houseList.append(node)
             }
         }
+        
+//        if houseList.count > 0 {
+//            if let house = houseList[0].childNode(withName: "house", recursively: true) {
+//                if let physicsBody = house.physicsBody {
+//
+//                    let houseCollisioMask = physicsBody.categoryBitMask
+//                    / print("setting house physics body (mask = \(houseCollisioMask))")
+//                    // missileNode.physicsBody?.contactTestBitMask |= houseCollisioMask
+//
+//                    print("missile contact bitmask: \(missileNode.physicsBody?.contactTestBitMask ?? -1)")
+//                }
+//            }
+//        }
+
         
         randomHouseDist = GKRandomDistribution(lowestValue: 0, highestValue: houseList.count - 1)
         
@@ -131,6 +147,43 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         
     }
     
+    func fireMissile() {
+            
+        let spawnZ:Float = missileSpawnMinZ + (Float(randomSpawnDist.nextInt()) / 100.0) * (missileSpawnMaxZ - missileSpawnMinZ)
+        
+        let spawnLocation = SCNVector3(x: -20, y: Float(missileSpawnHeight), z: spawnZ)
+        // choose random target
+        
+        let houseIndex: Int = randomHouseDist.nextInt()
+        var target:SCNVector3 = SCNVector3(0, 0, 0)
+        if (houseIndex < houseList.count) {
+            target = houseList[houseIndex].position
+            print("firig missile at house @ \(target)")
+        }
+        else {
+            print("index: \(houseIndex) is too big")
+            target = houseList[0].position
+        }
+        
+        // Get direction
+        let dir:SCNVector3 = normalise(target - spawnLocation)
+        let force = dir * Float(20.0)
+
+        // print("Firing missile at \(target) from \(spawnLocation) (\(dir)) with force \(force)")
+
+        // spawn and apply force
+
+        let newMissile:SCNNode = missileNode.clone()
+        
+        print("Firing missile with contactTestBitMask: \(newMissile.physicsBody?.contactTestBitMask ?? -1)")
+
+        newMissile.physicsBody?.applyForce(force, asImpulse: false)
+        newMissile.position = spawnLocation
+        newMissile.look(at: target, up: SCNVector3(1, 0, 0), localFront: SCNVector3(0, 1, 0))
+
+        gameScene?.rootNode.addChildNode(newMissile)
+    }
+    
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         // check if we need to create missile
         // print("render")
@@ -140,54 +193,24 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         else if (time - lastMissileSpawn > missileSpawnInterval) {
             lastMissileSpawn = time
             // get random location along spawn pane
-            
-            let spawnZ:Float = missileSpawnMinZ + (Float(randomSpawnDist.nextInt()) / 100.0) * (missileSpawnMaxZ - missileSpawnMinZ)
-            
-            let spawnLocation = SCNVector3(x: -20, y: Float(missileSpawnHeight), z: spawnZ)
-            // choose random target
-            
-            let houseIndex: Int = randomHouseDist.nextInt()
-            var target:SCNVector3 = SCNVector3(0, 0, 0)
-            if (houseIndex < houseList.count) {
-                target = houseList[houseIndex].position
-            }
-            else {
-                print("index: \(houseIndex) is too big")
-                target = houseList[0].position
-            }
-            
-            // Get direction
-            let dir:SCNVector3 = normalise(target - spawnLocation)
-            let force = dir * Float(20.0)
-            
-            
-            print("Firing missile at \(target) from \(spawnLocation) (\(dir)) with force \(force)")
-            
-            // spawn and apply force
-            
-            let newMissile:SCNNode = missileNode.clone()
-            
-            newMissile.physicsBody?.applyForce(force, asImpulse: false)
-            newMissile.position = spawnLocation
-            newMissile.look(at: target, up: SCNVector3(1, 0, 0), localFront: SCNVector3(0, 1, 0))
-            
-            
-            
-            gameScene?.rootNode.addChildNode(newMissile)
+            fireMissile()
         }
     }
     
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
-        var contactNode: SCNNode!
-        print("Collision")
+        print("collision between type: \(contact.nodeA.name ?? "nil") (@\(contact.nodeA.presentation.worldPosition)) and \(contact.nodeB.name ?? "nil") (@\(contact.nodeB.presentation.worldPosition))")
         if (contact.nodeA.name == "missile") {
-            contactNode = contact.nodeA
+            contact.nodeA.removeFromParentNode()
+            if (contact.nodeB.name == "house") {
+                contact.nodeB.removeFromParentNode()
+            }
         }
-        else{
-            contactNode = contact.nodeB
+        else if (contact.nodeB.name == "missile") {
+            contact.nodeB.removeFromParentNode()
+            if (contact.nodeA.name == "house") {
+                contact.nodeA.removeFromParentNode()
+            }
         }
-        
-        contactNode.removeFromParentNode()
     }
     
     override var shouldAutorotate: Bool {
