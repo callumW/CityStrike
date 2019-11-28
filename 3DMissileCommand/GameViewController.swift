@@ -32,31 +32,32 @@ func normalise(_ vec: SCNVector3) -> SCNVector3 {
 }
 
 class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysicsContactDelegate {
-    
-    let missileSpawnInterval: Double = 0.5
-    var lastMissileSpawn: Double = 0.0
-    var missileSpawnHeight:Float = 10
-    var missileSpawnMinZ:Float = -1.0
-    var missileSpawnMaxZ:Float = 1.0
-    var missileSpawnArea:SCNNode!
-    
-    
-    // let missileEmitterLocation = SCNVector3(x: -6, y: 2.5, z: 0)
-    var missileNode:SCNNode!
+
+    var missileFactory: MissileFactory!
+    var city:City!
+    var enemyController: EnemyController!
+
     var gameScene: SCNScene!
-    var randomHouseDist: GKRandomDistribution!
-    var randomSpawnDist: GKRandomDistribution!
-    
-    var houseList: Array<SCNNode> = []
-    var houseContactMask: Int = 0
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+
         // create a new scene
         gameScene = SCNScene(named: "art.scnassets/Theatre.scn")!
+
+        // setup missile factory
+        missileFactory = MissileFactory(gameScene)
+        if missileFactory == nil {
+            fatalError("Unable to create missile factory")
+        }
+
+        city = City(gameScene)
+
+        enemyController = EnemyController(gameScene: gameScene, missileFactory: missileFactory,city: city)
+
         gameScene?.physicsWorld.contactDelegate = self  // register for phsysics contact callback
-        
-        
+
         // create and add a light to the scene
         let lightNode = SCNNode()
         lightNode.light = SCNLight()
@@ -70,7 +71,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         ambientLightNode.light!.type = .ambient
         ambientLightNode.light!.color = UIColor.darkGray
         gameScene.rootNode.addChildNode(ambientLightNode)
-        
+
         
         // retrieve the SCNView
         let scnView = self.view as! SCNView
@@ -92,122 +93,32 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         // add a tap gesture recognizer
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         scnView.addGestureRecognizer(tapGesture)
-        
-        // Load in our missile node
-        let missileScene = SCNScene(named: "art.scnassets/Missile.scn")
-        
-        // get our missile node
-        missileNode = missileScene?.rootNode.childNode(withName: "missile", recursively: true)
-        // missileNode.physicsBody?.contactTestBitMask = 2
-        
-        // get our houses
-        for node in gameScene.rootNode.childNodes {
-            if node.name == "house" {
-                houseList.append(node)
-            }
-        }
-        
-//        if houseList.count > 0 {
-//            if let house = houseList[0].childNode(withName: "house", recursively: true) {
-//                if let physicsBody = house.physicsBody {
-//
-//                    let houseCollisioMask = physicsBody.categoryBitMask
-//                    / print("setting house physics body (mask = \(houseCollisioMask))")
-//                    // missileNode.physicsBody?.contactTestBitMask |= houseCollisioMask
-//
-//                    print("missile contact bitmask: \(missileNode.physicsBody?.contactTestBitMask ?? -1)")
-//                }
-//            }
-//        }
-
-        
-        randomHouseDist = GKRandomDistribution(lowestValue: 0, highestValue: houseList.count - 1)
-        
-        missileSpawnArea = gameScene.rootNode.childNode(withName: "missile spawn", recursively: true)
-        
-        missileSpawnHeight = missileSpawnArea.position.y
-
-        let spawnPlane:SCNPlane = missileSpawnArea.geometry as! SCNPlane
-        
-        missileSpawnMinZ = missileSpawnArea.worldPosition.z - Float(spawnPlane.height / 2)
-        
-        missileSpawnMaxZ = missileSpawnArea.worldPosition.z + Float(spawnPlane.height / 2)
-        
-        randomSpawnDist = GKRandomDistribution(lowestValue:0, highestValue: 100)
-        
-        print("mssile spawn min/max: \(missileSpawnMinZ)/\(missileSpawnMaxZ)")
-        
-
     }
-    
+
     @objc
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
         // retrieve the SCNView
         // let scnView = self.view as! SCNView
-        
+
     }
-    
-    func fireMissile() {
-            
-        let spawnZ:Float = missileSpawnMinZ + (Float(randomSpawnDist.nextInt()) / 100.0) * (missileSpawnMaxZ - missileSpawnMinZ)
-        
-        let spawnLocation = SCNVector3(x: -20, y: Float(missileSpawnHeight), z: spawnZ)
-        // choose random target
-        
-        let houseIndex: Int = randomHouseDist.nextInt()
-        var target:SCNVector3 = SCNVector3(0, 0, 0)
-        if (houseIndex < houseList.count) {
-            target = houseList[houseIndex].position
-            print("firig missile at house @ \(target)")
-        }
-        else {
-            print("index: \(houseIndex) is too big")
-            target = houseList[0].position
-        }
-        
-        // Get direction
-        let dir:SCNVector3 = normalise(target - spawnLocation)
-        let force = dir * Float(20.0)
 
-        // print("Firing missile at \(target) from \(spawnLocation) (\(dir)) with force \(force)")
-
-        // spawn and apply force
-
-        let newMissile:SCNNode = missileNode.clone()
-        
-        print("Firing missile with contactTestBitMask: \(newMissile.physicsBody?.contactTestBitMask ?? -1)")
-
-        newMissile.physicsBody?.applyForce(force, asImpulse: false)
-        newMissile.position = spawnLocation
-        newMissile.look(at: target, up: SCNVector3(1, 0, 0), localFront: SCNVector3(0, 1, 0))
-
-        gameScene?.rootNode.addChildNode(newMissile)
-    }
-    
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        // check if we need to create missile
-        // print("render")
-        if (lastMissileSpawn == 0) {
-            lastMissileSpawn = time
-        }
-        else if (time - lastMissileSpawn > missileSpawnInterval) {
-            lastMissileSpawn = time
-            // get random location along spawn pane
-            fireMissile()
-        }
+        enemyController?.update(time: time)
     }
     
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
-        print("collision between type: \(contact.nodeA.name ?? "nil") (@\(contact.nodeA.presentation.worldPosition)) and \(contact.nodeB.name ?? "nil") (@\(contact.nodeB.presentation.worldPosition))")
+//        print("collision between type: \(contact.nodeA.name ?? "nil") (@\(contact.nodeA.presentation.worldPosition)) and \(contact.nodeB.name ?? "nil") (@\(contact.nodeB.presentation.worldPosition))")
         if (contact.nodeA.name == "missile") {
             contact.nodeA.removeFromParentNode()
             if (contact.nodeB.name == "house") {
+                city.houseWasDestroyed(contact.nodeB)
                 contact.nodeB.removeFromParentNode()
             }
         }
         else if (contact.nodeB.name == "missile") {
             contact.nodeB.removeFromParentNode()
             if (contact.nodeA.name == "house") {
+                city.houseWasDestroyed(contact.nodeA)
                 contact.nodeA.removeFromParentNode()
             }
         }
