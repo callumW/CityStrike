@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B0E8DF12392D0690012DB0E /* explosion_sound_v2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1B0E8DF02392D0690012DB0E /* explosion_sound_v2.wav */; };
 		1B17B64A237DCAA100998F2F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B17B649237DCAA100998F2F /* AppDelegate.swift */; };
 		1B17B64C237DCAA100998F2F /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B17B64B237DCAA100998F2F /* art.scnassets */; };
 		1B17B64E237DCAA100998F2F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B17B64D237DCAA100998F2F /* GameViewController.swift */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1B0E8DF02392D0690012DB0E /* explosion_sound_v2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = explosion_sound_v2.wav; sourceTree = "<group>"; };
 		1B17B646237DCAA100998F2F /* 3DMissileCommand.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 3DMissileCommand.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B17B649237DCAA100998F2F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1B17B64B237DCAA100998F2F /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -66,6 +68,7 @@
 		1B17B648237DCAA100998F2F /* 3DMissileCommand */ = {
 			isa = PBXGroup;
 			children = (
+				1B0E8DF02392D0690012DB0E /* explosion_sound_v2.wav */,
 				1BBE26202392920C002A97BA /* explosion_short.wav */,
 				1B17B649237DCAA100998F2F /* AppDelegate.swift */,
 				1B17B64B237DCAA100998F2F /* art.scnassets */,
@@ -140,6 +143,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1B0E8DF12392D0690012DB0E /* explosion_sound_v2.wav in Resources */,
 				1BBE26162391C844002A97BA /* Sounds.xcassets in Resources */,
 				1B17B64C237DCAA100998F2F /* art.scnassets in Resources */,
 				1B17B656237DCAA300998F2F /* LaunchScreen.storyboard in Resources */,

@@ -87,6 +87,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         
         scnView.delegate = self
 
+        scnView.preferredFramesPerSecond = 30
+
         
         // show statistics such as fps and timing information
         scnView.showsStatistics = true
@@ -117,7 +119,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         }
 
         // preload an play explosion to stop initial lag
-        globalExplosion = SCNAudioSource(named: "explosion_short.wav")
+        globalExplosion = SCNAudioSource(named: "explosion_sound_v2.wav")
         globalExplosion.isPositional = true
         globalExplosion.loops = false
         globalExplosion.volume = 0
@@ -129,7 +131,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         player.didFinishPlayback = { () in
             tmp.removeFromParentNode()
-            self.globalExplosion.volume = 0.4
+            self.globalExplosion.volume = 0.3
         }
 
         gameScene.rootNode.addChildNode(tmp)

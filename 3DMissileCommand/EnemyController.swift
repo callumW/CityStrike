@@ -15,6 +15,7 @@ import SceneKit
 class EnemyController {
 
     static let FIRE_INTERVAL: TimeInterval = 2
+    static let SPEED_SCALER: Float = 5
     let gameScene:SCNScene
     let missileFactory:MissileFactory
     let targetCity:City
@@ -45,10 +46,19 @@ class EnemyController {
                 let missile = missileFactory.spawnEnemyMissile()
 
                 let dir:SCNVector3 = normalise(target.position - missile.position)
-                let force = dir * Float(20.0)
+                let force = dir * EnemyController.SPEED_SCALER
 
                 missile.physicsBody?.applyForce(force, asImpulse: false)
-                missile.look(at: target.position, up: SCNVector3(1, 0, 0), localFront: SCNVector3(0, 1, 0))
+
+                if missile.constraints == nil {
+                    missile.constraints = []
+                }
+
+                let lookAtConstraint = SCNLookAtConstraint(target: target)
+                lookAtConstraint.localFront = SCNVector3(0, 1, 0)
+                lookAtConstraint.worldUp = SCNVector3(1, 0, 0)
+                lookAtConstraint.isGimbalLockEnabled = false
+                missile.constraints?.append(lookAtConstraint)
 
                 gameScene.rootNode.addChildNode(missile)
             }
