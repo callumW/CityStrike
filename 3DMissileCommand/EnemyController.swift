@@ -14,7 +14,7 @@ import SceneKit
  */
 class EnemyController {
 
-    static let FIRE_INTERVAL: TimeInterval = 0.5  // Fire a missile every 3 seconds
+    static let FIRE_INTERVAL: TimeInterval = 2
     let gameScene:SCNScene
     let missileFactory:MissileFactory
     let targetCity:City

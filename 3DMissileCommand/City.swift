@@ -15,6 +15,7 @@ class City {
 
     let gameScene:SCNScene
     var houses:Dictionary<Float, SCNNode> = [:]
+    var destoryedHouses:Array<SCNNode> = []
 
     init(_ gameScene: SCNScene) {
         self.gameScene = gameScene
@@ -36,16 +37,21 @@ class City {
         return (houses.randomElement())?.value
     }
 
+    func cleanUp() {
+        while(destoryedHouses.count > 0) {
+            let house = destoryedHouses.removeFirst()
+            house.removeFromParentNode()
+        }
+    }
+
 
     /// Notify the City that a house was destroyed
     /// - Parameter house: The house that was destroyed
     /// - Returns: True if house was in the city and successfuly destroyed, false otherwise
     func houseWasDestroyed(_ house:SCNNode) {
-        if houses.removeValue(forKey: house.worldPosition.z) == nil {
-            print("no matching house in set")
-        }
-        else {
+        if let removed = houses.removeValue(forKey: house.worldPosition.z){
             print("removed house @ \(house.worldPosition) from set! count now: \(houses.count)")
+            destoryedHouses.append(removed)
         }
     }
 }
