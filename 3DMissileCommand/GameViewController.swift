@@ -36,10 +36,15 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     var missileFactory: MissileFactory!
     var city:City!
     var enemyController: EnemyController!
+    var playerController: PlayerController!
     var explosion: SCNParticleSystem!
     var globalExplosion: SCNAudioSource!
 
+    var hitTestPlane: SCNNode!
+
     var gameScene: SCNScene!
+
+    var taps: Array<CGPoint> = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,6 +63,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         enemyController = EnemyController(gameScene: gameScene, missileFactory: missileFactory,city: city)
 
+        playerController = PlayerController(scene: gameScene, factory: missileFactory)
+
         gameScene?.physicsWorld.contactDelegate = self  // register for phsysics contact callback
 
         // create and add a light to the scene
@@ -74,9 +81,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         ambientLightNode.light!.color = UIColor.darkGray
         gameScene.rootNode.addChildNode(ambientLightNode)
 
-
-
-
         // retrieve the SCNView
         let scnView = self.view as! SCNView
         
@@ -92,7 +96,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         
         // show statistics such as fps and timing information
         scnView.showsStatistics = true
-        
+
         // load explosion
         if let explosionScene = SCNScene(named: "art.scnassets/Explosions.scn") {
             print("Explosion scene has \(explosionScene.rootNode.childNodes.count) nodes")
@@ -136,15 +140,54 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         gameScene.rootNode.addChildNode(tmp)
         tmp.addAudioPlayer(player)
+
+        // Setup tap handler
+        let tapRecognizer = UITapGestureRecognizer()
+        tapRecognizer.numberOfTapsRequired = 1
+        tapRecognizer.numberOfTouchesRequired = 1
+
+        tapRecognizer.addTarget(self, action: #selector(GameViewController.handleTap(sender:)))
+        scnView.addGestureRecognizer(tapRecognizer)
+
+        // get hitTestPlane
+        hitTestPlane = gameScene.rootNode.childNode(withName: "hit_test_plane", recursively: false)
+
+        if hitTestPlane == nil {
+            print("Failed to find hit test plane")
+        }
+
     }
 
     @objc
-    func handleTap(_ gestureRecognize: UIGestureRecognizer) {
+    func handleTap(sender: UITapGestureRecognizer) {
+        if sender.state == .ended {
+            // handling code
+
+            let point = sender.location(in: self.view)
+            // print("tap @ \(point)")
+
+            taps.append(point)
+        }
     }
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        enemyController.update(time: time)
+        enemyController.update(time)
         city.cleanUp()
+
+        while (taps.count > 0) {
+
+            let point = taps.removeFirst()
+
+//            print("evaluating tap  \(point)")
+
+            let results = renderer.hitTest(point, options: [SCNHitTestOption.categoryBitMask: 16, SCNHitTestOption.ignoreHiddenNodes: false, SCNHitTestOption.backFaceCulling: false])
+
+            for result in results {
+//                print("hit plane @ \(result.worldCoordinates)")
+                playerController.fireMissile(at: result.worldCoordinates)
+            }
+
+        }
     }
 
     func addExplosion(at: SCNVector3) {
@@ -174,17 +217,39 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
 //        print("collision between type: \(contact.nodeA.name ?? "nil") (@\(contact.nodeA.presentation.worldPosition)) and \(contact.nodeB.name ?? "nil") (@\(contact.nodeB.presentation.worldPosition))")
         if (contact.nodeA.name == "missile") {
-            addExplosion(at: contact.nodeA.presentation.position)
-            contact.nodeA.removeFromParentNode()
+            /*
+                We may get multiple contact callbacks for the same node, therefore to avoid placing multiple explosions for the same missile, we check whether
+                it belongs to a parent node, i.e. has it already been removed from its parent node
+             */
+            if contact.nodeA.parent != nil {
+                print("missile explodes @ \(contact.nodeA.presentation.position)")
+                addExplosion(at: contact.nodeA.presentation.position)
+                contact.nodeA.removeFromParentNode()
+            }
+
             if (contact.nodeB.name == "house") {
                 city.houseWasDestroyed(contact.nodeB)
             }
+            else if (contact.nodeB.name == "target_node") {
+                contact.nodeB.removeFromParentNode()
+            }
         }
         else if (contact.nodeB.name == "missile") {
-            addExplosion(at: contact.nodeB.presentation.position)
-            contact.nodeB.removeFromParentNode()
+            /*
+                We may get multiple contact callbacks for the same node, therefore to avoid placing multiple explosions for the same missile, we check whether
+                it belongs to a parent node, i.e. has it already been removed from its parent node
+             */
+            if contact.nodeB.parent != nil {
+                print("missile explodes @ \(contact.nodeB.presentation.position)")
+                addExplosion(at: contact.nodeB.presentation.position)
+                contact.nodeB.removeFromParentNode()
+            }
+
             if (contact.nodeA.name == "house") {
                 city.houseWasDestroyed(contact.nodeA)
+            }
+            else if (contact.nodeA.name == "target_node") {
+                contact.nodeA.removeFromParentNode()
             }
         }
     }

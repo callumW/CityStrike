@@ -12,7 +12,7 @@ import SceneKit
 /*
  Class describing an enemy controller which fires missiles at houses in the scene
  */
-class EnemyController {
+class EnemyController: MissileController {
 
     static let FIRE_INTERVAL: TimeInterval = 2
     static let SPEED_SCALER: Float = 5
@@ -36,7 +36,7 @@ class EnemyController {
 
     /// Update the enemy controller, if necessary the enemy controller will fire a missile at a house. This function should be called on the renderer call.
     /// - Parameter time: current time
-    func update(time: TimeInterval) {
+    override func update(_ time: TimeInterval) {
         if lastUpdate == -1 {
             lastUpdate = time
         }
@@ -45,20 +45,7 @@ class EnemyController {
             if let target = targetCity.getRandomHouse() {
                 let missile = missileFactory.spawnEnemyMissile()
 
-                let dir:SCNVector3 = normalise(target.position - missile.position)
-                let force = dir * EnemyController.SPEED_SCALER
-
-                missile.physicsBody?.applyForce(force, asImpulse: false)
-
-                if missile.constraints == nil {
-                    missile.constraints = []
-                }
-
-                let lookAtConstraint = SCNLookAtConstraint(target: target)
-                lookAtConstraint.localFront = SCNVector3(0, 1, 0)
-                lookAtConstraint.worldUp = SCNVector3(1, 0, 0)
-                lookAtConstraint.isGimbalLockEnabled = false
-                missile.constraints?.append(lookAtConstraint)
+                super.prepareMissile(missile: missile, target: target, forceScale: EnemyController.SPEED_SCALER)
 
                 gameScene.rootNode.addChildNode(missile)
             }

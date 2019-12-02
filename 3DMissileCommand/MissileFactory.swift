@@ -72,7 +72,7 @@ class MissileFactory {
     }
 
     /// returns a missile node
-    func createMissile() -> SCNNode {
+    private func createMissile() -> SCNNode {
         return masterMissileNode.clone()
     }
 
@@ -81,6 +81,13 @@ class MissileFactory {
         let missile = createMissile()
         let spawnZ:Float = missileSpawnMinZ + randomDist.nextUniform() * missileSpawnRangeZ
         missile.position = SCNVector3(missileSpawnX, missileSpawnY, spawnZ)
+        return missile
+    }
+
+    func spawnPlayerMissile() -> SCNNode {
+        let missile = createMissile()
+
+        missile.position = SCNVector3(1, 1, 1)
         return missile
     }
 

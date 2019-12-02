@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1B0E8DF12392D0690012DB0E /* explosion_sound_v2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1B0E8DF02392D0690012DB0E /* explosion_sound_v2.wav */; };
+		1B0E8DF3239448830012DB0E /* MissileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0E8DF2239448830012DB0E /* MissileController.swift */; };
+		1B0E8DF52394491C0012DB0E /* PlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0E8DF42394491C0012DB0E /* PlayerController.swift */; };
 		1B17B64A237DCAA100998F2F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B17B649237DCAA100998F2F /* AppDelegate.swift */; };
 		1B17B64C237DCAA100998F2F /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B17B64B237DCAA100998F2F /* art.scnassets */; };
 		1B17B64E237DCAA100998F2F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B17B64D237DCAA100998F2F /* GameViewController.swift */; };
@@ -23,6 +25,8 @@
 
 /* Begin PBXFileReference section */
 		1B0E8DF02392D0690012DB0E /* explosion_sound_v2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = explosion_sound_v2.wav; sourceTree = "<group>"; };
+		1B0E8DF2239448830012DB0E /* MissileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissileController.swift; sourceTree = "<group>"; };
+		1B0E8DF42394491C0012DB0E /* PlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerController.swift; sourceTree = "<group>"; };
 		1B17B646237DCAA100998F2F /* 3DMissileCommand.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 3DMissileCommand.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B17B649237DCAA100998F2F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1B17B64B237DCAA100998F2F /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -74,6 +78,8 @@
 				1B17B64B237DCAA100998F2F /* art.scnassets */,
 				1B17B64D237DCAA100998F2F /* GameViewController.swift */,
 				1BBE260723905B84002A97BA /* EnemyController.swift */,
+				1B0E8DF2239448830012DB0E /* MissileController.swift */,
+				1B0E8DF42394491C0012DB0E /* PlayerController.swift */,
 				1BBE260923906094002A97BA /* City.swift */,
 				1BBE2605238F1873002A97BA /* MissileFactory.swift */,
 				1B17B64F237DCAA100998F2F /* Main.storyboard */,
@@ -163,7 +169,9 @@
 				1B17B64E237DCAA100998F2F /* GameViewController.swift in Sources */,
 				1BBE260A23906094002A97BA /* City.swift in Sources */,
 				1B17B64A237DCAA100998F2F /* AppDelegate.swift in Sources */,
+				1B0E8DF52394491C0012DB0E /* PlayerController.swift in Sources */,
 				1BBE260823905B84002A97BA /* EnemyController.swift in Sources */,
+				1B0E8DF3239448830012DB0E /* MissileController.swift in Sources */,
 				1BBE2606238F1873002A97BA /* MissileFactory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
