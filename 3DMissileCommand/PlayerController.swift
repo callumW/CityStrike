@@ -12,6 +12,7 @@ import SceneKit
 class PlayerController: MissileController {
 
     static let PLAYER_MISSILE_CATEGORY_BIT_MASK: Int = 1 << 63
+    static let PLAYER_MISSILE_SPEED_SCALER: Float = MissileController.BASE_MISSILE_SPEED_SCALER * 8
 
     let gameScene: SCNScene
     let missileFactory: MissileFactory
@@ -47,7 +48,7 @@ class PlayerController: MissileController {
 
         missile.physicsBody?.contactTestBitMask = PlayerController.PLAYER_MISSILE_CATEGORY_BIT_MASK
 
-        super.prepareMissile(missile: missile, target: targetNode, forceScale: MissileController.BASE_MISSILE_SPEED_SCALER)
+        super.prepareMissile(missile: missile, target: targetNode, forceScale: PlayerController.PLAYER_MISSILE_SPEED_SCALER)
 
         gameScene.rootNode.addChildNode(targetNode)
         gameScene.rootNode.addChildNode(missile)

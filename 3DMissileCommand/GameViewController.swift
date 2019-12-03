@@ -37,8 +37,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     var city:City!
     var enemyController: EnemyController!
     var playerController: PlayerController!
-    var explosion: SCNParticleSystem!
-    var globalExplosion: SCNAudioSource!
+    var lastUpdateTime: TimeInterval = 0.0
 
     var hitTestPlane: SCNNode!
 
@@ -97,49 +96,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         // show statistics such as fps and timing information
         scnView.showsStatistics = true
 
-        // load explosion
-        if let explosionScene = SCNScene(named: "art.scnassets/Explosions.scn") {
-            print("Explosion scene has \(explosionScene.rootNode.childNodes.count) nodes")
-
-            for node in explosionScene.rootNode.childNodes {
-                print("node has name \(node.name ?? "no name" )")
-            }
-            if let tmp = explosionScene.rootNode.childNode(withName: "explosion", recursively: true) {
-                if let particleSystems = tmp.particleSystems {
-                    if particleSystems.count > 0 {
-                        explosion = particleSystems[0]
-                    }
-                }
-                else {
-                    print("Failed to get particles systems from explosion node")
-                }
-            }
-            else {
-                print("Failed find explosion  node")
-            }
-        }
-        else {
-            print("Failed to load explosion scene")
-        }
-
-        // preload an play explosion to stop initial lag
-        globalExplosion = SCNAudioSource(named: "explosion_sound_v2.wav")
-        globalExplosion.isPositional = true
-        globalExplosion.loops = false
-        globalExplosion.volume = 0
-        globalExplosion.load()
-
-        let player = SCNAudioPlayer(source: globalExplosion)
-        let tmp = SCNNode(geometry: nil)
-        tmp.position = SCNVector3(0, 0, 0)
-
-        player.didFinishPlayback = { () in
-            tmp.removeFromParentNode()
-            self.globalExplosion.volume = 0.3
-        }
-
-        gameScene.rootNode.addChildNode(tmp)
-        tmp.addAudioPlayer(player)
 
         // Setup tap handler
         let tapRecognizer = UITapGestureRecognizer()
@@ -156,6 +112,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             print("Failed to find hit test plane")
         }
 
+        missileFactory.preloadAudio()
     }
 
     @objc
@@ -171,7 +128,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     }
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        lastUpdateTime = time
         enemyController.update(time)
+        missileFactory.update(time)
         city.cleanUp()
 
         while (taps.count > 0) {
@@ -190,30 +149,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         }
     }
 
-    func addExplosion(at: SCNVector3) {
-        if explosion != nil {
-            let rotationMatrix = SCNMatrix4MakeRotation(0, 0, 0, 0)
-            let translationMatrix = SCNMatrix4MakeTranslation(at.x, at.y, at.z)
-            let transformMatrix = SCNMatrix4Mult(rotationMatrix, translationMatrix)
-
-            self.gameScene.addParticleSystem(explosion, transform: transformMatrix)
-        }
-        else {
-            print("no explosion to add")
-        }
-
-        let player = SCNAudioPlayer(source: globalExplosion)
-        let tmp = SCNNode(geometry: nil)
-        tmp.position = SCNVector3(at.x, at.y, at.z)
-
-        player.didFinishPlayback = { () in
-            tmp.removeFromParentNode()
-        }
-
-        gameScene.rootNode.addChildNode(tmp)
-        tmp.addAudioPlayer(player)
-    }
-    
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
 //        print("collision between type: \(contact.nodeA.name ?? "nil") (@\(contact.nodeA.presentation.worldPosition)) and \(contact.nodeB.name ?? "nil") (@\(contact.nodeB.presentation.worldPosition))")
         if (contact.nodeA.name == "missile") {
@@ -222,16 +157,22 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
                 it belongs to a parent node, i.e. has it already been removed from its parent node
              */
             if contact.nodeA.parent != nil {
-                print("missile explodes @ \(contact.nodeA.presentation.position)")
-                addExplosion(at: contact.nodeA.presentation.position)
+                var explosionLoc: SCNVector3?
+                if (contact.nodeB.name == "target_node") {
+                    print("hit target node!")
+                    explosionLoc = contact.nodeB.worldPosition
+                    contact.nodeB.removeFromParentNode()
+                }
+                else {
+                    explosionLoc = contact.nodeA.presentation.position
+                }
+                print("missile explodes @ \(explosionLoc!)")
+                missileFactory.addExplosion(at: explosionLoc!, time: lastUpdateTime)
                 contact.nodeA.removeFromParentNode()
             }
 
             if (contact.nodeB.name == "house") {
                 city.houseWasDestroyed(contact.nodeB)
-            }
-            else if (contact.nodeB.name == "target_node") {
-                contact.nodeB.removeFromParentNode()
             }
         }
         else if (contact.nodeB.name == "missile") {
@@ -240,16 +181,22 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
                 it belongs to a parent node, i.e. has it already been removed from its parent node
              */
             if contact.nodeB.parent != nil {
-                print("missile explodes @ \(contact.nodeB.presentation.position)")
-                addExplosion(at: contact.nodeB.presentation.position)
+                var explosionLoc: SCNVector3?
+                if (contact.nodeA.name == "target_node") {
+                    print("hit target node!")
+                    explosionLoc = contact.nodeA.worldPosition
+                    contact.nodeA.removeFromParentNode()
+                }
+                else {
+                    explosionLoc = contact.nodeB.presentation.position
+                }
+                print("missile explodes @ \(explosionLoc!)")
+                missileFactory.addExplosion(at: explosionLoc!, time: lastUpdateTime)
                 contact.nodeB.removeFromParentNode()
             }
 
             if (contact.nodeA.name == "house") {
                 city.houseWasDestroyed(contact.nodeA)
-            }
-            else if (contact.nodeA.name == "target_node") {
-                contact.nodeA.removeFromParentNode()
             }
         }
     }

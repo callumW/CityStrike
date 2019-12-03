@@ -12,15 +12,25 @@ import SceneKit
 class MissileController {
 
     static let BASE_MISSILE_SPEED_SCALER: Float = 5
+    static let EXPLOSION_COLLIDER_BIT_MASK: Int = 1 << 62
 
     func update(_ time: TimeInterval) {}
 
+
+    /// Prepare and fire missile.
+    /// This specifid missile will be oriented towards the target node, and fired by means of a costant force
+    /// The passed missile will also be set to be collidable with explosion nodes
+    /// - Parameters:
+    ///   - missile: The missile to prepare
+    ///   - target: Target to fire the missile at
+    ///   - forceScale: scale of the force which will be applied to the missile to move it
     func prepareMissile(missile: SCNNode, target: SCNNode, forceScale: Float) {
 
         let dir:SCNVector3 = normalise(target.position - missile.position)
         let force = dir * forceScale
 
         missile.physicsBody?.applyForce(force, asImpulse: false)
+        missile.physicsBody?.contactTestBitMask |= MissileController.EXPLOSION_COLLIDER_BIT_MASK
 
         if missile.constraints == nil {
             missile.constraints = []
