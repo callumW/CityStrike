@@ -173,6 +173,7 @@ class MissileFactory {
 
         let physicsBody = SCNPhysicsBody(type: .static, shape: physicsShape)
         physicsBody.categoryBitMask = MissileController.EXPLOSION_COLLIDER_BIT_MASK
+        physicsBody.collisionBitMask = 0
         physicsBody.isAffectedByGravity = false
 
         // let explosionNode = SCNNode(geometry: SCNSphere(radius: CGFloat(MissileFactory.EXPLOSION_RADIUS_START)))    // show representation of physics body

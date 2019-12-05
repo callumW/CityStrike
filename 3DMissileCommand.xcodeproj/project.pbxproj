@@ -10,12 +10,13 @@
 		1B0E8DF12392D0690012DB0E /* explosion_sound_v2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1B0E8DF02392D0690012DB0E /* explosion_sound_v2.wav */; };
 		1B0E8DF3239448830012DB0E /* MissileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0E8DF2239448830012DB0E /* MissileController.swift */; };
 		1B0E8DF52394491C0012DB0E /* PlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0E8DF42394491C0012DB0E /* PlayerController.swift */; };
+		1B0E8E03239998780012DB0E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B0E8E01239998780012DB0E /* LaunchScreen.storyboard */; };
+		1B0E8E04239998780012DB0E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B0E8E02239998780012DB0E /* Main.storyboard */; };
+		1B0E8E062399AA890012DB0E /* arroway.de_concrete-53_d100.png in Resources */ = {isa = PBXBuildFile; fileRef = 1B0E8E052399AA890012DB0E /* arroway.de_concrete-53_d100.png */; };
 		1B17B64A237DCAA100998F2F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B17B649237DCAA100998F2F /* AppDelegate.swift */; };
 		1B17B64C237DCAA100998F2F /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B17B64B237DCAA100998F2F /* art.scnassets */; };
 		1B17B64E237DCAA100998F2F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B17B64D237DCAA100998F2F /* GameViewController.swift */; };
-		1B17B651237DCAA100998F2F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B17B64F237DCAA100998F2F /* Main.storyboard */; };
 		1B17B653237DCAA300998F2F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B17B652237DCAA300998F2F /* Assets.xcassets */; };
-		1B17B656237DCAA300998F2F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B17B654237DCAA300998F2F /* LaunchScreen.storyboard */; };
 		1BBE2606238F1873002A97BA /* MissileFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BBE2605238F1873002A97BA /* MissileFactory.swift */; };
 		1BBE260823905B84002A97BA /* EnemyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BBE260723905B84002A97BA /* EnemyController.swift */; };
 		1BBE260A23906094002A97BA /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BBE260923906094002A97BA /* City.swift */; };
@@ -27,13 +28,15 @@
 		1B0E8DF02392D0690012DB0E /* explosion_sound_v2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = explosion_sound_v2.wav; sourceTree = "<group>"; };
 		1B0E8DF2239448830012DB0E /* MissileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissileController.swift; sourceTree = "<group>"; };
 		1B0E8DF42394491C0012DB0E /* PlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerController.swift; sourceTree = "<group>"; };
+		1B0E8DFB23970A110012DB0E /* missile_battery.blend */ = {isa = PBXFileReference; lastKnownFileType = file; path = missile_battery.blend; sourceTree = "<group>"; };
+		1B0E8E01239998780012DB0E /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		1B0E8E02239998780012DB0E /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		1B0E8E052399AA890012DB0E /* arroway.de_concrete-53_d100.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "arroway.de_concrete-53_d100.png"; sourceTree = "<group>"; };
 		1B17B646237DCAA100998F2F /* 3DMissileCommand.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 3DMissileCommand.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B17B649237DCAA100998F2F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1B17B64B237DCAA100998F2F /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		1B17B64D237DCAA100998F2F /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
-		1B17B650237DCAA100998F2F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1B17B652237DCAA300998F2F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		1B17B655237DCAA300998F2F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1B17B657237DCAA300998F2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1BBE2605238F1873002A97BA /* MissileFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissileFactory.swift; sourceTree = "<group>"; };
 		1BBE260723905B84002A97BA /* EnemyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyController.swift; sourceTree = "<group>"; };
@@ -53,9 +56,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1B0E8DF9239709070012DB0E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1B0E8DFB23970A110012DB0E /* missile_battery.blend */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		1B0E8E072399AA9F0012DB0E /* Textures */ = {
+			isa = PBXGroup;
+			children = (
+				1B0E8E052399AA890012DB0E /* arroway.de_concrete-53_d100.png */,
+			);
+			path = Textures;
+			sourceTree = "<group>";
+		};
 		1B17B63D237DCAA100998F2F = {
 			isa = PBXGroup;
 			children = (
+				1B0E8E072399AA9F0012DB0E /* Textures */,
+				1B0E8DF9239709070012DB0E /* Models */,
 				1B17B648237DCAA100998F2F /* 3DMissileCommand */,
 				1B17B647237DCAA100998F2F /* Products */,
 			);
@@ -72,6 +93,8 @@
 		1B17B648237DCAA100998F2F /* 3DMissileCommand */ = {
 			isa = PBXGroup;
 			children = (
+				1B0E8E01239998780012DB0E /* LaunchScreen.storyboard */,
+				1B0E8E02239998780012DB0E /* Main.storyboard */,
 				1B0E8DF02392D0690012DB0E /* explosion_sound_v2.wav */,
 				1BBE26202392920C002A97BA /* explosion_short.wav */,
 				1B17B649237DCAA100998F2F /* AppDelegate.swift */,
@@ -82,9 +105,7 @@
 				1B0E8DF42394491C0012DB0E /* PlayerController.swift */,
 				1BBE260923906094002A97BA /* City.swift */,
 				1BBE2605238F1873002A97BA /* MissileFactory.swift */,
-				1B17B64F237DCAA100998F2F /* Main.storyboard */,
 				1B17B652237DCAA300998F2F /* Assets.xcassets */,
-				1B17B654237DCAA300998F2F /* LaunchScreen.storyboard */,
 				1B17B657237DCAA300998F2F /* Info.plist */,
 				1BBE26152391C844002A97BA /* Sounds.xcassets */,
 			);
@@ -150,11 +171,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				1B0E8DF12392D0690012DB0E /* explosion_sound_v2.wav in Resources */,
+				1B0E8E062399AA890012DB0E /* arroway.de_concrete-53_d100.png in Resources */,
+				1B0E8E03239998780012DB0E /* LaunchScreen.storyboard in Resources */,
 				1BBE26162391C844002A97BA /* Sounds.xcassets in Resources */,
 				1B17B64C237DCAA100998F2F /* art.scnassets in Resources */,
-				1B17B656237DCAA300998F2F /* LaunchScreen.storyboard in Resources */,
+				1B0E8E04239998780012DB0E /* Main.storyboard in Resources */,
 				1B17B653237DCAA300998F2F /* Assets.xcassets in Resources */,
-				1B17B651237DCAA100998F2F /* Main.storyboard in Resources */,
 				1BBE26212392920C002A97BA /* explosion_short.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -177,25 +199,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		1B17B64F237DCAA100998F2F /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1B17B650237DCAA100998F2F /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		1B17B654237DCAA300998F2F /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1B17B655237DCAA300998F2F /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1B17B658237DCAA300998F2F /* Debug */ = {

@@ -19,6 +19,8 @@ class PlayerController: MissileController {
 
     let genericTargetNode: SCNNode
 
+    var missileBatteries: Array<SCNNode> = []
+
 
     init(scene: SCNScene, factory: MissileFactory) {
         gameScene = scene
@@ -37,6 +39,12 @@ class PlayerController: MissileController {
         genericTargetNode.physicsBody?.categoryBitMask = PlayerController.PLAYER_MISSILE_CATEGORY_BIT_MASK
         genericTargetNode.castsShadow = false
         genericTargetNode.name = "target_node"
+
+        for node in gameScene.rootNode.childNodes {
+            if node.name == "missile_battery" {
+                missileBatteries.append(node)
+            }
+        }
     }
 
     func fireMissile(at: SCNVector3) {
@@ -45,6 +53,10 @@ class PlayerController: MissileController {
         targetNode.position = at
 
         let missile = missileFactory.spawnPlayerMissile()
+
+        if missileBatteries.count > 0 {
+            missile.position = missileBatteries.randomElement()!.position
+        }
 
         missile.physicsBody?.contactTestBitMask = PlayerController.PLAYER_MISSILE_CATEGORY_BIT_MASK
 
