@@ -210,6 +210,7 @@ class MissileFactory {
 
         if let body = node.physicsBody {
             body.physicsShape = SCNPhysicsShape(geometry: SCNSphere(radius: CGFloat(newRadius)), options: nil)
+            // TODO, would it be better to apply some sort of transform here instead?
         }
 
         // node.geometry = SCNSphere(radius: CGFloat(newRadius))    // show representation of physics body

@@ -31,6 +31,7 @@ class MissileController {
 
         missile.physicsBody?.applyForce(force, asImpulse: false)
         missile.physicsBody?.contactTestBitMask |= MissileController.EXPLOSION_COLLIDER_BIT_MASK
+        missile.physicsBody?.collisionBitMask = 0
 
         if missile.constraints == nil {
             missile.constraints = []
