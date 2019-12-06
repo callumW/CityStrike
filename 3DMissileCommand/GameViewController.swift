@@ -10,6 +10,7 @@ import UIKit
 import QuartzCore
 import SceneKit
 import GameplayKit
+import SpriteKit
 
 func *(left: SCNVector3, right: Float) -> SCNVector3 {
     return SCNVector3(x: left.x * right, y: left.y * right, z: left.z * right)
@@ -38,12 +39,18 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     var enemyController: EnemyController!
     var playerController: PlayerController!
     var lastUpdateTime: TimeInterval = 0.0
+    var startTime: TimeInterval = 0.0
 
     var hitTestPlane: SCNNode!
 
     var gameScene: SCNScene!
 
     var taps: Array<CGPoint> = []
+
+    var timeLabel: SKLabelNode!
+    var scoreLabel: SKLabelNode!
+
+    var score: Int = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,6 +99,20 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         scnView.preferredFramesPerSecond = 30
 
+        scnView.overlaySKScene = SKScene(fileNamed: "UIOverlay.sks")
+
+        if let node = scnView.overlaySKScene!.childNode(withName: "time_label") {
+            if node is SKLabelNode {
+                timeLabel = node as? SKLabelNode
+            }
+        }
+
+        if let node = scnView.overlaySKScene!.childNode(withName: "score_label") {
+            if node is SKLabelNode {
+                scoreLabel = node as? SKLabelNode
+            }
+        }
+
         
         // show statistics such as fps and timing information
         scnView.showsStatistics = true
@@ -127,11 +148,31 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         }
     }
 
+    func updateUI(time: TimeInterval) {
+        if startTime == 0 {
+            startTime = time
+        }
+
+        // set time label
+        if timeLabel != nil {
+            timeLabel.text = String(format: "Time: %.01fs", time - startTime)
+        }
+        else {
+            print("no time label")
+        }
+
+        if scoreLabel != nil {
+            scoreLabel.text = "Score: \(score)"
+        }
+    }
+
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         lastUpdateTime = time
         enemyController.update(time)
         missileFactory.update(time)
         city.cleanUp()
+
+        updateUI(time: time)
 
         while (taps.count > 0) {
 
@@ -151,52 +192,73 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
 //        print("collision between type: \(contact.nodeA.name ?? "nil") (@\(contact.nodeA.presentation.worldPosition)) and \(contact.nodeB.name ?? "nil") (@\(contact.nodeB.presentation.worldPosition))")
-        if (contact.nodeA.name == "missile") {
-            /*
-                We may get multiple contact callbacks for the same node, therefore to avoid placing multiple explosions for the same missile, we check whether
-                it belongs to a parent node, i.e. has it already been removed from its parent node
-             */
-            if contact.nodeA.parent != nil {
-                var explosionLoc: SCNVector3?
-                if (contact.nodeB.name == "target_node") {
-                    print("hit target node!")
-                    explosionLoc = contact.nodeB.worldPosition
-                    contact.nodeB.removeFromParentNode()
-                }
-                else {
-                    explosionLoc = contact.nodeA.presentation.position
-                }
-                print("missile explodes @ \(explosionLoc!)")
-                missileFactory.addExplosion(at: explosionLoc!, time: lastUpdateTime)
-                contact.nodeA.removeFromParentNode()
-            }
 
-            if (contact.nodeB.name == "house") {
-                city.houseWasDestroyed(contact.nodeB)
-            }
-        }
-        else if (contact.nodeB.name == "missile") {
-            /*
-                We may get multiple contact callbacks for the same node, therefore to avoid placing multiple explosions for the same missile, we check whether
-                it belongs to a parent node, i.e. has it already been removed from its parent node
-             */
-            if contact.nodeB.parent != nil {
-                var explosionLoc: SCNVector3?
-                if (contact.nodeA.name == "target_node") {
-                    print("hit target node!")
-                    explosionLoc = contact.nodeA.worldPosition
+        let nodeABody: SCNPhysicsBody = contact.nodeA.physicsBody!
+        let nodeBBody: SCNPhysicsBody = contact.nodeB.physicsBody!
+
+        /* Player Missile */
+        if nodeABody.categoryBitMask & COLLISION_BITMASK.PLAYER_MISSILE != 0 {
+            if nodeBBody.categoryBitMask & COLLISION_BITMASK.PLAYER_TARGET_NODE != 0 {
+                contact.nodeB.removeFromParentNode()
+                if contact.nodeA.parent != nil {    // if we hit a target node, set the explosion as the position of the target node
+                    missileFactory.addExplosion(at: contact.nodeB.presentation.position, time: lastUpdateTime)
                     contact.nodeA.removeFromParentNode()
                 }
-                else {
-                    explosionLoc = contact.nodeB.presentation.position
-                }
-                print("missile explodes @ \(explosionLoc!)")
-                missileFactory.addExplosion(at: explosionLoc!, time: lastUpdateTime)
+            }
+            else {
+                print("Player missile collides with something other than target: \(contact.nodeB.name ?? "unknown") | \(nodeBBody.categoryBitMask)")
+            }
+            if contact.nodeA.parent != nil {
+                missileFactory.addExplosion(at: contact.nodeA.presentation.position, time: lastUpdateTime)
+                contact.nodeA.removeFromParentNode()
+            }
+        }
+        else if nodeBBody.categoryBitMask & COLLISION_BITMASK.PLAYER_MISSILE != 0 {
+            if nodeABody.categoryBitMask & COLLISION_BITMASK.PLAYER_TARGET_NODE != 0 {
+                contact.nodeA.removeFromParentNode()
+                if contact.nodeB.parent != nil {
+                     missileFactory.addExplosion(at: contact.nodeA.presentation.position, time: lastUpdateTime)
+                     contact.nodeB.removeFromParentNode()
+                 }
+            }
+            else {
+                print("Player missile collides with something other than target: \(contact.nodeA.name ?? "unknown") | \(nodeABody.categoryBitMask)")
+            }
+            if contact.nodeB.parent != nil {
+                missileFactory.addExplosion(at: contact.nodeB.presentation.position, time: lastUpdateTime)
                 contact.nodeB.removeFromParentNode()
             }
+        }
 
-            if (contact.nodeA.name == "house") {
-                city.houseWasDestroyed(contact.nodeA)
+        /* Enemy Missile */
+        if nodeABody.categoryBitMask & COLLISION_BITMASK.ENEMY_MISSILE != 0 {
+            if nodeBBody.categoryBitMask & COLLISION_BITMASK.HOUSE != 0 {
+                if city.houseWasDestroyed(contact.nodeB) {
+                    score -= 10
+                }
+            }
+            else if contact.nodeA.parent != nil {
+                score += 1
+            }
+
+            if contact.nodeA.parent != nil {
+                missileFactory.addExplosion(at: contact.nodeA.presentation.position, time: lastUpdateTime)
+                contact.nodeA.removeFromParentNode()
+            }
+        }
+        else if nodeBBody.categoryBitMask & COLLISION_BITMASK.ENEMY_MISSILE != 0 {
+            if nodeABody.categoryBitMask & COLLISION_BITMASK.HOUSE != 0 {
+                if city.houseWasDestroyed(contact.nodeA) {
+                    score -= 10
+                }
+            }
+            else if contact.nodeB.parent != nil {
+                score += 1
+            }
+
+            if contact.nodeB.parent != nil {
+                missileFactory.addExplosion(at: contact.nodeB.presentation.position, time: lastUpdateTime)
+                contact.nodeB.removeFromParentNode()
             }
         }
     }

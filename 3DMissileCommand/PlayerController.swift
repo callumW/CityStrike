@@ -10,8 +10,6 @@ import Foundation
 import SceneKit
 
 class PlayerController: MissileController {
-
-    static let PLAYER_MISSILE_CATEGORY_BIT_MASK: Int = 1 << 63
     static let PLAYER_MISSILE_SPEED_SCALER: Float = MissileController.BASE_MISSILE_SPEED_SCALER * 8
 
     let gameScene: SCNScene
@@ -20,6 +18,8 @@ class PlayerController: MissileController {
     let genericTargetNode: SCNNode
 
     var missileBatteries: Array<SCNNode> = []
+
+    var targetNodes: Dictionary<String, SCNNode> = [:]
 
 
     init(scene: SCNScene, factory: MissileFactory) {
@@ -36,7 +36,7 @@ class PlayerController: MissileController {
         genericTargetNode = SCNNode(geometry: nil)
         genericTargetNode.physicsBody = SCNPhysicsBody(type: SCNPhysicsBodyType.static, shape: physicsShape)
         genericTargetNode.physicsBody?.isAffectedByGravity = false
-        genericTargetNode.physicsBody?.categoryBitMask = PlayerController.PLAYER_MISSILE_CATEGORY_BIT_MASK
+        genericTargetNode.physicsBody?.categoryBitMask = COLLISION_BITMASK.PLAYER_TARGET_NODE
         genericTargetNode.castsShadow = false
         genericTargetNode.name = "target_node"
 
@@ -58,7 +58,9 @@ class PlayerController: MissileController {
             missile.position = missileBatteries.randomElement()!.position
         }
 
-        missile.physicsBody?.contactTestBitMask = PlayerController.PLAYER_MISSILE_CATEGORY_BIT_MASK
+        missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.PLAYER_TARGET_NODE
+        // missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.FLOOR
+        missile.physicsBody?.categoryBitMask = COLLISION_BITMASK.PLAYER_MISSILE
 
         super.prepareMissile(missile: missile, target: targetNode, forceScale: PlayerController.PLAYER_MISSILE_SPEED_SCALER)
 
@@ -71,4 +73,8 @@ class PlayerController: MissileController {
     override func update(_ time: TimeInterval) {
 
     }
+
+//    func removeTarget(for: SCNNode) {
+//
+//    }
 }

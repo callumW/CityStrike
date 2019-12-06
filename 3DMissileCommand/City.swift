@@ -48,10 +48,12 @@ class City {
     /// Notify the City that a house was destroyed
     /// - Parameter house: The house that was destroyed
     /// - Returns: True if house was in the city and successfuly destroyed, false otherwise
-    func houseWasDestroyed(_ house:SCNNode) {
+    func houseWasDestroyed(_ house:SCNNode) -> Bool {
         if let removed = houses.removeValue(forKey: house.worldPosition.z){
             print("removed house @ \(house.worldPosition) from set! count now: \(houses.count)")
             destoryedHouses.append(removed)
+            return true
         }
+        return false
     }
 }

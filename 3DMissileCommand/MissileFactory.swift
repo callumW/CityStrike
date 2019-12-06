@@ -19,6 +19,8 @@ class MissileFactory {
     static let EXPLOSION_RADIUS_START: Double = 0.1
     static let EXPLOSION_RADIUS_END: Double = 1.5
 
+    
+
     let gameScene: SCNScene
     let masterMissileNode: SCNNode
     let missileSpawnY: Float
@@ -172,7 +174,9 @@ class MissileFactory {
         let physicsShape = SCNPhysicsShape(geometry: SCNSphere(radius: CGFloat(MissileFactory.EXPLOSION_RADIUS_START)), options: nil)
 
         let physicsBody = SCNPhysicsBody(type: .static, shape: physicsShape)
-        physicsBody.categoryBitMask = MissileController.EXPLOSION_COLLIDER_BIT_MASK
+        physicsBody.categoryBitMask = COLLISION_BITMASK.MISSILE_EXPLOSION
+        // physicsBody.contactTestBitMask |= COLLISION_BITMASK.PLAYER_MISSILE   // TODO re-add once target nodes will not be orphaned
+        physicsBody.contactTestBitMask |= COLLISION_BITMASK.ENEMY_MISSILE
         physicsBody.collisionBitMask = 0
         physicsBody.isAffectedByGravity = false
 

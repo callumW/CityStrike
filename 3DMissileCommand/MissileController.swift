@@ -12,7 +12,6 @@ import SceneKit
 class MissileController {
 
     static let BASE_MISSILE_SPEED_SCALER: Float = 5
-    static let EXPLOSION_COLLIDER_BIT_MASK: Int = 1 << 62
 
     func update(_ time: TimeInterval) {}
 
@@ -30,7 +29,7 @@ class MissileController {
         let force = dir * forceScale
 
         missile.physicsBody?.applyForce(force, asImpulse: false)
-        missile.physicsBody?.contactTestBitMask |= MissileController.EXPLOSION_COLLIDER_BIT_MASK
+        missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.MISSILE_EXPLOSION
         missile.physicsBody?.collisionBitMask = 0
 
         if missile.constraints == nil {

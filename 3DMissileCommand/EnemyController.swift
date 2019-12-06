@@ -16,6 +16,7 @@ class EnemyController: MissileController {
 
     static let FIRE_INTERVAL: TimeInterval = 2
     static let SPEED_SCALER: Float = 5
+
     let gameScene:SCNScene
     let missileFactory:MissileFactory
     let targetCity:City
@@ -44,6 +45,10 @@ class EnemyController: MissileController {
             // target & fire a missile
             if let target = targetCity.getRandomHouse() {
                 let missile = missileFactory.spawnEnemyMissile()
+
+                missile.physicsBody?.categoryBitMask |= COLLISION_BITMASK.ENEMY_MISSILE
+                missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.HOUSE
+                missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.FLOOR
 
                 super.prepareMissile(missile: missile, target: target, forceScale: EnemyController.SPEED_SCALER)
 
