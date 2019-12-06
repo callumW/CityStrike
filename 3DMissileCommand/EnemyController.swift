@@ -53,6 +53,7 @@ class EnemyController: MissileController {
                 super.prepareMissile(missile: missile, target: target, forceScale: EnemyController.SPEED_SCALER)
 
                 gameScene.rootNode.addChildNode(missile)
+                missileFactory.addEngineSound(to: missile)
             }
             else {
                 print("no house to target")

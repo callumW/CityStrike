@@ -10,7 +10,7 @@ import Foundation
 import SceneKit
 
 class PlayerController: MissileController {
-    static let PLAYER_MISSILE_SPEED_SCALER: Float = MissileController.BASE_MISSILE_SPEED_SCALER * 8
+    static let PLAYER_MISSILE_SPEED_SCALER: Float = MissileController.BASE_MISSILE_SPEED_SCALER * 6
 
     let gameScene: SCNScene
     let missileFactory: MissileFactory
@@ -66,6 +66,8 @@ class PlayerController: MissileController {
 
         gameScene.rootNode.addChildNode(targetNode)
         gameScene.rootNode.addChildNode(missile)
+
+        missileFactory.addEngineSound(to: missile)
     }
 
     /// To be called in the Scene renderer function. Updates the Player controlled objects

@@ -56,6 +56,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     var gameOverTextNode: SCNNode! = nil
     var gameOverAudioSource: SCNAudioSource! = nil
 
+    var listenerPosition: SCNNode!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -105,6 +107,12 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         scnView.overlaySKScene = SKScene(fileNamed: "UIOverlay.sks")
 
+        if let cam = gameScene.rootNode.childNode(withName: "audio_listener", recursively: true) {
+            print("setting listener to position \(cam.position) rotation: \(cam.rotation)")
+
+            scnView.audioListener = cam
+        }
+
         if let node = scnView.overlaySKScene!.childNode(withName: "time_label") {
             if node is SKLabelNode {
                 timeLabel = node as? SKLabelNode
@@ -123,8 +131,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         if let source = SCNAudioSource(fileNamed: "game_over.wav") {
             source.isPositional = true
-            source.loops = true
-            source.volume = 0.1
+            source.loops = false
+            source.volume = 0.01
             source.load()
 
             gameOverAudioSource = source
@@ -186,7 +194,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if gamePlaying {
             lastUpdateTime = time
-            enemyController.update(time)
+            // enemyController.update(time)
             missileFactory.update(time)
             city.cleanUp()
 

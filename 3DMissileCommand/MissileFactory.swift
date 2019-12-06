@@ -30,6 +30,8 @@ class MissileFactory {
     let missileSpawnRangeZ: Float
     let randomDist: GKRandomDistribution
 
+    var missileEngineSound: SCNAudioSource!
+
     var explosionSoundSource: SCNAudioSource!
     let explosionParticleSystem: SCNParticleSystem
 
@@ -84,7 +86,7 @@ class MissileFactory {
         randomDist = GKRandomDistribution(lowestValue: 0, highestValue: 100)
 
         // Setup Audio
-        explosionSoundSource = SCNAudioSource(named: "explosion_sound_v2.wav")
+        explosionSoundSource = SCNAudioSource(named: "explosion_sound_v2_mono.wav")
         if explosionSoundSource == nil {
             print("failed to load explosion audio")
             return nil
@@ -93,6 +95,18 @@ class MissileFactory {
         explosionSoundSource.loops = false
         explosionSoundSource.volume = 0
         explosionSoundSource.load()
+
+        missileEngineSound = SCNAudioSource(named: "rocket_sound_mono.wav")
+        if missileEngineSound == nil {
+            print("Failed to load missile engine sound")
+            return nil
+        }
+
+        missileEngineSound.isPositional = true
+        missileEngineSound.loops = true
+        missileEngineSound.volume = 0.1
+        missileEngineSound.shouldStream = false
+        missileEngineSound.load()
 
         // Load particle system
         // load explosion
@@ -135,11 +149,12 @@ class MissileFactory {
 
         player.didFinishPlayback = { () in
             tmp.removeFromParentNode()
-            self.explosionSoundSource.volume = 0.3
+            self.explosionSoundSource.volume = 20
         }
 
         gameScene.rootNode.addChildNode(tmp)
         tmp.addAudioPlayer(player)
+
     }
 
     /// returns a missile node
@@ -147,11 +162,22 @@ class MissileFactory {
         return masterMissileNode.clone()
     }
 
+    func addEngineSound(to: SCNNode) {
+        let audioSource = SCNAudioSource(named: "rocket_sound_mono.wav")
+        audioSource?.isPositional = true
+        audioSource?.loops = true
+        audioSource?.shouldStream = false
+        audioSource?.volume = 1
+        let player = SCNAudioPlayer(source: audioSource!)
+        to.addAudioPlayer(player)
+    }
+
     /// returns a missile node positioned at a random point along the spawn strip defined in game scene
     func spawnEnemyMissile() -> SCNNode {
         let missile = createMissile()
         let spawnZ:Float = missileSpawnMinZ + randomDist.nextUniform() * missileSpawnRangeZ
         missile.position = SCNVector3(missileSpawnX, missileSpawnY, spawnZ)
+
         return missile
     }
 
