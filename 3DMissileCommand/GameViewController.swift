@@ -51,6 +51,10 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     var scoreLabel: SKLabelNode!
 
     var score: Int = 0
+    var gamePlaying: Bool = true
+
+    var gameOverTextNode: SCNNode! = nil
+    var gameOverAudioSource: SCNAudioSource! = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -113,6 +117,19 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             }
         }
 
+        if let node = gameScene.rootNode.childNode(withName: "game_over_text", recursively: true) {
+            gameOverTextNode = node
+        }
+
+        if let source = SCNAudioSource(fileNamed: "game_over.wav") {
+            source.isPositional = true
+            source.loops = true
+            source.volume = 0.1
+            source.load()
+
+            gameOverAudioSource = source
+        }
+
         
         // show statistics such as fps and timing information
         scnView.showsStatistics = true
@@ -167,26 +184,51 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     }
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        lastUpdateTime = time
-        enemyController.update(time)
-        missileFactory.update(time)
-        city.cleanUp()
+        if gamePlaying {
+            lastUpdateTime = time
+            enemyController.update(time)
+            missileFactory.update(time)
+            city.cleanUp()
 
-        updateUI(time: time)
+            if city.houseCount() > 0 {
 
-        while (taps.count > 0) {
+                updateUI(time: time)
 
-            let point = taps.removeFirst()
+                while (taps.count > 0) {
 
-//            print("evaluating tap  \(point)")
+                    let point = taps.removeFirst()
 
-            let results = renderer.hitTest(point, options: [SCNHitTestOption.categoryBitMask: 16, SCNHitTestOption.ignoreHiddenNodes: false, SCNHitTestOption.backFaceCulling: false])
+        //            print("evaluating tap  \(point)")
 
-            for result in results {
-//                print("hit plane @ \(result.worldCoordinates)")
-                playerController.fireMissile(at: result.worldCoordinates)
+                    let results = renderer.hitTest(point, options: [SCNHitTestOption.categoryBitMask: 16, SCNHitTestOption.ignoreHiddenNodes: false, SCNHitTestOption.backFaceCulling: false])
+
+                    for result in results {
+        //                print("hit plane @ \(result.worldCoordinates)")
+                        playerController.fireMissile(at: result.worldCoordinates)
+                    }
+
+                }
             }
+            else {  // game over
+                gamePlaying = false
+                print("game over")
 
+                if gameOverTextNode != nil {
+                    gameOverTextNode.isHidden = false
+                    let player = SCNAudioPlayer(source: gameOverAudioSource)
+
+                    gameOverTextNode.addAudioPlayer(player)
+                }
+
+                let animation = CABasicAnimation(keyPath: "rotation")
+                animation.fromValue = SCNVector4(x: 0, y: 1, z: 0, w: 0)
+                animation.toValue = SCNVector4(x: 0, y: 1, z: 0, w: Float(2 * Float.pi))
+                animation.duration = 3
+                animation.repeatCount = .greatestFiniteMagnitude
+
+                gameOverTextNode.addAnimation(animation, forKey: nil)
+
+            }
         }
     }
 

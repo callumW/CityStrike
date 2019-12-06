@@ -30,7 +30,9 @@ class City {
         }
     }
 
-
+    func houseCount() -> Int {
+        return houses.count
+    }
 
     /// Return a random house in the City, or nil if there are no houses left in the City
     func getRandomHouse() -> SCNNode? {
