@@ -49,6 +49,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
     var timeLabel: SKLabelNode!
     var scoreLabel: SKLabelNode!
+    var silo1Label: SKLabelNode!
+    var silo2Label: SKLabelNode!
 
     var score: Int = 0
     var gamePlaying: Bool = true
@@ -129,10 +131,22 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             gameOverTextNode = node
         }
 
+        if let node = scnView.overlaySKScene!.childNode(withName: "silo_0_heat") {
+            if node is SKLabelNode {
+                silo1Label = node as? SKLabelNode
+            }
+        }
+
+        if let node = scnView.overlaySKScene!.childNode(withName: "silo_1_heat") {
+            if node is SKLabelNode {
+                silo2Label = node as? SKLabelNode
+            }
+        }
+
         if let source = SCNAudioSource(fileNamed: "game_over.wav") {
             source.isPositional = true
-            source.loops = false
-            source.volume = 0.01
+            source.loops = true
+            source.volume = 0.1
             source.load()
 
             gameOverAudioSource = source
@@ -194,9 +208,18 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if gamePlaying {
             lastUpdateTime = time
-            // enemyController.update(time)
+            enemyController.update(time)
             missileFactory.update(time)
+            playerController.update(time)
             city.cleanUp()
+
+            if silo1Label != nil {
+                silo1Label.text = String(format: "Silo 1: %.01f", playerController.getSiloHeatLevel(0))
+            }
+
+            if silo2Label != nil {
+                silo2Label.text = String(format: "Silo 2: %.01f", playerController.getSiloHeatLevel(1))
+            }
 
             if city.houseCount() > 0 {
 

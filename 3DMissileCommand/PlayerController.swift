@@ -8,18 +8,34 @@
 
 import Foundation
 import SceneKit
+import GameplayKit
+
+struct MissileBattery {
+    let node: SCNNode
+    var heatValue: Double
+    var overheated: Bool
+}
 
 class PlayerController: MissileController {
     static let PLAYER_MISSILE_SPEED_SCALER: Float = MissileController.BASE_MISSILE_SPEED_SCALER * 6
+
+    static let HEAT_PER_MISSILE: Double = 1.0           // Heat increase from 1 missile fire
+    static let MAX_TEMP: Double = 5.0                   // When this value is reached, the silo must cool down fully before firing again
+    static let HEAT_DISAPATION_RATE: TimeInterval = 1.0 // Amount of heat reduced in 1 second
 
     let gameScene: SCNScene
     let missileFactory: MissileFactory
 
     let genericTargetNode: SCNNode
 
-    var missileBatteries: Array<SCNNode> = []
+    var missileBatteries: Array<MissileBattery> = []
+    var overheatedMissileBatteries: Array<MissileBattery> = []
 
     var targetNodes: Dictionary<String, SCNNode> = [:]
+
+    var lastUpdate: TimeInterval = 0
+
+    var indexPicker: GKRandomDistribution = GKRandomDistribution(lowestValue: 0, highestValue: 1)
 
 
     init(scene: SCNScene, factory: MissileFactory) {
@@ -42,7 +58,7 @@ class PlayerController: MissileController {
 
         for node in gameScene.rootNode.childNodes {
             if node.name == "missile_battery" {
-                missileBatteries.append(node)
+                missileBatteries.append(MissileBattery(node: node, heatValue: 0.0, overheated: false))
             }
         }
     }
@@ -54,8 +70,26 @@ class PlayerController: MissileController {
 
         let missile = missileFactory.spawnPlayerMissile()
 
+
         if missileBatteries.count > 0 {
-            missile.position = missileBatteries.randomElement()!.position
+
+            var index = indexPicker.nextInt()
+            if index > missileBatteries.count {
+                index = 0
+            }
+            if missileBatteries[index].overheated {
+                print("misfire, battery overheated!")
+                return
+            }
+
+            missileBatteries[index].heatValue = missileBatteries[index].heatValue + PlayerController.HEAT_PER_MISSILE
+
+            if missileBatteries[index].heatValue > PlayerController.MAX_TEMP {
+                missileBatteries[index].overheated = true
+                // TODO move to overheated list!
+            }
+
+            missile.position = missileBatteries[index].node.position
         }
 
         missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.PLAYER_TARGET_NODE
@@ -74,6 +108,22 @@ class PlayerController: MissileController {
     /// - Parameter time: Current time in seconds
     override func update(_ time: TimeInterval) {
 
+        if lastUpdate != 0 {
+            for i in 0..<missileBatteries.count {
+                if missileBatteries[i].heatValue > 0 {
+                    missileBatteries[i].heatValue -= (time - lastUpdate) * PlayerController.HEAT_PER_MISSILE
+                }
+                if missileBatteries[i].heatValue <= 0 {
+                    missileBatteries[i].heatValue = 0
+                    missileBatteries[i].overheated = false
+                }
+            }
+        }
+        lastUpdate = time
+    }
+
+    func getSiloHeatLevel(_ i: Int) -> Double {
+        return missileBatteries[i].heatValue
     }
 
 //    func removeTarget(for: SCNNode) {
