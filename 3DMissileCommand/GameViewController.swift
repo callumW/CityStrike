@@ -51,6 +51,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     var scoreLabel: SKLabelNode!
     var silo1Label: SKLabelNode!
     var silo2Label: SKLabelNode!
+    var overlayScene: SKScene!
 
     var score: Int = 0
     var gamePlaying: Bool = true
@@ -63,9 +64,24 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     override func viewDidLoad() {
         super.viewDidLoad()
 
-
         // create a new scene
         gameScene = SCNScene(named: "art.scnassets/Theatre.scn")!
+
+        // retrieve the SCNView
+        let scnView = self.view as! SCNView
+
+        // set the scene to the view
+        scnView.scene = gameScene
+
+        scnView.isPlaying = true
+
+        scnView.delegate = self
+
+        scnView.preferredFramesPerSecond = 30
+
+        overlayScene = SKScene(fileNamed: "UIOverlay.sks")
+        overlayScene.isPaused = false
+        scnView.overlaySKScene = overlayScene
 
         // setup missile factory
         missileFactory = MissileFactory(gameScene)
@@ -77,7 +93,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         enemyController = EnemyController(gameScene: gameScene, missileFactory: missileFactory,city: city)
 
-        playerController = PlayerController(scene: gameScene, factory: missileFactory)
+        playerController = PlayerController(scene: gameScene, factory: missileFactory, ui: overlayScene)
 
         gameScene?.physicsWorld.contactDelegate = self  // register for phsysics contact callback
 
@@ -95,19 +111,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         ambientLightNode.light!.color = UIColor.darkGray
         gameScene.rootNode.addChildNode(ambientLightNode)
 
-        // retrieve the SCNView
-        let scnView = self.view as! SCNView
-        
-        // set the scene to the view
-        scnView.scene = gameScene
-        
-        scnView.isPlaying = true
-        
-        scnView.delegate = self
-
-        scnView.preferredFramesPerSecond = 30
-
-        scnView.overlaySKScene = SKScene(fileNamed: "UIOverlay.sks")
 
         if let cam = gameScene.rootNode.childNode(withName: "audio_listener", recursively: true) {
             print("setting listener to position \(cam.position) rotation: \(cam.rotation)")
@@ -235,7 +238,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
                     for result in results {
         //                print("hit plane @ \(result.worldCoordinates)")
-                        playerController.fireMissile(at: result.worldCoordinates)
+                        playerController.fireMissile(at: result.worldCoordinates, tapPoint: point)
+                        // addTargetHint(at: point)
                     }
 
                 }
@@ -275,32 +279,24 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
                 contact.nodeB.removeFromParentNode()
                 if contact.nodeA.parent != nil {    // if we hit a target node, set the explosion as the position of the target node
                     missileFactory.addExplosion(at: contact.nodeB.presentation.position, time: lastUpdateTime)
-                    contact.nodeA.removeFromParentNode()
                 }
             }
-            else {
-                print("Player missile collides with something other than target: \(contact.nodeB.name ?? "unknown") | \(nodeBBody.categoryBitMask)")
-            }
-            if contact.nodeA.parent != nil {
+            else if contact.nodeA.parent != nil {
                 missileFactory.addExplosion(at: contact.nodeA.presentation.position, time: lastUpdateTime)
-                contact.nodeA.removeFromParentNode()
             }
+            playerController.onPlayerMissileCollision(contact.nodeA)
         }
         else if nodeBBody.categoryBitMask & COLLISION_BITMASK.PLAYER_MISSILE != 0 {
             if nodeABody.categoryBitMask & COLLISION_BITMASK.PLAYER_TARGET_NODE != 0 {
                 contact.nodeA.removeFromParentNode()
                 if contact.nodeB.parent != nil {
                      missileFactory.addExplosion(at: contact.nodeA.presentation.position, time: lastUpdateTime)
-                     contact.nodeB.removeFromParentNode()
                  }
             }
-            else {
-                print("Player missile collides with something other than target: \(contact.nodeA.name ?? "unknown") | \(nodeABody.categoryBitMask)")
-            }
-            if contact.nodeB.parent != nil {
+            else if contact.nodeB.parent != nil {
                 missileFactory.addExplosion(at: contact.nodeB.presentation.position, time: lastUpdateTime)
-                contact.nodeB.removeFromParentNode()
             }
+            playerController.onPlayerMissileCollision(contact.nodeB)
         }
 
         /* Enemy Missile */

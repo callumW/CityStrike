@@ -16,6 +16,11 @@ struct MissileBattery {
     var overheated: Bool
 }
 
+struct TargetedMissile : Hashable {
+    let targetNode: SCNNode
+    let uiHint: SKNode
+}
+
 class PlayerController: MissileController {
     static let PLAYER_MISSILE_SPEED_SCALER: Float = MissileController.BASE_MISSILE_SPEED_SCALER * 6
 
@@ -25,11 +30,13 @@ class PlayerController: MissileController {
 
     let gameScene: SCNScene
     let missileFactory: MissileFactory
+    let uiOverlay: SKScene
 
     let genericTargetNode: SCNNode
 
     var missileBatteries: Array<MissileBattery> = []
     var overheatedMissileBatteries: Array<MissileBattery> = []
+    var missileTargets: Dictionary<SCNNode, TargetedMissile> = [:]
 
     var targetNodes: Dictionary<String, SCNNode> = [:]
 
@@ -37,10 +44,13 @@ class PlayerController: MissileController {
 
     var indexPicker: GKRandomDistribution = GKRandomDistribution(lowestValue: 0, highestValue: 1)
 
+    let targetHintAction: SKAction
 
-    init(scene: SCNScene, factory: MissileFactory) {
+
+    init(scene: SCNScene, factory: MissileFactory, ui: SKScene) {
         gameScene = scene
         missileFactory = factory
+        uiOverlay = ui
 
         /*
             We could omit setting up a physics shape here, and instead construct our node with some geometry and let the physics body use that
@@ -61,9 +71,30 @@ class PlayerController: MissileController {
                 missileBatteries.append(MissileBattery(node: node, heatValue: 0.0, overheated: false))
             }
         }
+
+        /* Setup action to animate ui target hints */
+        let scaleAction = SKAction.scale(by: 1.5, duration: 0.2)
+        let pulseAction = SKAction.sequence([scaleAction, scaleAction.reversed()])
+        targetHintAction = SKAction.group([SKAction.repeatForever(pulseAction)])
     }
 
-    func fireMissile(at: SCNVector3) {
+
+    /// add target hint node to UI and return it
+    /// - Parameter at: The tap point
+    /// returns the hint node
+    func addTargetHint(at: CGPoint) -> SKSpriteNode {
+        // create shape node:
+        let targetCircle = SKSpriteNode(imageNamed: "target_hint.png")
+
+        targetCircle.position = uiOverlay.convertPoint(fromView: at) // need to convert from view space to scene space
+        uiOverlay.addChild(targetCircle)
+
+        targetCircle.run(targetHintAction)
+
+        return targetCircle
+    }
+
+    func fireMissile(at: SCNVector3, tapPoint: CGPoint) {
         let targetNode = genericTargetNode.clone()
 
         targetNode.position = at
@@ -102,6 +133,11 @@ class PlayerController: MissileController {
         gameScene.rootNode.addChildNode(missile)
 
         missileFactory.addEngineSound(to: missile)
+
+        let uiHint = addTargetHint(at: tapPoint)
+
+        missileTargets.updateValue(TargetedMissile(targetNode: targetNode, uiHint: uiHint), forKey: missile)
+        
     }
 
     /// To be called in the Scene renderer function. Updates the Player controlled objects
@@ -126,7 +162,23 @@ class PlayerController: MissileController {
         return missileBatteries[i].heatValue
     }
 
-//    func removeTarget(for: SCNNode) {
-//
-//    }
+
+    /// To be called when the player missile has collided with something in the scene (typically the target node, but not necessarily)
+    /// - Parameter missile: The player missile which collided with something
+    /// returns true if player node has not collided previously (in which case explosion will be placed, false otherwise
+    @discardableResult func onPlayerMissileCollision(_ missile: SCNNode) -> Bool {
+        if missile.parent != nil {
+            missile.removeFromParentNode()
+            // remove target nodes from scene and ui
+            if let targetStruct = missileTargets.removeValue(forKey: missile) {
+                targetStruct.targetNode.removeFromParentNode()
+                targetStruct.uiHint.removeFromParent()
+                return true
+            }
+            else {
+                return false
+            }
+        }
+        return false
+    }
 }

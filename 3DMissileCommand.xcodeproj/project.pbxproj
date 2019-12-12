@@ -20,7 +20,6 @@
 		1B17B64E237DCAA100998F2F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B17B64D237DCAA100998F2F /* GameViewController.swift */; };
 		1B17B653237DCAA300998F2F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B17B652237DCAA300998F2F /* Assets.xcassets */; };
 		1BA942A5239AC1A80073C912 /* game_over.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942A4239AC1A80073C912 /* game_over.wav */; };
-		1BA942B1239ACB4F0073C912 /* game_over.blend in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942B0239ACB4F0073C912 /* game_over.blend */; };
 		1BA942B4239AD5610073C912 /* rocket_sound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942B3239AD5610073C912 /* rocket_sound.wav */; };
 		1BA942B6239AE2BF0073C912 /* rocket_sound_mono.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942B5239AE2BF0073C912 /* rocket_sound_mono.wav */; };
 		1BA942DA239AFD190073C912 /* explosion_sound_v2_mono.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942D9239AFD190073C912 /* explosion_sound_v2_mono.wav */; };
@@ -29,6 +28,7 @@
 		1BBE260A23906094002A97BA /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BBE260923906094002A97BA /* City.swift */; };
 		1BBE26162391C844002A97BA /* Sounds.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BBE26152391C844002A97BA /* Sounds.xcassets */; };
 		1BBE26212392920C002A97BA /* explosion_short.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BBE26202392920C002A97BA /* explosion_short.wav */; };
+		1BD3490D23A2C80A0017BE72 /* target_hint.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BD3490C23A2C8090017BE72 /* target_hint.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +57,8 @@
 		1BBE260923906094002A97BA /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
 		1BBE26152391C844002A97BA /* Sounds.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Sounds.xcassets; sourceTree = "<group>"; };
 		1BBE26202392920C002A97BA /* explosion_short.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = explosion_short.wav; sourceTree = "<group>"; };
+		1BD3490923A2C2C50017BE72 /* target_hint.xcf */ = {isa = PBXFileReference; lastKnownFileType = file; path = target_hint.xcf; sourceTree = "<group>"; };
+		1BD3490C23A2C8090017BE72 /* target_hint.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = target_hint.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +92,7 @@
 		1B0E8E072399AA9F0012DB0E /* Textures */ = {
 			isa = PBXGroup;
 			children = (
+				1BD3490C23A2C8090017BE72 /* target_hint.png */,
 				1B0E8E052399AA890012DB0E /* arroway.de_concrete-53_d100.png */,
 			);
 			path = Textures;
@@ -98,6 +101,7 @@
 		1B17B63D237DCAA100998F2F = {
 			isa = PBXGroup;
 			children = (
+				1BD3490523A270A20017BE72 /* Graphics */,
 				1BA942B2239ACDDF0073C912 /* Animations */,
 				1BA942A3239AC1130073C912 /* Sounds */,
 				1B0E8E072399AA9F0012DB0E /* Textures */,
@@ -155,6 +159,14 @@
 			children = (
 			);
 			path = Animations;
+			sourceTree = "<group>";
+		};
+		1BD3490523A270A20017BE72 /* Graphics */ = {
+			isa = PBXGroup;
+			children = (
+				1BD3490923A2C2C50017BE72 /* target_hint.xcf */,
+			);
+			path = Graphics;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -216,13 +228,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				1BA942B4239AD5610073C912 /* rocket_sound.wav in Resources */,
-				1BA942B1239ACB4F0073C912 /* game_over.blend in Resources */,
 				1B0E8DF12392D0690012DB0E /* explosion_sound_v2.wav in Resources */,
 				1BA942DA239AFD190073C912 /* explosion_sound_v2_mono.wav in Resources */,
 				1B0E8E062399AA890012DB0E /* arroway.de_concrete-53_d100.png in Resources */,
 				1BA942B6239AE2BF0073C912 /* rocket_sound_mono.wav in Resources */,
 				1B0E8E03239998780012DB0E /* LaunchScreen.storyboard in Resources */,
 				1BBE26162391C844002A97BA /* Sounds.xcassets in Resources */,
+				1BD3490D23A2C80A0017BE72 /* target_hint.png in Resources */,
 				1B17B64C237DCAA100998F2F /* art.scnassets in Resources */,
 				1B0E8E04239998780012DB0E /* Main.storyboard in Resources */,
 				1B17B653237DCAA300998F2F /* Assets.xcassets in Resources */,
