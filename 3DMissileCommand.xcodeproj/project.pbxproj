@@ -28,7 +28,13 @@
 		1BBE260A23906094002A97BA /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BBE260923906094002A97BA /* City.swift */; };
 		1BBE26162391C844002A97BA /* Sounds.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BBE26152391C844002A97BA /* Sounds.xcassets */; };
 		1BBE26212392920C002A97BA /* explosion_short.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BBE26202392920C002A97BA /* explosion_short.wav */; };
+		1BCD731723A97773006570C8 /* MainMenuUI.sks in Resources */ = {isa = PBXBuildFile; fileRef = 1BCD731623A97773006570C8 /* MainMenuUI.sks */; };
+		1BCD731B23B13737006570C8 /* SKSpriteButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD731A23B13737006570C8 /* SKSpriteButtonNode.swift */; };
+		1BCD731F23B4D8EB006570C8 /* ButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD731E23B4D8EB006570C8 /* ButtonNode.swift */; };
+		1BCD732223B606FD006570C8 /* building_1.blend in Resources */ = {isa = PBXBuildFile; fileRef = 1BCD732123B606FD006570C8 /* building_1.blend */; };
+		1BCD732423B60923006570C8 /* skyscraper_1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1BCD732323B60923006570C8 /* skyscraper_1.jpg */; };
 		1BD3490D23A2C80A0017BE72 /* target_hint.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BD3490C23A2C8090017BE72 /* target_hint.png */; };
+		1BD3491723A2D91F0017BE72 /* MainMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD3491623A2D91F0017BE72 /* MainMenuViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,8 +63,15 @@
 		1BBE260923906094002A97BA /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
 		1BBE26152391C844002A97BA /* Sounds.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Sounds.xcassets; sourceTree = "<group>"; };
 		1BBE26202392920C002A97BA /* explosion_short.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = explosion_short.wav; sourceTree = "<group>"; };
+		1BCD731623A97773006570C8 /* MainMenuUI.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainMenuUI.sks; sourceTree = "<group>"; };
+		1BCD731A23B13737006570C8 /* SKSpriteButtonNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SKSpriteButtonNode.swift; sourceTree = "<group>"; };
+		1BCD731E23B4D8EB006570C8 /* ButtonNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonNode.swift; sourceTree = "<group>"; };
+		1BCD732023B507C2006570C8 /* play_button.xcf */ = {isa = PBXFileReference; lastKnownFileType = file; path = play_button.xcf; sourceTree = "<group>"; };
+		1BCD732123B606FD006570C8 /* building_1.blend */ = {isa = PBXFileReference; lastKnownFileType = file; path = building_1.blend; sourceTree = "<group>"; };
+		1BCD732323B60923006570C8 /* skyscraper_1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = skyscraper_1.jpg; sourceTree = "<group>"; };
 		1BD3490923A2C2C50017BE72 /* target_hint.xcf */ = {isa = PBXFileReference; lastKnownFileType = file; path = target_hint.xcf; sourceTree = "<group>"; };
 		1BD3490C23A2C8090017BE72 /* target_hint.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = target_hint.png; sourceTree = "<group>"; };
+		1BD3491623A2D91F0017BE72 /* MainMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				1B0D5E1D239A68BE005D6544 /* UIOverlay.sks */,
+				1BCD731623A97773006570C8 /* MainMenuUI.sks */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -83,6 +97,7 @@
 		1B0E8DF9239709070012DB0E /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				1BCD732123B606FD006570C8 /* building_1.blend */,
 				1BA942B0239ACB4F0073C912 /* game_over.blend */,
 				1B0E8DFB23970A110012DB0E /* missile_battery.blend */,
 			);
@@ -92,6 +107,7 @@
 		1B0E8E072399AA9F0012DB0E /* Textures */ = {
 			isa = PBXGroup;
 			children = (
+				1BCD732323B60923006570C8 /* skyscraper_1.jpg */,
 				1BD3490C23A2C8090017BE72 /* target_hint.png */,
 				1B0E8E052399AA890012DB0E /* arroway.de_concrete-53_d100.png */,
 			);
@@ -122,9 +138,11 @@
 		1B17B648237DCAA100998F2F /* 3DMissileCommand */ = {
 			isa = PBXGroup;
 			children = (
+				1BCD731E23B4D8EB006570C8 /* ButtonNode.swift */,
 				1B0D5E20239A6994005D6544 /* UI */,
 				1B0E8E01239998780012DB0E /* LaunchScreen.storyboard */,
 				1B0E8E02239998780012DB0E /* Main.storyboard */,
+				1BD3491623A2D91F0017BE72 /* MainMenuViewController.swift */,
 				1B17B649237DCAA100998F2F /* AppDelegate.swift */,
 				1B17B64B237DCAA100998F2F /* art.scnassets */,
 				1B17B64D237DCAA100998F2F /* GameViewController.swift */,
@@ -137,6 +155,7 @@
 				1B17B652237DCAA300998F2F /* Assets.xcassets */,
 				1B17B657237DCAA300998F2F /* Info.plist */,
 				1BBE26152391C844002A97BA /* Sounds.xcassets */,
+				1BCD731A23B13737006570C8 /* SKSpriteButtonNode.swift */,
 			);
 			path = 3DMissileCommand;
 			sourceTree = "<group>";
@@ -164,6 +183,7 @@
 		1BD3490523A270A20017BE72 /* Graphics */ = {
 			isa = PBXGroup;
 			children = (
+				1BCD732023B507C2006570C8 /* play_button.xcf */,
 				1BD3490923A2C2C50017BE72 /* target_hint.xcf */,
 			);
 			path = Graphics;
@@ -228,14 +248,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				1BA942B4239AD5610073C912 /* rocket_sound.wav in Resources */,
+				1BCD732223B606FD006570C8 /* building_1.blend in Resources */,
 				1B0E8DF12392D0690012DB0E /* explosion_sound_v2.wav in Resources */,
 				1BA942DA239AFD190073C912 /* explosion_sound_v2_mono.wav in Resources */,
 				1B0E8E062399AA890012DB0E /* arroway.de_concrete-53_d100.png in Resources */,
 				1BA942B6239AE2BF0073C912 /* rocket_sound_mono.wav in Resources */,
+				1BCD731723A97773006570C8 /* MainMenuUI.sks in Resources */,
 				1B0E8E03239998780012DB0E /* LaunchScreen.storyboard in Resources */,
 				1BBE26162391C844002A97BA /* Sounds.xcassets in Resources */,
 				1BD3490D23A2C80A0017BE72 /* target_hint.png in Resources */,
 				1B17B64C237DCAA100998F2F /* art.scnassets in Resources */,
+				1BCD732423B60923006570C8 /* skyscraper_1.jpg in Resources */,
 				1B0E8E04239998780012DB0E /* Main.storyboard in Resources */,
 				1B17B653237DCAA300998F2F /* Assets.xcassets in Resources */,
 				1BBE26212392920C002A97BA /* explosion_short.wav in Resources */,
@@ -253,7 +276,10 @@
 			files = (
 				1B17B64E237DCAA100998F2F /* GameViewController.swift in Sources */,
 				1BBE260A23906094002A97BA /* City.swift in Sources */,
+				1BCD731F23B4D8EB006570C8 /* ButtonNode.swift in Sources */,
+				1BD3491723A2D91F0017BE72 /* MainMenuViewController.swift in Sources */,
 				1B17B64A237DCAA100998F2F /* AppDelegate.swift in Sources */,
+				1BCD731B23B13737006570C8 /* SKSpriteButtonNode.swift in Sources */,
 				1B0E8DF52394491C0012DB0E /* PlayerController.swift in Sources */,
 				1B0D5E22239AAB25005D6544 /* CollisionBitmasks.swift in Sources */,
 				1BBE260823905B84002A97BA /* EnemyController.swift in Sources */,

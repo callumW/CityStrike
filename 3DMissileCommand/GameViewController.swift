@@ -64,6 +64,11 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        loadGameScene()
+    }
+
+    func loadGameScene() {
+
         // create a new scene
         gameScene = SCNScene(named: "art.scnassets/Theatre.scn")!
 
@@ -78,6 +83,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         scnView.delegate = self
 
         scnView.preferredFramesPerSecond = 30
+
+        scnView.debugOptions.insert(.showBoundingBoxes)
 
         overlayScene = SKScene(fileNamed: "UIOverlay.sks")
         overlayScene.isPaused = false
