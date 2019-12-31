@@ -13,33 +13,39 @@ class MissileController {
 
     static let BASE_MISSILE_SPEED_SCALER: Float = 5
 
-    func update(_ time: TimeInterval) {}
+    var inFlightMissiles: Set<MissileNode> = []
+    var explodingMissiles: Array<MissileNode> = []
+
+    let gameScene: SCNScene
+
+    init(gameScene: SCNScene) {
+        self.gameScene = gameScene
+    }
 
 
-    /// Prepare and fire missile.
-    /// This specifid missile will be oriented towards the target node, and fired by means of a costant force
-    /// The passed missile will also be set to be collidable with explosion nodes
-    /// - Parameters:
-    ///   - missile: The missile to prepare
-    ///   - target: Target to fire the missile at
-    ///   - forceScale: scale of the force which will be applied to the missile to move it
-    func prepareMissile(missile: SCNNode, target: SCNNode, forceScale: Float) {
+    /// Fire a player missile at the specified point
+    /// - Parameter at: Target of the missile
+    func firePlayerMissile(at: SCNVector3) {
 
-        let dir:SCNVector3 = normalise(target.position - missile.position)
-        let force = dir * forceScale
+    }
 
-        missile.physicsBody?.applyForce(force, asImpulse: false)
-        missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.MISSILE_EXPLOSION
-        missile.physicsBody?.collisionBitMask = 0
+    /// Fire an enemy missile at the specified point
+    /// - Parameter at: Target of the missile
+    func fireEnemyMissile(at: SCNVector3) {
 
-        if missile.constraints == nil {
-            missile.constraints = []
+    }
+
+    /// Notify the MissileController that a missile has collided with something.
+    /// - Parameter node: The missiles that has collided
+    func notifyCollision(node: MissileNode) {
+
+    }
+
+    /// Notify the MissileController to update it's state
+    /// - Parameter time: current time
+    func update(time: TimeInterval) {
+        for missile in explodingMissiles {
+            missile.update(time)
         }
-
-        let lookAtConstraint = SCNLookAtConstraint(target: target)
-        lookAtConstraint.localFront = SCNVector3(0, 1, 0)
-        lookAtConstraint.worldUp = SCNVector3(1, 0, 0)
-        lookAtConstraint.isGimbalLockEnabled = false
-        missile.constraints?.append(lookAtConstraint)
     }
 }

@@ -13,21 +13,15 @@ import SceneKit
 /// City class contains all the houses in the scene and provides automatic targetting for the enemy controller
 class City {
 
-    let gameScene:SCNScene
+    let parentNode: SCNNode
     var houses:Dictionary<Float, SCNNode> = [:]
     var destoryedHouses:Array<SCNNode> = []
 
-    init(_ gameScene: SCNScene) {
-        self.gameScene = gameScene
-
-        // load houses from scene into set
-
-        for node in self.gameScene.rootNode.childNodes {
-            if node.name != nil && node.name == "house" {
-                houses[node.worldPosition.z] = node
-                print("Adding house \(node.worldPosition)")
-            }
-        }
+    /// Initialiser
+    /// - Parameter parent: Parent Node of the City
+    init(parent: SCNNode) {
+        self.parentNode = parent
+        generate()
     }
 
     func houseCount() -> Int {
@@ -36,7 +30,12 @@ class City {
 
     /// Return a random house in the City, or nil if there are no houses left in the City
     func getRandomHouse() -> SCNNode? {
-        return (houses.randomElement())?.value
+        if let ret = houses.randomElement() {
+            return ret.value
+        }
+        else {
+            return nil
+        }
     }
 
     func cleanUp() {
@@ -57,5 +56,9 @@ class City {
             return true
         }
         return false
+    }
+
+    func generate() {
+        // TODO add basic city generation (literally just place two houses at predefined points
     }
 }

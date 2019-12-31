@@ -65,6 +65,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         super.viewDidLoad()
 
         loadGameScene()
+
+        let newPlane = TheatrePlane()
     }
 
     func loadGameScene() {
@@ -241,7 +243,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         //            print("evaluating tap  \(point)")
 
-                    let results = renderer.hitTest(point, options: [SCNHitTestOption.categoryBitMask: 16, SCNHitTestOption.ignoreHiddenNodes: false, SCNHitTestOption.backFaceCulling: false])
+                    let results = renderer.hitTest(point, options: [SCNHitTestOption.categoryBitMask: 16,
+                                                                    SCNHitTestOption.ignoreHiddenNodes: false,
+                                                                    SCNHitTestOption.backFaceCulling: false])
 
                     for result in results {
         //                print("hit plane @ \(result.worldCoordinates)")

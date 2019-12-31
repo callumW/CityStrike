@@ -18,7 +18,7 @@ class EnemyController: MissileController {
     static let SPEED_SCALER: Float = 5
 
     let gameScene:SCNScene
-    let missileFactory:MissileFactory
+    let missileController: MissileController
     let targetCity:City
     var lastUpdate: TimeInterval = -1.0
 
@@ -28,9 +28,9 @@ class EnemyController: MissileController {
     ///   - gameScene: Scene which the enemy will operate within
     ///   - missileFactory: The missile factory which the enemy will use to create missiles.
     ///   - city: The City that the enemy controller should attack
-    init(gameScene:SCNScene, missileFactory: MissileFactory, city: City) {
+    init(gameScene:SCNScene, controller: MissileController, city: City) {
         self.gameScene = gameScene
-        self.missileFactory = missileFactory
+        self.missileController = controller
         self.targetCity = city
     }
 
@@ -44,16 +44,17 @@ class EnemyController: MissileController {
         if time - lastUpdate > EnemyController.FIRE_INTERVAL {
             // target & fire a missile
             if let target = targetCity.getRandomHouse() {
-                let missile = missileFactory.spawnEnemyMissile()
-
-                missile.physicsBody?.categoryBitMask |= COLLISION_BITMASK.ENEMY_MISSILE
-                missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.HOUSE
-                missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.FLOOR
-
-                super.prepareMissile(missile: missile, target: target, forceScale: EnemyController.SPEED_SCALER)
-
-                gameScene.rootNode.addChildNode(missile)
-                missileFactory.addEngineSound(to: missile)
+//                let missile = missileFactory.spawnEnemyMissile()
+//
+//                missile.physicsBody?.categoryBitMask |= COLLISION_BITMASK.ENEMY_MISSILE
+//                missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.HOUSE
+//                missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.FLOOR
+//
+//                super.prepareMissile(missile: missile, target: target, forceScale: EnemyController.SPEED_SCALER)
+//
+//                gameScene.rootNode.addChildNode(missile)
+//                missileFactory.addEngineSound(to: missile)
+                missileController.fireEnemyMissile(at: target.worldPosition)
             }
             else {
                 print("no house to target")

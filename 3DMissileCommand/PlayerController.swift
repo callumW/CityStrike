@@ -29,7 +29,6 @@ class PlayerController: MissileController {
     static let HEAT_DISAPATION_RATE: TimeInterval = 1.0 // Amount of heat reduced in 1 second
 
     let gameScene: SCNScene
-    let missileFactory: MissileFactory
     let uiOverlay: SKScene
 
     let genericTargetNode: SCNNode
@@ -47,9 +46,8 @@ class PlayerController: MissileController {
     let targetHintAction: SKAction
 
 
-    init(scene: SCNScene, factory: MissileFactory, ui: SKScene) {
+    init(scene: SCNScene, ui: SKScene) {
         gameScene = scene
-        missileFactory = factory
         uiOverlay = ui
 
         /*
@@ -95,48 +93,48 @@ class PlayerController: MissileController {
     }
 
     func fireMissile(at: SCNVector3, tapPoint: CGPoint) {
-        let targetNode = genericTargetNode.clone()
-
-        targetNode.position = at
-
-        let missile = missileFactory.spawnPlayerMissile()
-
-
-        if missileBatteries.count > 0 {
-
-            var index = indexPicker.nextInt()
-            if index > missileBatteries.count {
-                index = 0
-            }
-            if missileBatteries[index].overheated {
-                print("misfire, battery overheated!")
-                return
-            }
-
-            missileBatteries[index].heatValue = missileBatteries[index].heatValue + PlayerController.HEAT_PER_MISSILE
-
-            if missileBatteries[index].heatValue > PlayerController.MAX_TEMP {
-                missileBatteries[index].overheated = true
-                // TODO move to overheated list!
-            }
-
-            missile.position = missileBatteries[index].node.position
-        }
-
-        missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.PLAYER_TARGET_NODE
-        // missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.FLOOR
-        missile.physicsBody?.categoryBitMask = COLLISION_BITMASK.PLAYER_MISSILE
-
-        super.prepareMissile(missile: missile, target: targetNode, forceScale: PlayerController.PLAYER_MISSILE_SPEED_SCALER)
-
-        gameScene.rootNode.addChildNode(targetNode)
-        gameScene.rootNode.addChildNode(missile)
-
-        missileFactory.addEngineSound(to: missile)
-
-        let uiHint = addTargetHint(at: tapPoint)
-
-        missileTargets.updateValue(TargetedMissile(targetNode: targetNode, uiHint: uiHint), forKey: missile)
+//        let targetNode = genericTargetNode.clone()
+//
+//        targetNode.position = at
+//
+//        let missile = missileFactory.spawnPlayerMissile()
+//
+//
+//        if missileBatteries.count > 0 {
+//
+//            var index = indexPicker.nextInt()
+//            if index > missileBatteries.count {
+//                index = 0
+//            }
+//            if missileBatteries[index].overheated {
+//                print("misfire, battery overheated!")
+//                return
+//            }
+//
+//            missileBatteries[index].heatValue = missileBatteries[index].heatValue + PlayerController.HEAT_PER_MISSILE
+//
+//            if missileBatteries[index].heatValue > PlayerController.MAX_TEMP {
+//                missileBatteries[index].overheated = true
+//                // TODO move to overheated list!
+//            }
+//
+//            missile.position = missileBatteries[index].node.position
+//        }
+//
+//        missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.PLAYER_TARGET_NODE
+//        // missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.FLOOR
+//        missile.physicsBody?.categoryBitMask = COLLISION_BITMASK.PLAYER_MISSILE
+//
+//        super.prepareMissile(missile: missile, target: targetNode, forceScale: PlayerController.PLAYER_MISSILE_SPEED_SCALER)
+//
+//        gameScene.rootNode.addChildNode(targetNode)
+//        gameScene.rootNode.addChildNode(missile)
+//
+//        missileFactory.addEngineSound(to: missile)
+//
+//        let uiHint = addTargetHint(at: tapPoint)
+//
+//        missileTargets.updateValue(TargetedMissile(targetNode: targetNode, uiHint: uiHint), forKey: missile)
         
     }
 
