@@ -7,6 +7,7 @@
 //
 
 import SceneKit
+import Foundation
 
 enum MISSILE_STATE {
     case IN_FLIGHT, EXPLODING, FINISHED
@@ -16,6 +17,9 @@ class TargetNode : SCNNode {
 
     override init() {
         super.init()
+
+        geometry = SCNSphere(radius: 0.1)
+
         /*
             We could omit setting up a physics shape here, and instead construct our node with some geometry and let the physics body use that
             however, when it comes to hidding our node we disable collisions! Instead, we don't give our node geometry, so that it won't be rendered
@@ -38,7 +42,7 @@ class TargetNode : SCNNode {
 class MissileNode : SCNNode {
 
     static let MISSILE_SPEED: Float = 5
-    static let missileReference = SCNReferenceNode(url: URL(fileURLWithPath: "art.scnassets/Missile.scn"))
+    static var missileReference: SCNNode? = nil
 
     var state: MISSILE_STATE = .IN_FLIGHT
 
@@ -50,13 +54,44 @@ class MissileNode : SCNNode {
     var targetNode: TargetNode? = nil
 
     override init() {
-        MissileNode.missileReference?.load()
-        if let tmp = MissileNode.missileReference?.childNode(withName: "", recursively: true) {
-            missileNode = tmp.clone()
+        if MissileNode.missileReference == nil {
+//            if let tmp = SCNScene(named: "art.scnassets/Missile.scn") {
+//                if let missile = tmp.rootNode.childNode(withName: "missile", recursively: true) {
+//                    MissileNode.missileReference = missile.clone()
+//                    MissileNode.missileReference?.removeFromParentNode()
+//                }
+//                else {
+//                    fatalError("Failed to find missile node in scene")
+//                }
+//            }
+//            else {
+//                fatalError("Failed to load missile scene")
+//            }
+            if let sceneURL = Bundle.main.url(forResource: "Missile", withExtension: "scn", subdirectory: "art.scnassets") {
+                if let ref = SCNReferenceNode(url: sceneURL) {
+                    ref.load()
+                    print("loaded reference node")
+                    if let missile = ref.childNode(withName: "missile", recursively: true) {
+                        MissileNode.missileReference = missile.clone()
+                        MissileNode.missileReference?.removeFromParentNode()
+                        print("initialised satic missile reference")
+                    }
+                    else {
+                        fatalError("Failed to find missile node in reference node")
+                    }
+                }
+                else {
+                    fatalError("Failed to load missile reference node")
+                }
+            }
+            else {
+                fatalError("Failed to get URL for missile scene")
+            }
+
         }
-        else {
-            missileNode = SCNNode()
-        }
+
+        missileNode = MissileNode.missileReference!.clone()
+
         super.init()
 
         if missileNode.constraints == nil {
@@ -84,8 +119,9 @@ class MissileNode : SCNNode {
 
     func fire(at: SCNVector3, speed: Float) {
         targetNode = TargetNode()
-        targetNode?.position = at
         self.addChildNode(targetNode!)
+
+        targetNode?.position = self.convertPosition(at, from: nil)  //convert from world position
 
         let lookAtConstraint = SCNLookAtConstraint(target: targetNode!)
         lookAtConstraint.localFront = SCNVector3(0, 1, 0)
@@ -127,6 +163,7 @@ class PlayerMissile : MissileNode {
     override init() {
         super.init()
         missileNode.physicsBody?.categoryBitMask = COLLISION_BITMASK.PLAYER_MISSILE
+        print("initialsed PLayerMissile")
     }
 
     required init?(coder: NSCoder) {

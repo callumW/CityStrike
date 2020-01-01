@@ -13,4 +13,5 @@ class COLLISION_BITMASK {
     static let HOUSE: Int              = 1 << 3
     static let PLAYER_TARGET_NODE: Int = 1 << 4
     static let MISSILE_EXPLOSION: Int  = 1 << 5
+    static let TARGET_PANE: Int        = 1 << 6
 }

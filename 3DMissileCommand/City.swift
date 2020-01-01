@@ -13,7 +13,7 @@ import SceneKit
 /// City class contains all the houses in the scene and provides automatic targetting for the enemy controller
 class CityNode: SCNNode {
 
-    static let houseReference = SCNReferenceNode(url: URL(fileURLWithPath: "art.scnassets/House.scn"))
+    static var houseReference: SCNNode? = nil
 
     var houses:Dictionary<Float, SCNNode> = [:]
     var destoryedHouses:Array<SCNNode> = []
@@ -21,6 +21,30 @@ class CityNode: SCNNode {
     /// Initialiser
     /// - Parameter parent: Parent Node of the City
     override init() {
+
+        if CityNode.houseReference == nil {
+            if let sceneURL = Bundle.main.url(forResource: "House", withExtension: "scn", subdirectory: "art.scnassets") {
+                if let ref = SCNReferenceNode(url: sceneURL) {
+                    ref.load()
+                    print("loaded reference node")
+                    if let house = ref.childNode(withName: "house", recursively: true) {
+                        CityNode.houseReference = house.clone()
+                        CityNode.houseReference?.removeFromParentNode()
+                        print("initialised satic house reference")
+                    }
+                    else {
+                        fatalError("Failed to find house node in reference node")
+                    }
+                }
+                else {
+                    fatalError("Failed to load house reference node")
+                }
+            }
+            else {
+                fatalError("Failed to get URL for house scene")
+            }
+        }
+
         super.init()
         generate()
     }

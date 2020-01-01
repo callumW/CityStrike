@@ -22,12 +22,11 @@ struct TargetedMissile : Hashable {
 }
 
 class PlayerController {
-    static let PLAYER_MISSILE_SPEED_SCALER: Float = 6
-
+    static let PLAYER_MISSILE_SPEED_SCALER: Float = 1
     let gameScene: SCNScene
     let uiOverlay: SKScene
 
-    var missileBatteries: Array<MissileBattery> = []
+    var missileBatteries: Array<SCNNode> = []
 
     var lastUpdate: TimeInterval = 0
 
@@ -36,7 +35,7 @@ class PlayerController {
     let targetHintAction: SKAction
 
 
-    init(scene: SCNScene, ui: SKScene) {
+    init(scene: SCNScene, ui: SKScene, planeNode: SCNNode) {
         gameScene = scene
         uiOverlay = ui
 
@@ -44,6 +43,13 @@ class PlayerController {
         let scaleAction = SKAction.scale(by: 1.5, duration: 0.2)
         let pulseAction = SKAction.sequence([scaleAction, scaleAction.reversed()])
         targetHintAction = SKAction.group([SKAction.repeatForever(pulseAction)])
+
+        // Find missile batteries:
+        for node in planeNode.childNodes {
+            if node.name != nil && node.name! == "missile_battery" {
+                missileBatteries.append(node)
+            }
+        }
     }
 
 
@@ -62,8 +68,13 @@ class PlayerController {
         return targetCircle
     }
 
-    func fireMissile(at: SCNVector3, tapPoint: CGPoint) {
-
+    func fireMissile(at: SCNVector3) -> MissileNode {
+        let missile = PlayerMissile()
+        let sourcePosition = missileBatteries.randomElement()!.position
+        missile.position = SCNVector3(sourcePosition.x, sourcePosition.y + 1, sourcePosition.z)
+        //missile.position = SCNVector3(0, 4, 0)
+        missile.fire(at: at, speed: PlayerController.PLAYER_MISSILE_SPEED_SCALER)
+        return missile
     }
 
     /// To be called in the Scene renderer function. Updates the Player controlled objects

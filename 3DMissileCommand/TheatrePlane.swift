@@ -24,11 +24,17 @@ class TheatrePlane: SCNNode {
     var playerMissileBatteries: Array<SCNNode> = []
 
     let enemyController: EnemyController
+
     let targettingUI: MissileTargetUI
+    var taps: Array<CGPoint> = []
 
     let city: CityNode
 
-    init?(gameScene: SCNScene, ui: SKScene) {
+    let containingView: SCNView
+
+    init?(gameScene: SCNScene, ui: SKScene, view: SCNView) {
+
+        containingView = view
 
         if TheatrePlane.scene == nil {
             print("Template TheatrePlane scene not loaded")
@@ -47,6 +53,7 @@ class TheatrePlane: SCNNode {
 
         if let tmp = planeNode.childNode(withName: "target_plane", recursively: true) {
             targetPlane = tmp
+            targetPlane.categoryBitMask = COLLISION_BITMASK.TARGET_PANE
         }
         else {
             print("Failed to find target plane in TheatrePlane")
@@ -60,7 +67,7 @@ class TheatrePlane: SCNNode {
             }
         }
 
-        playerController = PlayerController(scene: gameScene, ui: ui)
+        playerController = PlayerController(scene: gameScene, ui: ui, planeNode: planeNode)
 
         city = CityNode()
         planeNode.addChildNode(city)
@@ -92,9 +99,32 @@ class TheatrePlane: SCNNode {
         // TODO remove target nodes from ui overlay scene
     }
 
+    func notifyTap(point: CGPoint) {
+        print("Was notified of tap at: \(point)")
+        taps.append(point)
+    }
+
+    /// Process user taps that occured since the last update
+    func processUserInput() {
+
+        for tap in taps {
+            print("testing for hit results")
+            let results = containingView.hitTest(tap, options: [SCNHitTestOption.categoryBitMask: COLLISION_BITMASK.TARGET_PANE, SCNHitTestOption.ignoreHiddenNodes: false, SCNHitTestOption.backFaceCulling: false])
+
+            for result in results {
+                print("Tap hits \(result.node.name ?? "no_name") @ \(result.worldCoordinates)")
+                let missile = playerController.fireMissile(at: result.worldCoordinates)
+
+                self.addChildNode(missile)
+            }
+        }
+
+        taps.removeAll()
+    }
+
     /// Update the TheatrePlane and its contents
     /// - Parameter time: current time
     func update(time: TimeInterval) {
-
+        processUserInput()
     }
 }

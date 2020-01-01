@@ -60,15 +60,25 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         loadGameScene()
 
-        if let newPlane = TheatrePlane(gameScene: gameScene, ui: overlayScene) {
+        if let newPlane = TheatrePlane(gameScene: gameScene, ui: overlayScene, view: self.view as! SCNView) {
             newPlane.position = SCNVector3(-15, 0, 0)
             gameScene.rootNode.addChildNode(newPlane)
             theatrePlane = newPlane
+            print("plane is at: \(theatrePlane?.worldPosition)")
+            print("target plane is at: \(theatrePlane?.targetPlane.worldPosition)")
         }
         else {
             fatalError("Failed to create TheatrePlane")
         }
 
+        /*
+         Note: we need to load nodes that load models from scenes (via SCNReferenceNode) outside of the
+            render call, otherwise we get an error. Therefore, we create an instance of these nodes which
+            will cause the static reference node to be loaded
+         */
+        let missile = MissileNode()
+
+        let city = CityNode()
     }
 
     func loadGameScene() {
@@ -166,7 +176,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             let point = sender.location(in: self.view)
             // print("tap @ \(point)")
 
-            taps.append(point)
+            // taps.append(point)
+            theatrePlane?.notifyTap(point: point)
         }
     }
 
@@ -191,7 +202,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if gamePlaying {
             lastUpdateTime = time
-
+            theatrePlane?.update(time: time)
             updateUI(time: time)
 
 //            if city.houseCount() > 0 {
