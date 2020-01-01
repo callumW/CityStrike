@@ -11,17 +11,22 @@ import SceneKit
 
 
 /// City class contains all the houses in the scene and provides automatic targetting for the enemy controller
-class City {
+class CityNode: SCNNode {
 
-    let parentNode: SCNNode
+    static let houseReference = SCNReferenceNode(url: URL(fileURLWithPath: "art.scnassets/House.scn"))
+
     var houses:Dictionary<Float, SCNNode> = [:]
     var destoryedHouses:Array<SCNNode> = []
 
     /// Initialiser
     /// - Parameter parent: Parent Node of the City
-    init(parent: SCNNode) {
-        self.parentNode = parent
+    override init() {
+        super.init()
         generate()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     func houseCount() -> Int {
@@ -60,5 +65,8 @@ class City {
 
     func generate() {
         // TODO add basic city generation (literally just place two houses at predefined points
+        let house: SCNNode = CityNode.houseReference!.clone()
+
+        self.addChildNode(house)
     }
 }

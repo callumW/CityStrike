@@ -37,9 +37,11 @@ class TargetNode : SCNNode {
 
 class MissileNode : SCNNode {
 
+    static let MISSILE_SPEED: Float = 5
+    static let missileReference = SCNReferenceNode(url: URL(fileURLWithPath: "art.scnassets/Missile.scn"))
+
     var state: MISSILE_STATE = .IN_FLIGHT
 
-    static let missileReference = SCNReferenceNode(url: URL(fileURLWithPath: "art.scnassets/Missile.scn"))
     let audioSource = SCNAudioSource(named: "rocket_sound_mono.wav")
 
     let missileNode: SCNNode
@@ -93,7 +95,7 @@ class MissileNode : SCNNode {
         missileNode.constraints?.append(lookAtConstraint)
 
         let dir:SCNVector3 = normalise(targetNode!.position - missileNode.position)
-        let force = dir * speed
+        let force = dir * speed * MissileNode.MISSILE_SPEED
 
         missileNode.physicsBody?.applyForce(force, asImpulse: false)
     }

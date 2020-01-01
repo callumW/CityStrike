@@ -22,12 +22,11 @@ class ExplosionNode : SCNNode {
     let explosionNode: SCNNode
 
     init(time: TimeInterval) {
-        super.init()
         // TODO create and add audioplay to self
         startTime = time
 
         // add explosion sphere
-        let physicsShape = SCNPhysicsShape(geometry: SCNSphere(radius: CGFloat(MissileFactory.EXPLOSION_RADIUS_START)), options: nil)
+        let physicsShape = SCNPhysicsShape(geometry: SCNSphere(radius: CGFloat(ExplosionNode.EXPLOSION_RADIUS_START)), options: nil)
 
         let physicsBody = SCNPhysicsBody(type: .static, shape: physicsShape)
         physicsBody.categoryBitMask = COLLISION_BITMASK.MISSILE_EXPLOSION
@@ -42,12 +41,14 @@ class ExplosionNode : SCNNode {
         explosionNode.name = "explosion_node"
         explosionNode.physicsBody = physicsBody
 
-        self.addChildNode(explosionNode)
-
         audioSource.loops = false
         audioSource.isPositional = true
         audioSource.load()
         audioSource.shouldStream = false
+
+        super.init()
+
+        self.addChildNode(explosionNode)
 
         let player = SCNAudioPlayer(source: audioSource)
 

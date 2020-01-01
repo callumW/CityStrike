@@ -14,33 +14,38 @@ import SpriteKit
  buildings, and everything else required for the game to operate.
  The user can switch between these planes and launch missiles for each one.
  */
-class TheatrePlane {
-    let scene: SCNReferenceNode
-    let camera: SCNNode
+class TheatrePlane: SCNNode {
+    static let scene: SCNScene? = SCNScene(named: "art.scnassets/TheatrePlane.scn")
+    let planeNode: SCNNode
     let targetPlane: SCNNode
+    let cameraNode: SCNNode
 
-    let missileFactory: MissileFactory
     let playerController: PlayerController
+    var playerMissileBatteries: Array<SCNNode> = []
+
     let enemyController: EnemyController
     let targettingUI: MissileTargetUI
 
-    let city: City
+    let city: CityNode
 
-    init?(gameScene: SCNScene, factory: MissileFactory, ui: SKScene) {
-        self.missileFactory = factory
+    init?(gameScene: SCNScene, ui: SKScene) {
 
-        scene = SCNReferenceNode(url: URL(fileURLWithPath: "art.scnassets/TheatrePlane.scn"))!
-        scene.load()
+        if TheatrePlane.scene == nil {
+            print("Template TheatrePlane scene not loaded")
+            return nil
+        } else {
+            planeNode = TheatrePlane.scene!.rootNode.clone()
+        }
 
-        if let tmp = scene.childNode(withName: "camera", recursively: true) {
-            camera = tmp
+        if let tmp = planeNode.childNode(withName: "camera", recursively: true) {
+            cameraNode = tmp
         }
         else {
             print("Failed to find camera in TheatrePlane")
             return nil
         }
 
-        if let tmp = scene.childNode(withName: "target_plane", recursively: true) {
+        if let tmp = planeNode.childNode(withName: "target_plane", recursively: true) {
             targetPlane = tmp
         }
         else {
@@ -48,30 +53,32 @@ class TheatrePlane {
             return nil
         }
 
-        playerController = PlayerController(scene: gameScene, factory: factory, ui: ui)
+        // Get missile silos
+        for node in planeNode.childNodes {
+            if node.name != nil && node.name! == "missile_battery" {
+                playerMissileBatteries.append(node)
+            }
+        }
 
-        city = City(parent: scene)
+        playerController = PlayerController(scene: gameScene, ui: ui)
 
-        enemyController = EnemyController(gameScene: gameScene, missileFactory: factory, city: city)
+        city = CityNode()
+        planeNode.addChildNode(city)
+
+        enemyController = EnemyController(gameScene: gameScene, city: city)
 
         targettingUI = MissileTargetUI()
+
+        super.init()
+
+        self.addChildNode(planeNode)
 
         print("Initialised Plane")
     }
 
-
-    /// Add the plane's elements to the scene.
-    /// - Parameter into: The scene to add elements to
-    func load(into: SCNScene) {
-        into.rootNode.addChildNode(scene)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-
-
-    /// Remove the TheatrePlane from the scene
-    func removeFromScene() {
-        scene.removeFromParentNode()
-    }
-
 
     /// Set the plane as the active plane
     /// - Parameter in: Scene that the plane is active in
@@ -83,5 +90,11 @@ class TheatrePlane {
     /// Deactivate the plane
     func deactivate() {
         // TODO remove target nodes from ui overlay scene
+    }
+
+    /// Update the TheatrePlane and its contents
+    /// - Parameter time: current time
+    func update(time: TimeInterval) {
+
     }
 }
