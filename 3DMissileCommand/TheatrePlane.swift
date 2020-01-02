@@ -113,19 +113,25 @@ class TheatrePlane: SCNNode {
 
         for tap in taps {
             print("testing for hit results")
-            let results = containingView.hitTest(tap, options: [SCNHitTestOption.categoryBitMask: COLLISION_BITMASK.TARGET_PANE, SCNHitTestOption.ignoreHiddenNodes: false, SCNHitTestOption.backFaceCulling: false])
+            let results = containingView.hitTest(tap, options: [SCNHitTestOption.categoryBitMask: COLLISION_BITMASK.TARGET_PANE, SCNHitTestOption.ignoreHiddenNodes: false, SCNHitTestOption.backFaceCulling: false, SCNHitTestOption.searchMode: 1])
+            print("got results")
 
             for result in results {
-                print("Tap hits \(result.node.name ?? "no_name") @ \(result.worldCoordinates)")
-                let target = TargetNode()
-                target.position = self.convertPosition(result.worldCoordinates, from: nil)
-                self.addChildNode(target)
-                let missile = playerController.getMissile()
+                if result.node == targetPlane {
+                    print("Tap hits \(result.node.name ?? "no_name") @ \(result.worldCoordinates)")
+                    let target = TargetNode()
+                    target.position = self.convertPosition(result.worldCoordinates, from: nil)
+                    self.addChildNode(target)
+                    let missile = playerController.getMissile()
 
-                self.addChildNode(missile)
+                    self.addChildNode(missile)
 
-                missile.fire(targetNode: target, speed: PlayerController.PLAYER_MISSILE_SPEED_SCALER)
-                print("end of scope for missile")
+                    missile.fire(targetNode: target, speed: PlayerController.PLAYER_MISSILE_SPEED_SCALER)
+                    print("end of scope for missile")
+                }
+                else {
+                    print("skipping inactive plane")
+                }
             }
         }
 

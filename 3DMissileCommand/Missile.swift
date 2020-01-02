@@ -92,7 +92,7 @@ class MissileNode : SCNNode {
         }
 
         // All missiles can collide with explosions and targets
-        missileNode.physicsBody?.contactTestBitMask = COLLISION_BITMASK.MISSILE_EXPLOSION | COLLISION_BITMASK.PLAYER_TARGET_NODE
+        missileNode.physicsBody?.contactTestBitMask = COLLISION_BITMASK.MISSILE_EXPLOSION | COLLISION_BITMASK.PLAYER_TARGET_NODE | COLLISION_BITMASK.FLOOR
 
         audioSource?.loops = true
         audioSource?.isPositional = true

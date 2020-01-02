@@ -71,7 +71,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         }
 
         if let tmp = TheatrePlane(gameScene: gameScene, ui: overlayScene, view: self.view as! SCNView) {
-            tmp.position = SCNVector3(-15, 0, 3)
+            tmp.position = SCNVector3(-15, 0, 2)
+            tmp.rotation = SCNVector4(0, 1, 0, Float.pi / 3)
             gameScene.rootNode.addChildNode(tmp)
             otherPlane = tmp
         }
