@@ -19,6 +19,7 @@
 		1B17B64C237DCAA100998F2F /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B17B64B237DCAA100998F2F /* art.scnassets */; };
 		1B17B64E237DCAA100998F2F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B17B64D237DCAA100998F2F /* GameViewController.swift */; };
 		1B17B653237DCAA300998F2F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B17B652237DCAA300998F2F /* Assets.xcassets */; };
+		1BA4B05623BEA175007CE2E1 /* BuildingNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B05523BEA175007CE2E1 /* BuildingNode.swift */; };
 		1BA942A5239AC1A80073C912 /* game_over.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942A4239AC1A80073C912 /* game_over.wav */; };
 		1BA942B4239AD5610073C912 /* rocket_sound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942B3239AD5610073C912 /* rocket_sound.wav */; };
 		1BA942B6239AE2BF0073C912 /* rocket_sound_mono.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942B5239AE2BF0073C912 /* rocket_sound_mono.wav */; };
@@ -58,6 +59,7 @@
 		1B17B64D237DCAA100998F2F /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		1B17B652237DCAA300998F2F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1B17B657237DCAA300998F2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1BA4B05523BEA175007CE2E1 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingNode.swift; sourceTree = "<group>"; };
 		1BA942A4239AC1A80073C912 /* game_over.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = game_over.wav; sourceTree = "<group>"; };
 		1BA942B0239ACB4F0073C912 /* game_over.blend */ = {isa = PBXFileReference; lastKnownFileType = file; path = game_over.blend; sourceTree = "<group>"; };
 		1BA942B3239AD5610073C912 /* rocket_sound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = rocket_sound.wav; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 				1B0E8DF2239448830012DB0E /* MissileController.swift */,
 				1B0E8DF42394491C0012DB0E /* PlayerController.swift */,
 				1BBE260923906094002A97BA /* City.swift */,
+				1BA4B05523BEA175007CE2E1 /* BuildingNode.swift */,
 				1B0D5E21239AAB25005D6544 /* CollisionBitmasks.swift */,
 				1BBE2605238F1873002A97BA /* MissileFactory.swift */,
 				1B17B652237DCAA300998F2F /* Assets.xcassets */,
@@ -301,6 +304,7 @@
 				1B0E8DF52394491C0012DB0E /* PlayerController.swift in Sources */,
 				1B0D5E22239AAB25005D6544 /* CollisionBitmasks.swift in Sources */,
 				1BCD733423BA88CC006570C8 /* ExplosionNode.swift in Sources */,
+				1BA4B05623BEA175007CE2E1 /* BuildingNode.swift in Sources */,
 				1BBE260823905B84002A97BA /* EnemyController.swift in Sources */,
 				1B0E8DF3239448830012DB0E /* MissileController.swift in Sources */,
 				1BCD732E23BA641C006570C8 /* Missile.swift in Sources */,

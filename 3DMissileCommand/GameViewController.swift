@@ -54,6 +54,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     var listenerPosition: SCNNode!
 
     var theatrePlane: TheatrePlane? = nil
+    var otherPlane: TheatrePlane? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,6 +65,15 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             newPlane.position = SCNVector3(-15, 0, 0)
             gameScene.rootNode.addChildNode(newPlane)
             theatrePlane = newPlane
+        }
+        else {
+            fatalError("Failed to create TheatrePlane")
+        }
+
+        if let tmp = TheatrePlane(gameScene: gameScene, ui: overlayScene, view: self.view as! SCNView) {
+            tmp.position = SCNVector3(-15, 0, 3)
+            gameScene.rootNode.addChildNode(tmp)
+            otherPlane = tmp
         }
         else {
             fatalError("Failed to create TheatrePlane")
@@ -212,6 +222,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         if gamePlaying {
             lastUpdateTime = time
             theatrePlane?.update(time: time)
+            otherPlane?.update(time: time)
             updateUI(time: time)
 
 //            if city.houseCount() > 0 {
@@ -294,7 +305,10 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         /* Enemy Missile */
         if nodeABody.categoryBitMask & COLLISION_BITMASK.ENEMY_MISSILE != 0 {
             if nodeBBody.categoryBitMask & COLLISION_BITMASK.HOUSE != 0 {
-                theatrePlane!.houseWasDestroyed(contact.nodeB)
+                if contact.nodeB.parent != nil && contact.nodeB.parent is BuildingNode {
+                    let house = contact.nodeB.parent as! BuildingNode
+                    house.collidesWithMissile()
+                }
             }
 
             if contact.nodeA.parent != nil {
@@ -307,7 +321,10 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         }
         else if nodeBBody.categoryBitMask & COLLISION_BITMASK.ENEMY_MISSILE != 0 {
             if nodeABody.categoryBitMask & COLLISION_BITMASK.HOUSE != 0 {
-                theatrePlane!.houseWasDestroyed(contact.nodeA)
+                if contact.nodeA.parent != nil && contact.nodeA.parent is BuildingNode {
+                    let house = contact.nodeA.parent as! BuildingNode
+                    house.collidesWithMissile()
+                }
             }
 
             if contact.nodeB.parent != nil {
