@@ -14,12 +14,12 @@ class ExplosionNode : SCNNode {
     static let EXPLOSION_RADIUS_START: Double = 0.1
     static let EXPLOSION_RADIUS_END: Double = 1.5
 
-    let audioSource: SCNAudioSource = SCNAudioSource(fileNamed: "explosion_sound_v2_mono.wav")!
     static var particleSystem: SCNNode? = nil
 
     let startTime: TimeInterval
 
     let explosionNode: SCNNode
+    static var audioSource: SCNAudioSource?
 
     init(time: TimeInterval) {
         // TODO create and add audioplay to self
@@ -61,10 +61,19 @@ class ExplosionNode : SCNNode {
         explosionNode.name = "explosion_node"
         explosionNode.physicsBody = physicsBody
 
-        audioSource.loops = false
-        audioSource.isPositional = true
-        audioSource.load()
-        audioSource.shouldStream = false
+        if ExplosionNode.audioSource == nil {
+            if let tmp = SCNAudioSource(fileNamed: "explosion_sound_v2_mono.wav") {
+                ExplosionNode.audioSource = tmp
+            }
+            else {
+                fatalError("Failed to load explosion sound")
+            }
+            ExplosionNode.audioSource!.loops = false
+            ExplosionNode.audioSource!.isPositional = true
+            ExplosionNode.audioSource!.shouldStream = false
+            ExplosionNode.audioSource!.load()
+            ExplosionNode.audioSource!.volume = 0.5
+        }
 
         super.init()
 
@@ -72,11 +81,10 @@ class ExplosionNode : SCNNode {
 
         self.addChildNode(explosionNode)
 
-        let player = SCNAudioPlayer(source: audioSource)
-
-        self.addAudioPlayer(player)
-
         self.addChildNode(ExplosionNode.particleSystem!.clone())
+
+        let play = SCNAction.playAudio(ExplosionNode.audioSource!, waitForCompletion: true)
+        self.runAction(play)
     }
 
     required init?(coder: NSCoder) {

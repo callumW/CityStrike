@@ -64,8 +64,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             newPlane.position = SCNVector3(-15, 0, 0)
             gameScene.rootNode.addChildNode(newPlane)
             theatrePlane = newPlane
-            print("plane is at: \(theatrePlane?.worldPosition)")
-            print("target plane is at: \(theatrePlane?.targetPlane.worldPosition)")
         }
         else {
             fatalError("Failed to create TheatrePlane")
@@ -133,6 +131,11 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 //
 //            scnView.audioListener = cam
 //        }
+
+//        let listenerNode = SCNNode(geometry: nil)
+//        listenerNode.position = SCNVector3(0, 0, 0)
+//        gameScene.rootNode.addChildNode(listenerNode)
+//        scnView.audioListener = listenerNode
 
         if let node = scnView.overlaySKScene!.childNode(withName: "time_label") {
             if node is SKLabelNode {
