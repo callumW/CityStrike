@@ -294,32 +294,28 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         /* Enemy Missile */
         if nodeABody.categoryBitMask & COLLISION_BITMASK.ENEMY_MISSILE != 0 {
             if nodeBBody.categoryBitMask & COLLISION_BITMASK.HOUSE != 0 {
-//                if city.houseWasDestroyed(contact.nodeB) {
-//                    score -= 10
-//                }
-            }
-            else if contact.nodeA.parent != nil {
-                score += 1
+                theatrePlane!.houseWasDestroyed(contact.nodeB)
             }
 
             if contact.nodeA.parent != nil {
-//                missileFactory.addExplosion(at: contact.nodeA.presentation.position, time: lastUpdateTime)
-//                contact.nodeA.removeFromParentNode()
+                let parentNode = contact.nodeA.parent!
+                if parentNode is MissileNode {
+                    let missile = parentNode as! MissileNode
+                    missile.explode(time: self.lastUpdateTime)
+                }
             }
         }
         else if nodeBBody.categoryBitMask & COLLISION_BITMASK.ENEMY_MISSILE != 0 {
             if nodeABody.categoryBitMask & COLLISION_BITMASK.HOUSE != 0 {
-//                if city.houseWasDestroyed(contact.nodeA) {
-//                    score -= 10
-//                }
-            }
-            else if contact.nodeB.parent != nil {
-                score += 1
+                theatrePlane!.houseWasDestroyed(contact.nodeA)
             }
 
             if contact.nodeB.parent != nil {
-//                missileFactory.addExplosion(at: contact.nodeB.presentation.position, time: lastUpdateTime)
-//                contact.nodeB.removeFromParentNode()
+                let parentNode = contact.nodeB.parent!
+                if parentNode is MissileNode {
+                    let missile = parentNode as! MissileNode
+                    missile.explode(time: self.lastUpdateTime)
+                }
             }
         }
     }

@@ -15,20 +15,20 @@ import SceneKit
 class EnemyController {
 
     static let FIRE_INTERVAL: TimeInterval = 2
-    static let SPEED_SCALER: Float = 5
+    static let SPEED_SCALER: Float = 0.5
 
-    let gameScene:SCNScene
+    let spawnNode: SCNNode
     let targetCity: CityNode
     var lastUpdate: TimeInterval = -1.0
+
+    var explodingMissiles: Array<MissileNode> = []
 
 
     /// Initialise Enemy Controller
     /// - Parameters:
-    ///   - gameScene: Scene which the enemy will operate within
-    ///   - missileFactory: The missile factory which the enemy will use to create missiles.
     ///   - city: The City that the enemy controller should attack
-    init(gameScene:SCNScene, city: CityNode) {
-        self.gameScene = gameScene
+    init(city: CityNode, spawnNode: SCNNode) {
+        self.spawnNode = spawnNode
         self.targetCity = city
     }
 
@@ -41,13 +41,44 @@ class EnemyController {
         }
         if time - lastUpdate > EnemyController.FIRE_INTERVAL {
             // target & fire a missile
-            if let target = targetCity.getRandomHouse() {
+            if let targetBuilding = targetCity.getRandomHouse() {
                 print("Enemy: firing missile")
+                let missile = EnemyMissile()
+                missile.setCollisionCallback(callback: self.onEnemyMissileCollision)
+                spawnNode.addChildNode(missile)
+                let target = TargetNode()
+                spawnNode.addChildNode(target)
+
+                target.position = spawnNode.convertPosition(targetBuilding.worldPosition, from: nil)
+
+                print("Enemy targetting: \(target.position) | \(target.worldPosition) (building: \(targetBuilding.position) | \(targetBuilding.worldPosition)")
+                missile.fire(targetNode: target, speed: EnemyController.SPEED_SCALER)
+
+                print("missile location: \(missile.worldPosition) | target location: \(target.worldPosition)")
             }
             else {
                 print("no house to target")
             }
             lastUpdate = time
+        }
+
+        var i: Int = 0
+        while i < explodingMissiles.count {
+            let missile = explodingMissiles[i]
+            if missile.state == .FINISHED {
+                explodingMissiles.remove(at: i)
+                continue
+            }
+            else {
+                missile.update(time)
+            }
+            i += 1
+        }
+    }
+
+    func onEnemyMissileCollision(_ missile: SCNNode) {
+        if missile is MissileNode {
+            explodingMissiles.append(missile as! MissileNode)
         }
     }
 }

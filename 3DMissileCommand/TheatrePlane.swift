@@ -24,6 +24,7 @@ class TheatrePlane: SCNNode {
     var playerMissileBatteries: Array<SCNNode> = []
 
     let enemyController: EnemyController
+    let enemySpawn: SCNNode
 
     let targettingUI: MissileTargetUI
     var taps: Array<CGPoint> = []
@@ -72,7 +73,10 @@ class TheatrePlane: SCNNode {
         city = CityNode()
         planeNode.addChildNode(city)
 
-        enemyController = EnemyController(gameScene: gameScene, city: city)
+        enemySpawn = SCNNode(geometry: nil)
+        enemySpawn.position = SCNVector3(0, 20, 0)
+        planeNode.addChildNode(enemySpawn)
+        enemyController = EnemyController(city: city, spawnNode: enemySpawn)
 
         targettingUI = MissileTargetUI()
 
@@ -134,7 +138,14 @@ class TheatrePlane: SCNNode {
 //        if renderer.pointOfView != nil {
 //            print("scene point of view: \(renderer.pointOfView!.worldPosition)")
 //        }
+        city.cleanUp()
         processUserInput(renderer: renderer)
         playerController.update(time)
+        enemyController.update(time)
     }
+
+    func houseWasDestroyed(_ house: SCNNode) {
+        _ = city.houseWasDestroyed(house)
+    }
+
 }

@@ -15,7 +15,7 @@ class CityNode: SCNNode {
 
     static var houseReference: SCNNode? = nil
 
-    var houses:Dictionary<Float, SCNNode> = [:]
+    var houses:Set<SCNNode> = []
     var destoryedHouses:Array<SCNNode> = []
 
     /// Initialiser
@@ -60,7 +60,7 @@ class CityNode: SCNNode {
     /// Return a random house in the City, or nil if there are no houses left in the City
     func getRandomHouse() -> SCNNode? {
         if let ret = houses.randomElement() {
-            return ret.value
+            return ret
         }
         else {
             return nil
@@ -79,7 +79,7 @@ class CityNode: SCNNode {
     /// - Parameter house: The house that was destroyed
     /// - Returns: True if house was in the city and successfuly destroyed, false otherwise
     func houseWasDestroyed(_ house:SCNNode) -> Bool {
-        if let removed = houses.removeValue(forKey: house.worldPosition.z){
+        if let removed = houses.remove(house){
             print("removed house @ \(house.worldPosition) from set! count now: \(houses.count)")
             destoryedHouses.append(removed)
             return true
@@ -90,7 +90,8 @@ class CityNode: SCNNode {
     func generate() {
         // TODO add basic city generation (literally just place two houses at predefined points
         let house: SCNNode = CityNode.houseReference!.clone()
-
+        house.position = SCNVector3(-1, 0, 0)
+        self.houses.insert(house)
         self.addChildNode(house)
     }
 }
