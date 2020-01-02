@@ -25,6 +25,8 @@ class ExplosionNode : SCNNode {
         // TODO create and add audioplay to self
         startTime = time
 
+
+
         // add explosion sphere
         let physicsShape = SCNPhysicsShape(geometry: SCNSphere(radius: CGFloat(ExplosionNode.EXPLOSION_RADIUS_START)), options: nil)
 
@@ -47,6 +49,8 @@ class ExplosionNode : SCNNode {
         audioSource.shouldStream = false
 
         super.init()
+
+        // geometry = SCNSphere(radius: 0.1)
 
         self.addChildNode(explosionNode)
 
@@ -72,6 +76,7 @@ class ExplosionNode : SCNNode {
                 body.physicsShape = SCNPhysicsShape(geometry: SCNSphere(radius: CGFloat(newRadius)), options: nil)
                 // TODO, would it be better to apply some sort of transform here instead?
             }
+            // geometry = SCNSphere(radius: CGFloat(newRadius))
             return true
         }
         else {

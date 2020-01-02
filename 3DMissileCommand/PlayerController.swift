@@ -28,6 +28,7 @@ class PlayerController {
     let planeNode: SCNNode
 
     var missileBatteries: Array<SCNNode> = []
+    var explodingMissiles: Array<MissileNode> = []
 
     var lastUpdate: TimeInterval = 0
 
@@ -75,6 +76,10 @@ class PlayerController {
         let sourcePosition = source.position
         missile.position = sourcePosition
 
+        missile.setCollisionCallback(callback: { (missile: SCNNode) -> Void in
+            self.onPlayerMissileCollision(missile: missile)
+        })
+
         return missile
     }
 
@@ -82,16 +87,27 @@ class PlayerController {
     /// - Parameter time: Current time in seconds
     func update(_ time: TimeInterval) {
         lastUpdate = time
+        var i: Int = 0
+        while i < explodingMissiles.count {
+            let missile = explodingMissiles[i]
+            if missile.state == .FINISHED {
+                explodingMissiles.remove(at: i)
+                continue
+            }
+            else {
+                missile.update(time)
+            }
+            i += 1
+        }
     }
 
 
     /// To be called when the player missile has collided with something in the scene (typically the target node, but not necessarily)
     /// - Parameter missile: The player missile which collided with something
     /// returns true if player node has not collided previously (in which case explosion will be placed, false otherwise
-    @discardableResult func onPlayerMissileCollision(_ missile: SCNNode) -> Bool {
-        if missile is MissileNode {
-            let tmp = missile as! MissileNode
-        }
+    @discardableResult func onPlayerMissileCollision(missile: SCNNode) -> Bool {
+        // TODO add to list of exploding missiles for later updating
+        explodingMissiles.append(missile as! MissileNode)
         return false
     }
 }

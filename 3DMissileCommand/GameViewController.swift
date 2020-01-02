@@ -258,30 +258,28 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         /* Player Missile */
         if nodeABody.categoryBitMask & COLLISION_BITMASK.PLAYER_MISSILE != 0 {
-            if nodeBBody.categoryBitMask & COLLISION_BITMASK.PLAYER_TARGET_NODE != 0 {
-//                contact.nodeB.removeFromParentNode()
-                if contact.nodeA.parent != nil {    // if we hit a target node, set the explosion as the position of the target node
-//                    missileFactory.addExplosion(at: contact.nodeB.presentation.position, time: lastUpdateTime)
-                    // TODO update PlayerControllers
+            if contact.nodeA.parent != nil {
+                let parentNode = contact.nodeA.parent!
+                if parentNode is PlayerMissile {
+                    let missile = parentNode as! PlayerMissile
+                    missile.explode(time: self.lastUpdateTime)
+                }
+                else {
+                    print("contact is not missile node")
                 }
             }
-            else if contact.nodeA.parent != nil {
-//                missileFactory.addExplosion(at: contact.nodeA.presentation.position, time: lastUpdateTime)
-                // TODO update Player Controllers
-            }
-//            playerController.onPlayerMissileCollision(contact.nodeA)
         }
         else if nodeBBody.categoryBitMask & COLLISION_BITMASK.PLAYER_MISSILE != 0 {
-            if nodeABody.categoryBitMask & COLLISION_BITMASK.PLAYER_TARGET_NODE != 0 {
-//                contact.nodeA.removeFromParentNode()
-                if contact.nodeB.parent != nil {
-//                     missileFactory.addExplosion(at: contact.nodeA.presentation.position, time: lastUpdateTime)
-                 }
+            if contact.nodeB.parent != nil {
+                let parentNode = contact.nodeB.parent!
+                if parentNode is PlayerMissile {
+                    let missile = parentNode as! PlayerMissile
+                    missile.explode(time: self.lastUpdateTime)
+                }
+                else {
+                    print("contact is not missile node")
+                }
             }
-            else if contact.nodeB.parent != nil {
-//                missileFactory.addExplosion(at: contact.nodeB.presentation.position, time: lastUpdateTime)
-            }
-//            playerController.onPlayerMissileCollision(contact.nodeB)
         }
 
         /* Enemy Missile */

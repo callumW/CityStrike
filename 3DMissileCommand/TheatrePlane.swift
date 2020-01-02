@@ -121,6 +121,7 @@ class TheatrePlane: SCNNode {
                 self.addChildNode(missile)
 
                 missile.fire(targetNode: target, speed: PlayerController.PLAYER_MISSILE_SPEED_SCALER)
+                print("end of scope for missile")
             }
         }
 
@@ -134,5 +135,6 @@ class TheatrePlane: SCNNode {
 //            print("scene point of view: \(renderer.pointOfView!.worldPosition)")
 //        }
         processUserInput(renderer: renderer)
+        playerController.update(time)
     }
 }

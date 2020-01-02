@@ -18,7 +18,7 @@ class TargetNode : SCNNode {
     override init() {
         super.init()
 
-        geometry = SCNSphere(radius: 0.1)
+        geometry = nil
 
         /*
             We could omit setting up a physics shape here, and instead construct our node with some geometry and let the physics body use that
@@ -53,27 +53,17 @@ class MissileNode : SCNNode {
 
     var targetNode: TargetNode? = nil
 
+    var collisionCallback: (SCNNode) -> Void
+
     override init() {
         if MissileNode.missileReference == nil {
-//            if let tmp = SCNScene(named: "art.scnassets/Missile.scn") {
-//                if let missile = tmp.rootNode.childNode(withName: "missile", recursively: true) {
-//                    MissileNode.missileReference = missile.clone()
-//                    MissileNode.missileReference?.removeFromParentNode()
-//                }
-//                else {
-//                    fatalError("Failed to find missile node in scene")
-//                }
-//            }
-//            else {
-//                fatalError("Failed to load missile scene")
-//            }
             if let sceneURL = Bundle.main.url(forResource: "Missile", withExtension: "scn", subdirectory: "art.scnassets") {
                 if let ref = SCNReferenceNode(url: sceneURL) {
                     ref.load()
                     print("loaded reference node")
                     if let missile = ref.childNode(withName: "missile", recursively: true) {
                         MissileNode.missileReference = missile.clone()
-                        MissileNode.missileReference?.removeFromParentNode()
+                        // MissileNode.missileReference?.removeFromParentNode()
                         print("initialised satic missile reference")
                     }
                     else {
@@ -91,6 +81,9 @@ class MissileNode : SCNNode {
         }
 
         missileNode = MissileNode.missileReference!.clone()
+
+        collisionCallback = { (missile: SCNNode) -> Void in
+        }
 
         super.init()
 
@@ -117,6 +110,10 @@ class MissileNode : SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
 
+    func setCollisionCallback(callback: @escaping (SCNNode) -> Void) {
+        self.collisionCallback = callback
+    }
+
     func fire(targetNode: TargetNode, speed: Float) {
 
         self.targetNode = targetNode
@@ -137,11 +134,19 @@ class MissileNode : SCNNode {
     /// Trigger the missile to explode
     /// - Parameter time: The time of explosion
     func explode(time: TimeInterval) {
+        print("missile explodes")
+        if targetNode != nil {
+            targetNode!.removeFromParentNode()
+            targetNode = nil
+        }
         explosionNode = ExplosionNode(time: time)
+        explosionNode!.position = missileNode.presentation.position
         missileNode.removeFromParentNode()
         self.addChildNode(explosionNode!)
         self.state = .EXPLODING
+        self.collisionCallback(self)
     }
+
 
     /// Update the missile explosion
     /// - Parameter time: current time
