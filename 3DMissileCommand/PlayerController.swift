@@ -25,6 +25,7 @@ class PlayerController {
     static let PLAYER_MISSILE_SPEED_SCALER: Float = 1
     let gameScene: SCNScene
     let uiOverlay: SKScene
+    let planeNode: SCNNode
 
     var missileBatteries: Array<SCNNode> = []
 
@@ -38,7 +39,7 @@ class PlayerController {
     init(scene: SCNScene, ui: SKScene, planeNode: SCNNode) {
         gameScene = scene
         uiOverlay = ui
-
+        self.planeNode = planeNode
         /* Setup action to animate ui target hints */
         let scaleAction = SKAction.scale(by: 1.5, duration: 0.2)
         let pulseAction = SKAction.sequence([scaleAction, scaleAction.reversed()])
@@ -68,12 +69,12 @@ class PlayerController {
         return targetCircle
     }
 
-    func fireMissile(at: SCNVector3) -> MissileNode {
+    func getMissile() -> MissileNode {
         let missile = PlayerMissile()
-        let sourcePosition = missileBatteries.randomElement()!.position
-        missile.position = SCNVector3(sourcePosition.x, sourcePosition.y + 1, sourcePosition.z)
-        //missile.position = SCNVector3(0, 4, 0)
-        missile.fire(at: at, speed: PlayerController.PLAYER_MISSILE_SPEED_SCALER)
+        let source = missileBatteries.randomElement()!
+        let sourcePosition = source.position
+        missile.position = sourcePosition
+
         return missile
     }
 

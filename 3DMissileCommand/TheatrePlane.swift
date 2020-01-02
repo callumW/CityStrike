@@ -100,12 +100,12 @@ class TheatrePlane: SCNNode {
     }
 
     func notifyTap(point: CGPoint) {
-        print("Was notified of tap at: \(point)")
+//        print("Was notified of tap at: \(point)")
         taps.append(point)
     }
 
     /// Process user taps that occured since the last update
-    func processUserInput() {
+    func processUserInput(renderer: SCNSceneRenderer) {
 
         for tap in taps {
             print("testing for hit results")
@@ -113,9 +113,14 @@ class TheatrePlane: SCNNode {
 
             for result in results {
                 print("Tap hits \(result.node.name ?? "no_name") @ \(result.worldCoordinates)")
-                let missile = playerController.fireMissile(at: result.worldCoordinates)
+                let target = TargetNode()
+                target.position = self.convertPosition(result.worldCoordinates, from: nil)
+                self.addChildNode(target)
+                let missile = playerController.getMissile()
 
                 self.addChildNode(missile)
+
+                missile.fire(targetNode: target, speed: PlayerController.PLAYER_MISSILE_SPEED_SCALER)
             }
         }
 
@@ -124,7 +129,10 @@ class TheatrePlane: SCNNode {
 
     /// Update the TheatrePlane and its contents
     /// - Parameter time: current time
-    func update(time: TimeInterval) {
-        processUserInput()
+    func update(time: TimeInterval, renderer: SCNSceneRenderer) {
+//        if renderer.pointOfView != nil {
+//            print("scene point of view: \(renderer.pointOfView!.worldPosition)")
+//        }
+        processUserInput(renderer: renderer)
     }
 }

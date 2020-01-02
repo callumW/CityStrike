@@ -117,20 +117,18 @@ class MissileNode : SCNNode {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func fire(at: SCNVector3, speed: Float) {
-        targetNode = TargetNode()
-        self.addChildNode(targetNode!)
+    func fire(targetNode: TargetNode, speed: Float) {
 
-        targetNode?.position = self.convertPosition(at, from: nil)  //convert from world position
+        self.targetNode = targetNode
 
-        let lookAtConstraint = SCNLookAtConstraint(target: targetNode!)
+        let lookAtConstraint = SCNLookAtConstraint(target: self.targetNode!)
         lookAtConstraint.localFront = SCNVector3(0, 1, 0)
         lookAtConstraint.worldUp = SCNVector3(1, 0, 0)
         lookAtConstraint.isGimbalLockEnabled = false
 
         missileNode.constraints?.append(lookAtConstraint)
 
-        let dir:SCNVector3 = normalise(targetNode!.position - missileNode.position)
+        let dir:SCNVector3 = normalise(self.targetNode!.parent!.convertPosition(self.targetNode!.position, to: self) - missileNode.position)
         let force = dir * speed * MissileNode.MISSILE_SPEED
 
         missileNode.physicsBody?.applyForce(force, asImpulse: false)
