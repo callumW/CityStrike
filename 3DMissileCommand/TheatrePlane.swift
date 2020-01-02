@@ -109,7 +109,7 @@ class TheatrePlane: SCNNode {
     }
 
     /// Process user taps that occured since the last update
-    func processUserInput(renderer: SCNSceneRenderer) {
+    func processUserInput() {
 
         for tap in taps {
             print("testing for hit results")
@@ -134,12 +134,9 @@ class TheatrePlane: SCNNode {
 
     /// Update the TheatrePlane and its contents
     /// - Parameter time: current time
-    func update(time: TimeInterval, renderer: SCNSceneRenderer) {
-//        if renderer.pointOfView != nil {
-//            print("scene point of view: \(renderer.pointOfView!.worldPosition)")
-//        }
+    func update(time: TimeInterval) {
         city.cleanUp()
-        processUserInput(renderer: renderer)
+        processUserInput()
         playerController.update(time)
         enemyController.update(time)
     }

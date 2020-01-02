@@ -211,7 +211,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if gamePlaying {
             lastUpdateTime = time
-            theatrePlane?.update(time: time, renderer: renderer)
+            theatrePlane?.update(time: time)
             updateUI(time: time)
 
 //            if city.houseCount() > 0 {
