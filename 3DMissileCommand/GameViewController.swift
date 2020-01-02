@@ -71,14 +71,20 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             fatalError("Failed to create TheatrePlane")
         }
 
+        loadStaticVariables()
+    }
+
+    func loadStaticVariables() {
         /*
          Note: we need to load nodes that load models from scenes (via SCNReferenceNode) outside of the
             render call, otherwise we get an error. Therefore, we create an instance of these nodes which
             will cause the static reference node to be loaded
          */
-        let missile = MissileNode()
+        _ = MissileNode()
 
-        let city = CityNode()
+        _ = CityNode()
+
+        _ = ExplosionNode(time: 0)
     }
 
     func loadGameScene() {

@@ -15,7 +15,7 @@ class ExplosionNode : SCNNode {
     static let EXPLOSION_RADIUS_END: Double = 1.5
 
     let audioSource: SCNAudioSource = SCNAudioSource(fileNamed: "explosion_sound_v2_mono.wav")!
-    static let particleSystem: SCNReferenceNode = SCNReferenceNode(url: URL(fileURLWithPath: "art.scnassets/Explosions.scn"))!
+    static var particleSystem: SCNNode? = nil
 
     let startTime: TimeInterval
 
@@ -25,7 +25,25 @@ class ExplosionNode : SCNNode {
         // TODO create and add audioplay to self
         startTime = time
 
-
+        if ExplosionNode.particleSystem == nil {
+            if let sceneURL = Bundle.main.url(forResource: "Explosions", withExtension: "scn", subdirectory: "art.scnassets") {
+                if let ref = SCNReferenceNode(url: sceneURL) {
+                    ref.load()
+                    if let explosion = ref.childNode(withName: "explosion", recursively: true) {
+                        ExplosionNode.particleSystem = explosion.clone()
+                    }
+                    else {
+                        fatalError("Failed to fine explosion node in scene")
+                    }
+                }
+                else {
+                    fatalError("Failed to load explosion scene")
+                }
+            }
+            else {
+                fatalError("Failed to find explosion scene")
+            }
+        }
 
         // add explosion sphere
         let physicsShape = SCNPhysicsShape(geometry: SCNSphere(radius: CGFloat(ExplosionNode.EXPLOSION_RADIUS_START)), options: nil)
@@ -58,7 +76,7 @@ class ExplosionNode : SCNNode {
 
         self.addAudioPlayer(player)
 
-        self.addChildNode(ExplosionNode.particleSystem.clone())
+        self.addChildNode(ExplosionNode.particleSystem!.clone())
     }
 
     required init?(coder: NSCoder) {
