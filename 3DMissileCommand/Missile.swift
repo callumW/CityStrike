@@ -38,7 +38,12 @@ class TargetNode : SCNNode {
         self.name = "target_node"
     }
 
+    func deactivate() {
+        self.uiNode?.removeFromParent()
+    }
+
     deinit {
+        print("target node deinit called")
         self.uiNode?.removeFromParent()
     }
 
@@ -142,9 +147,9 @@ class MissileNode : SCNNode {
     /// Trigger the missile to explode
     /// - Parameter time: The time of explosion
     func explode(time: TimeInterval) {
-        print("missile explodes")
         if targetNode != nil {
-            targetNode!.removeFromParentNode()
+            targetNode?.deactivate()
+            targetNode?.removeFromParentNode()
             targetNode = nil
         }
         explosionNode = ExplosionNode(time: time)
@@ -174,7 +179,6 @@ class PlayerMissile : MissileNode {
     override init() {
         super.init()
         missileNode.physicsBody?.categoryBitMask = COLLISION_BITMASK.PLAYER_MISSILE
-        print("initialsed PLayerMissile")
     }
 
     required init?(coder: NSCoder) {
@@ -185,7 +189,6 @@ class PlayerMissile : MissileNode {
 class EnemyMissile : MissileNode {
     override init () {
         super.init()
-        // TODO set collision for houses
         missileNode.physicsBody?.categoryBitMask = COLLISION_BITMASK.ENEMY_MISSILE
         missileNode.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.HOUSE
     }
