@@ -7,6 +7,7 @@
 //
 
 import SceneKit
+import SpriteKit
 import Foundation
 
 enum MISSILE_STATE {
@@ -15,7 +16,10 @@ enum MISSILE_STATE {
 
 class TargetNode : SCNNode {
 
-    override init() {
+    let uiNode: SKNode?
+
+    init(uiNode: SKNode?) {
+        self.uiNode = uiNode
         super.init()
 
         geometry = nil
@@ -32,6 +36,10 @@ class TargetNode : SCNNode {
         self.physicsBody?.categoryBitMask = COLLISION_BITMASK.PLAYER_TARGET_NODE
         self.castsShadow = false
         self.name = "target_node"
+    }
+
+    deinit {
+        self.uiNode?.removeFromParent()
     }
 
     required init?(coder: NSCoder) {

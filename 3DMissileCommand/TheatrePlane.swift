@@ -33,6 +33,9 @@ class TheatrePlane: SCNNode {
 
     let containingView: SCNView
 
+    let uiParentNode: SKNode
+    let uiScene: SKScene
+
     init?(gameScene: SCNScene, ui: SKScene, view: SCNView) {
 
         containingView = view
@@ -80,6 +83,8 @@ class TheatrePlane: SCNNode {
 
         targettingUI = MissileTargetUI()
 
+        uiParentNode = SKNode()
+        uiScene = ui
         super.init()
 
         self.addChildNode(planeNode)
@@ -93,14 +98,15 @@ class TheatrePlane: SCNNode {
 
     /// Set the plane as the active plane
     /// - Parameter in: Scene that the plane is active in
-    func activate(camera: SCNNode) {
+    func activate(camera: SCNNode, uiScene: SKScene) {
         self.cameraNode.addChildNode(camera)
+        uiScene.addChild(self.uiParentNode)
     }
 
 
     /// Deactivate the plane
     func deactivate() {
-        // TODO remove target nodes from ui overlay scene
+        self.uiParentNode.removeFromParent()
     }
 
     func notifyTap(point: CGPoint) {
@@ -119,7 +125,12 @@ class TheatrePlane: SCNNode {
             for result in results {
                 if result.node == targetPlane {
                     print("Tap hits \(result.node.name ?? "no_name") @ \(result.worldCoordinates)")
-                    let target = TargetNode()
+
+                    let targetUiNode = SKSpriteNode(imageNamed: "target_hint.png")
+                    targetUiNode.position = uiScene.convertPoint(fromView: tap)
+                    self.uiParentNode.addChild(targetUiNode)
+
+                    let target = TargetNode(uiNode: targetUiNode)
                     target.position = self.convertPosition(result.worldCoordinates, from: nil)
                     self.addChildNode(target)
                     let missile = playerController.getMissile()

@@ -85,7 +85,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             fatalError("Failed to create TheatrePlane")
         }
 
-        planes[0].activate(camera: mainCamera!)
+        planes[0].activate(camera: mainCamera!, uiScene: overlayScene)
         activePlane = planes[0]
 
         loadStaticVariables()
@@ -135,14 +135,20 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
     func setPlaneOne() {
         print("set plane 1")
-        planes[0].activate(camera: mainCamera!)
-        activePlane = planes[0]
+        if activePlane != planes[0] {
+            activePlane?.deactivate()
+            planes[0].activate(camera: mainCamera!, uiScene: overlayScene)
+            activePlane = planes[0]
+        }
     }
 
     func setPlaneTwo() {
         print("set plane 2")
-        planes[1].activate(camera: mainCamera!)
-        activePlane = planes[1]
+        if activePlane != planes[1] {
+            activePlane?.deactivate()
+            planes[1].activate(camera: mainCamera!, uiScene: overlayScene)
+            activePlane = planes[1]
+        }
     }
 
     func loadGameScene() {
@@ -190,17 +196,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         mainCamera!.camera = SCNCamera()
         scnView.pointOfView = mainCamera
 
-
-//        if let cam = gameScene.rootNode.childNode(withName: "audio_listener", recursively: true) {
-//            print("setting listener to position \(cam.position) rotation: \(cam.rotation)")
-//
-//            scnView.audioListener = cam
-//        }
-
-//        let listenerNode = SCNNode(geometry: nil)
-//        listenerNode.position = SCNVector3(0, 0, 0)
-//        gameScene.rootNode.addChildNode(listenerNode)
-//        scnView.audioListener = listenerNode
+        scnView.audioListener = mainCamera
 
         if let node = scnView.overlaySKScene!.childNode(withName: "time_label") {
             if node is SKLabelNode {
@@ -288,12 +284,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if gamePlaying {
-
-//            if taps.count > 0 {
-//                planes[1].activate(camera: mainCamera!)
-//                activePlane = planes[1]
-//                taps.removeAll()
-//            }
 
             lastUpdateTime = time
             for plane in planes {

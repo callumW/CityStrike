@@ -46,7 +46,7 @@ class EnemyController {
                 let missile = EnemyMissile()
                 missile.setCollisionCallback(callback: self.onEnemyMissileCollision)
                 spawnNode.addChildNode(missile)
-                let target = TargetNode()
+                let target = TargetNode(uiNode: nil)
                 spawnNode.addChildNode(target)
 
                 target.position = spawnNode.convertPosition(targetBuilding.worldPosition, from: nil)
