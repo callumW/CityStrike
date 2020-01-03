@@ -26,15 +26,14 @@ class ButtonNode : SKNode {
         }
     }
 
-    init(upImage: String, downImage: String, position: CGPoint, scale: Double, callback: @escaping () -> Void) {
+
+    init(upImage: String, downImage: String, callback: @escaping () -> Void) {
         upNode = SKSpriteNode(imageNamed: upImage)
         upNode.isHidden = false
-        upNode.size = upNode.size * scale
         //upNode.isUserInteractionEnabled = true
 
         downNode = SKSpriteNode(imageNamed: downImage)
         downNode.isHidden = true
-        downNode.size = downNode.size * scale
         //downNode.isUserInteractionEnabled = true
 
         self.callback = callback
@@ -57,6 +56,17 @@ class ButtonNode : SKNode {
         upNode.isHidden = false
         downNode.isHidden = true
         callback()
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        print("touches cancelled")
+        upNode.isHidden = false
+        downNode.isHidden = true
+        callback()
+    }
+
+    override func contains(_ p: CGPoint) -> Bool {
+        return upNode.contains(p) || downNode.contains(p)
     }
 
     required init?(coder aDecoder: NSCoder) {

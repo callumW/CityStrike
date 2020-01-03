@@ -94,7 +94,6 @@ class TheatrePlane: SCNNode {
     /// Set the plane as the active plane
     /// - Parameter in: Scene that the plane is active in
     func activate(camera: SCNNode) {
-        // TODO set camera position
         self.cameraNode.addChildNode(camera)
     }
 

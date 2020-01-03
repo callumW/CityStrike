@@ -57,6 +57,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
     var planes: Array<TheatrePlane> = []
 
+    var uiButtons: Array<SKNode> = []
+
     var mainCamera: SCNNode? = nil
 
     override func viewDidLoad() {
@@ -84,8 +86,11 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         }
 
         planes[0].activate(camera: mainCamera!)
+        activePlane = planes[0]
 
         loadStaticVariables()
+
+        loadButtons()
     }
 
     func loadStaticVariables() {
@@ -99,6 +104,45 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         _ = CityNode()
 
         _ = ExplosionNode(time: 0)
+    }
+
+    func loadButtons() {
+
+        let maxX = overlayScene.size.width / 2
+        let minX = 0 - maxX
+
+        let maxY = overlayScene.size.height / 2
+        let minY = 0 - maxY
+
+        let plane1Pos = CGPoint(x: minX + 110, y: maxY - 55)
+        let plane2Pos = CGPoint(x: minX + 220, y: maxY - 55)
+
+
+        let plane1Button = ButtonNode(upImage: "plane_1", downImage: "plane_1", callback: self.setPlaneOne)
+        plane1Button.setScale(0.25)
+        plane1Button.position = plane1Pos
+        overlayScene.addChild(plane1Button)
+        uiButtons.append(plane1Button)
+
+        let plane2Button = ButtonNode(upImage: "plane_2", downImage: "plane_2", callback: self.setPlaneTwo)
+        plane2Button.setScale(0.25)
+        plane2Button.position = plane2Pos
+        overlayScene.addChild(plane2Button)
+        uiButtons.append(plane2Button)
+
+
+    }
+
+    func setPlaneOne() {
+        print("set plane 1")
+        planes[0].activate(camera: mainCamera!)
+        activePlane = planes[0]
+    }
+
+    func setPlaneTwo() {
+        print("set plane 2")
+        planes[1].activate(camera: mainCamera!)
+        activePlane = planes[1]
     }
 
     func loadGameScene() {
@@ -122,6 +166,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         overlayScene = SKScene(fileNamed: "UIOverlay.sks")
         overlayScene.isPaused = false
+        overlayScene.isUserInteractionEnabled = true
         scnView.overlaySKScene = overlayScene
 
 
@@ -203,10 +248,23 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             // handling code
 
             let point = sender.location(in: self.view)
-            // print("tap @ \(point)")
+            print("tap @ \(point)")
 
-            taps.append(point)
-            //theatrePlane?.notifyTap(point: point)
+            // taps.append(point)
+
+            // TODO check tap hits anything in UI scene?
+            var tapHandled = false
+            for button in uiButtons {
+                if button.contains(point) {
+                    print("tap hanndled by button")
+                    tapHandled = true
+                    break
+                }
+            }
+
+            if !tapHandled {
+                activePlane?.notifyTap(point: point)
+            }
         }
     }
 
@@ -231,10 +289,11 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if gamePlaying {
 
-            if taps.count > 0 {
-                planes[1].activate(camera: mainCamera!)
-                taps.removeAll()
-            }
+//            if taps.count > 0 {
+//                planes[1].activate(camera: mainCamera!)
+//                activePlane = planes[1]
+//                taps.removeAll()
+//            }
 
             lastUpdateTime = time
             for plane in planes {
