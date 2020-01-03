@@ -125,7 +125,7 @@ class MissileNode : SCNNode {
 
         missileNode.constraints?.append(lookAtConstraint)
 
-        let dir: SCNVector3 = normalise(self.targetNode!.worldPosition - missileNode.worldPosition)
+        let dir: SCNVector3 = normalise(self.targetNode!.worldPosition - missileNode.worldPosition) 
         let force = dir * speed * MissileNode.MISSILE_SPEED
 
         missileNode.physicsBody?.applyForce(force, asImpulse: false)

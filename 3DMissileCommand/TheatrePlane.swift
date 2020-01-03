@@ -44,7 +44,7 @@ class TheatrePlane: SCNNode {
             planeNode = TheatrePlane.scene!.rootNode.clone()
         }
 
-        if let tmp = planeNode.childNode(withName: "camera", recursively: true) {
+        if let tmp = planeNode.childNode(withName: "camera_position", recursively: true) {
             cameraNode = tmp
         }
         else {
@@ -93,8 +93,9 @@ class TheatrePlane: SCNNode {
 
     /// Set the plane as the active plane
     /// - Parameter in: Scene that the plane is active in
-    func activate(in: SCNScene) {
-
+    func activate(camera: SCNNode) {
+        // TODO set camera position
+        self.cameraNode.addChildNode(camera)
     }
 
 

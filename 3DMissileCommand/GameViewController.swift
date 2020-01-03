@@ -53,8 +53,11 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
     var listenerPosition: SCNNode!
 
-    var theatrePlane: TheatrePlane? = nil
-    var otherPlane: TheatrePlane? = nil
+    var activePlane: TheatrePlane? = nil
+
+    var planes: Array<TheatrePlane> = []
+
+    var mainCamera: SCNNode? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,7 +67,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         if let newPlane = TheatrePlane(gameScene: gameScene, ui: overlayScene, view: self.view as! SCNView) {
             newPlane.position = SCNVector3(-15, 0, 0)
             gameScene.rootNode.addChildNode(newPlane)
-            theatrePlane = newPlane
+            planes.append(newPlane)
         }
         else {
             fatalError("Failed to create TheatrePlane")
@@ -74,11 +77,13 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             tmp.position = SCNVector3(-15, 0, 2)
             tmp.rotation = SCNVector4(0, 1, 0.3, Float.pi / 3)
             gameScene.rootNode.addChildNode(tmp)
-            otherPlane = tmp
+            planes.append(tmp)
         }
         else {
             fatalError("Failed to create TheatrePlane")
         }
+
+        planes[0].activate(camera: mainCamera!)
 
         loadStaticVariables()
     }
@@ -135,6 +140,10 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         ambientLightNode.light!.type = .ambient
         ambientLightNode.light!.color = UIColor.darkGray
         gameScene.rootNode.addChildNode(ambientLightNode)
+
+        mainCamera = SCNNode(geometry: nil)
+        mainCamera!.camera = SCNCamera()
+        scnView.pointOfView = mainCamera
 
 
 //        if let cam = gameScene.rootNode.childNode(withName: "audio_listener", recursively: true) {
@@ -196,8 +205,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             let point = sender.location(in: self.view)
             // print("tap @ \(point)")
 
-            // taps.append(point)
-            theatrePlane?.notifyTap(point: point)
+            taps.append(point)
+            //theatrePlane?.notifyTap(point: point)
         }
     }
 
@@ -221,9 +230,16 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if gamePlaying {
+
+            if taps.count > 0 {
+                planes[1].activate(camera: mainCamera!)
+                taps.removeAll()
+            }
+
             lastUpdateTime = time
-            theatrePlane?.update(time: time)
-            otherPlane?.update(time: time)
+            for plane in planes {
+                plane.update(time: time)
+            }
             updateUI(time: time)
 
 //            if city.houseCount() > 0 {
