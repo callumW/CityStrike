@@ -92,7 +92,7 @@ class MissileNode : SCNNode {
         }
 
         // All missiles can collide with explosions and targets
-        missileNode.physicsBody?.contactTestBitMask = COLLISION_BITMASK.MISSILE_EXPLOSION | COLLISION_BITMASK.PLAYER_TARGET_NODE | COLLISION_BITMASK.FLOOR
+        missileNode.physicsBody?.contactTestBitMask = COLLISION_BITMASK.MISSILE_EXPLOSION | COLLISION_BITMASK.PLAYER_TARGET_NODE
 
         audioSource?.loops = true
         audioSource?.isPositional = true
@@ -125,7 +125,7 @@ class MissileNode : SCNNode {
 
         missileNode.constraints?.append(lookAtConstraint)
 
-        let dir:SCNVector3 = normalise(self.targetNode!.parent!.convertPosition(self.targetNode!.position, to: self) - missileNode.position)
+        let dir: SCNVector3 = normalise(self.targetNode!.worldPosition - missileNode.worldPosition)
         let force = dir * speed * MissileNode.MISSILE_SPEED
 
         missileNode.physicsBody?.applyForce(force, asImpulse: false)
