@@ -61,6 +61,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
     var mainCamera: SCNNode? = nil
 
+    var spriteView: SKView? = nil
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -85,6 +87,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             fatalError("Failed to create TheatrePlane")
         }
 
+        spriteView = SKView()
+
         planes[0].activate(camera: mainCamera!, uiScene: overlayScene)
         activePlane = planes[0]
 
@@ -108,23 +112,29 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
     func loadButtons() {
 
+        print("UI Scene: \(overlayScene.size)")
+
         let maxX = overlayScene.size.width / 2
         let minX = 0 - maxX
 
         let maxY = overlayScene.size.height / 2
         let minY = 0 - maxY
 
-        let plane1Pos = CGPoint(x: minX + 110, y: maxY - 55)
-        let plane2Pos = CGPoint(x: minX + 220, y: maxY - 55)
+        let padding = CGFloat(10)
+        let margin = CGFloat(50)
 
 
-        let plane1Button = ButtonNode(upImage: "plane_1", downImage: "plane_1", callback: self.setPlaneOne)
+        let plane1Button = ButtonNode(node: planes[0].minimapParentNode, callback: self.setPlaneOne)
         plane1Button.setScale(0.25)
+        let plane1Size = plane1Button.calculateAccumulatedFrame()
+        print("button size: \(plane1Size)")
+        let plane1Pos = CGPoint(x: minX + margin + (plane1Size.width / 2), y: maxY - margin - (plane1Size.height / 2))
+        let plane2Pos = CGPoint(x: plane1Pos.x + (plane1Size.width / 2) + padding + (plane1Size.width / 2), y: plane1Pos.y)
         plane1Button.position = plane1Pos
         overlayScene.addChild(plane1Button)
         uiButtons.append(plane1Button)
 
-        let plane2Button = ButtonNode(upImage: "plane_2", downImage: "plane_2", callback: self.setPlaneTwo)
+        let plane2Button = ButtonNode(node: planes[1].minimapParentNode, callback: self.setPlaneTwo)
         plane2Button.setScale(0.25)
         plane2Button.position = plane2Pos
         overlayScene.addChild(plane2Button)
@@ -173,8 +183,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         overlayScene = SKScene(fileNamed: "UIOverlay.sks")
         overlayScene.isPaused = false
         overlayScene.isUserInteractionEnabled = true
-        scnView.overlaySKScene = overlayScene
 
+        scnView.overlaySKScene = overlayScene
 
         gameScene?.physicsWorld.contactDelegate = self  // register for phsysics contact callback
 
@@ -246,15 +256,14 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             let point = sender.location(in: self.view)
             print("tap @ \(point)")
 
-            // taps.append(point)
-
-            // TODO check tap hits anything in UI scene?
             var tapHandled = false
-            for button in uiButtons {
-                if button.contains(point) {
-                    print("tap hanndled by button")
+            let convertedPoint = overlayScene.convertPoint(fromView: point)
+
+            let uiNodes = overlayScene.nodes(at: convertedPoint)
+            for node in uiNodes {
+                if node is ButtonNode {
+                    print("hit button!")
                     tapHandled = true
-                    break
                 }
             }
 

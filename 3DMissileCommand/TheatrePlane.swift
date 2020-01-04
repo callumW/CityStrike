@@ -36,6 +36,8 @@ class TheatrePlane: SCNNode {
     let uiParentNode: SKNode
     let uiScene: SKScene
 
+    let minimapParentNode: SKNode
+
     init?(gameScene: SCNScene, ui: SKScene, view: SCNView) {
 
         containingView = view
@@ -85,11 +87,18 @@ class TheatrePlane: SCNNode {
 
         uiParentNode = SKNode()
         uiScene = ui
+
+        minimapParentNode = PlaneMinimapNode()
+
         super.init()
 
         self.addChildNode(planeNode)
 
         print("Initialised Plane")
+    }
+
+    func getTexture(view: SKView) -> SKTexture {
+        return view.texture(from: minimapParentNode)!
     }
 
     required init?(coder: NSCoder) {
