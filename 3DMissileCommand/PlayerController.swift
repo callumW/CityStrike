@@ -29,6 +29,7 @@ class PlayerController {
 
     var missileBatteries: Array<SCNNode> = []
     var explodingMissiles: Array<MissileNode> = []
+    var missiles: Array<MissileNode> = []
 
     var lastUpdate: TimeInterval = 0
 
@@ -80,6 +81,8 @@ class PlayerController {
             self.onPlayerMissileCollision(missile: missile)
         })
 
+        missiles.append(missile)
+
         return missile
     }
 
@@ -88,10 +91,10 @@ class PlayerController {
     func update(_ time: TimeInterval) {
         lastUpdate = time
         var i: Int = 0
-        while i < explodingMissiles.count {
-            let missile = explodingMissiles[i]
+        while i < missiles.count {
+            let missile = missiles[i]
             if missile.state == .FINISHED {
-                explodingMissiles.remove(at: i)
+                missiles.remove(at: i)
                 continue
             }
             else {
@@ -107,7 +110,7 @@ class PlayerController {
     /// returns true if player node has not collided previously (in which case explosion will be placed, false otherwise
     @discardableResult func onPlayerMissileCollision(missile: SCNNode) -> Bool {
         // TODO add to list of exploding missiles for later updating
-        explodingMissiles.append(missile as! MissileNode)
+        // explodingMissiles.append(missile as! MissileNode)
         return false
     }
 }

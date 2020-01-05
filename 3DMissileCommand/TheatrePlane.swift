@@ -144,6 +144,8 @@ class TheatrePlane: SCNNode {
                     self.addChildNode(target)
                     let missile = playerController.getMissile()
 
+                    minimapParentNode.addChild(missile.minimapNode)
+
                     self.addChildNode(missile)
 
                     missile.fire(targetNode: target, speed: PlayerController.PLAYER_MISSILE_SPEED_SCALER)
@@ -164,7 +166,7 @@ class TheatrePlane: SCNNode {
         city.cleanUp()
         processUserInput()
         playerController.update(time)
-        enemyController.update(time)
+        //enemyController.update(time)
     }
 
     func houseWasDestroyed(_ house: SCNNode) {

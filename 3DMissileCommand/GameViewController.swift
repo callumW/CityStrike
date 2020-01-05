@@ -118,7 +118,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         let minX = 0 - maxX
 
         let maxY = overlayScene.size.height / 2
-        let minY = 0 - maxY
 
         let padding = CGFloat(10)
         let margin = CGFloat(50)

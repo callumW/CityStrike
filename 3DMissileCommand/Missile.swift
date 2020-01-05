@@ -10,6 +10,10 @@ import SceneKit
 import SpriteKit
 import Foundation
 
+func convertToPlane(point: CGPoint) -> CGPoint {
+    return CGPoint(x: ((point.x + 30) / 30) * 400, y: (point.y / 30) * 200)
+}
+
 enum MISSILE_STATE {
     case IN_FLIGHT, EXPLODING, FINISHED
 }
@@ -66,6 +70,8 @@ class MissileNode : SCNNode {
 
     var targetNode: TargetNode? = nil
 
+    let minimapNode: SKNode
+
     var collisionCallback: (SCNNode) -> Void
 
     override init() {
@@ -97,6 +103,11 @@ class MissileNode : SCNNode {
 
         collisionCallback = { (missile: SCNNode) -> Void in
         }
+
+        minimapNode = SKNode()
+        let tmp = SKShapeNode(circleOfRadius: 5)
+        tmp.fillColor = .red
+        minimapNode.addChild(tmp)
 
         super.init()
 
@@ -158,6 +169,13 @@ class MissileNode : SCNNode {
         self.addChildNode(explosionNode!)
         self.state = .EXPLODING
         self.collisionCallback(self)
+        minimapNode.removeFromParent()
+    }
+
+    func updateMinimap() {
+        
+        minimapNode.position = convertToPlane(point: CGPoint(x: CGFloat(missileNode.presentation.worldPosition.x), y: CGFloat(missileNode.presentation.worldPosition.y)))
+        print("new missile position: \(minimapNode.position) | \(missileNode.presentation.position)")
     }
 
 
@@ -171,6 +189,8 @@ class MissileNode : SCNNode {
                 self.removeFromParentNode()
             }
         }
+
+        updateMinimap()
     }
 
 }
