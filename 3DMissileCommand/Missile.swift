@@ -10,10 +10,6 @@ import SceneKit
 import SpriteKit
 import Foundation
 
-func convertToPlane(point: CGPoint) -> CGPoint {
-    return CGPoint(x: ((point.x + 30) / 30) * 400, y: (point.y / 30) * 200)
-}
-
 enum MISSILE_STATE {
     case IN_FLIGHT, EXPLODING, FINISHED
 }
@@ -70,7 +66,7 @@ class MissileNode : SCNNode {
 
     var targetNode: TargetNode? = nil
 
-    let minimapNode: SKNode
+    let minimapNode: MissileMinimapNode
 
     var collisionCallback: (SCNNode) -> Void
 
@@ -104,10 +100,10 @@ class MissileNode : SCNNode {
         collisionCallback = { (missile: SCNNode) -> Void in
         }
 
-        minimapNode = SKNode()
-        let tmp = SKShapeNode(circleOfRadius: 5)
-        tmp.fillColor = .red
-        minimapNode.addChild(tmp)
+        minimapNode = MissileMinimapNode(planeSize: CGSize(width: 400, height: 200))
+//        let tmp = SKShapeNode(circleOfRadius: 5)
+//        tmp.fillColor = .red
+//        minimapNode.addChild(tmp)
 
         super.init()
 
@@ -173,9 +169,7 @@ class MissileNode : SCNNode {
     }
 
     func updateMinimap() {
-        
-        minimapNode.position = convertToPlane(point: CGPoint(x: CGFloat(missileNode.presentation.worldPosition.x), y: CGFloat(missileNode.presentation.worldPosition.y)))
-        print("new missile position: \(minimapNode.position) | \(missileNode.presentation.position)")
+        minimapNode.position = CGPoint(x: CGFloat(missileNode.presentation.worldPosition.x), y: CGFloat(missileNode.presentation.worldPosition.y))
     }
 
 
