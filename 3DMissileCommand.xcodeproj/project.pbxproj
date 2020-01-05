@@ -22,6 +22,7 @@
 		1BA4B05623BEA175007CE2E1 /* BuildingNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B05523BEA175007CE2E1 /* BuildingNode.swift */; };
 		1BA4B05823C0BA5B007CE2E1 /* PlaneMinimapNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B05723C0BA5B007CE2E1 /* PlaneMinimapNode.swift */; };
 		1BA4B05A23C24273007CE2E1 /* MissileMinimapNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B05923C24273007CE2E1 /* MissileMinimapNode.swift */; };
+		1BA4B05C23C273C2007CE2E1 /* explosion.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BA4B05B23C273C2007CE2E1 /* explosion.png */; };
 		1BA942A5239AC1A80073C912 /* game_over.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942A4239AC1A80073C912 /* game_over.wav */; };
 		1BA942B4239AD5610073C912 /* rocket_sound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942B3239AD5610073C912 /* rocket_sound.wav */; };
 		1BA942B6239AE2BF0073C912 /* rocket_sound_mono.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942B5239AE2BF0073C912 /* rocket_sound_mono.wav */; };
@@ -64,6 +65,7 @@
 		1BA4B05523BEA175007CE2E1 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingNode.swift; sourceTree = "<group>"; };
 		1BA4B05723C0BA5B007CE2E1 /* PlaneMinimapNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaneMinimapNode.swift; sourceTree = "<group>"; };
 		1BA4B05923C24273007CE2E1 /* MissileMinimapNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissileMinimapNode.swift; sourceTree = "<group>"; };
+		1BA4B05B23C273C2007CE2E1 /* explosion.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = explosion.png; sourceTree = "<group>"; };
 		1BA942A4239AC1A80073C912 /* game_over.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = game_over.wav; sourceTree = "<group>"; };
 		1BA942B0239ACB4F0073C912 /* game_over.blend */ = {isa = PBXFileReference; lastKnownFileType = file; path = game_over.blend; sourceTree = "<group>"; };
 		1BA942B3239AD5610073C912 /* rocket_sound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = rocket_sound.wav; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 		1B0E8E072399AA9F0012DB0E /* Textures */ = {
 			isa = PBXGroup;
 			children = (
+				1BA4B05B23C273C2007CE2E1 /* explosion.png */,
 				1BCD732323B60923006570C8 /* skyscraper_1.jpg */,
 				1BD3490C23A2C8090017BE72 /* target_hint.png */,
 				1B0E8E052399AA890012DB0E /* arroway.de_concrete-53_d100.png */,
@@ -274,6 +277,7 @@
 				1BA942B4239AD5610073C912 /* rocket_sound.wav in Resources */,
 				1BCD732223B606FD006570C8 /* building_1.blend in Resources */,
 				1B0E8DF12392D0690012DB0E /* explosion_sound_v2.wav in Resources */,
+				1BA4B05C23C273C2007CE2E1 /* explosion.png in Resources */,
 				1BA942DA239AFD190073C912 /* explosion_sound_v2_mono.wav in Resources */,
 				1B0E8E062399AA890012DB0E /* arroway.de_concrete-53_d100.png in Resources */,
 				1BA942B6239AE2BF0073C912 /* rocket_sound_mono.wav in Resources */,
