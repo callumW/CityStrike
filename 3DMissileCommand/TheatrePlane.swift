@@ -66,10 +66,15 @@ class TheatrePlane: SCNNode {
             return nil
         }
 
+        minimapParentNode = PlaneMinimapNode()
+
         // Get missile silos
         for node in planeNode.childNodes {
             if node.name != nil && node.name! == "missile_battery" {
                 playerMissileBatteries.append(node)
+                let tmp = MissileBatteryNode()
+                tmp.position = CGPoint(x: CGFloat(node.position.x), y: CGFloat(node.position.y))
+                minimapParentNode.addChild(tmp)
             }
         }
 
@@ -87,8 +92,6 @@ class TheatrePlane: SCNNode {
 
         uiParentNode = SKNode()
         uiScene = ui
-
-        minimapParentNode = PlaneMinimapNode()
 
         super.init()
 

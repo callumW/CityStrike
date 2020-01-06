@@ -169,7 +169,8 @@ class MissileNode : SCNNode {
     }
 
     func updateMinimap() {
-        minimapNode.position = CGPoint(x: CGFloat(missileNode.presentation.worldPosition.x), y: CGFloat(missileNode.presentation.worldPosition.y))
+        let planePosition = missileNode.convertPosition(missileNode.presentation.position, to: self.parent)
+        minimapNode.position = CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y))
     }
 
 

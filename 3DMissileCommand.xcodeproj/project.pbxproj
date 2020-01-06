@@ -20,8 +20,7 @@
 		1B17B64E237DCAA100998F2F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B17B64D237DCAA100998F2F /* GameViewController.swift */; };
 		1B17B653237DCAA300998F2F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B17B652237DCAA300998F2F /* Assets.xcassets */; };
 		1BA4B05623BEA175007CE2E1 /* BuildingNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B05523BEA175007CE2E1 /* BuildingNode.swift */; };
-		1BA4B05823C0BA5B007CE2E1 /* PlaneMinimapNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B05723C0BA5B007CE2E1 /* PlaneMinimapNode.swift */; };
-		1BA4B05A23C24273007CE2E1 /* MissileMinimapNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B05923C24273007CE2E1 /* MissileMinimapNode.swift */; };
+		1BA4B05A23C24273007CE2E1 /* Minimap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B05923C24273007CE2E1 /* Minimap.swift */; };
 		1BA4B05C23C273C2007CE2E1 /* explosion.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BA4B05B23C273C2007CE2E1 /* explosion.png */; };
 		1BA942A5239AC1A80073C912 /* game_over.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942A4239AC1A80073C912 /* game_over.wav */; };
 		1BA942B4239AD5610073C912 /* rocket_sound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942B3239AD5610073C912 /* rocket_sound.wav */; };
@@ -63,8 +62,7 @@
 		1B17B652237DCAA300998F2F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1B17B657237DCAA300998F2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1BA4B05523BEA175007CE2E1 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingNode.swift; sourceTree = "<group>"; };
-		1BA4B05723C0BA5B007CE2E1 /* PlaneMinimapNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaneMinimapNode.swift; sourceTree = "<group>"; };
-		1BA4B05923C24273007CE2E1 /* MissileMinimapNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissileMinimapNode.swift; sourceTree = "<group>"; };
+		1BA4B05923C24273007CE2E1 /* Minimap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Minimap.swift; sourceTree = "<group>"; };
 		1BA4B05B23C273C2007CE2E1 /* explosion.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = explosion.png; sourceTree = "<group>"; };
 		1BA942A4239AC1A80073C912 /* game_over.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = game_over.wav; sourceTree = "<group>"; };
 		1BA942B0239ACB4F0073C912 /* game_over.blend */ = {isa = PBXFileReference; lastKnownFileType = file; path = game_over.blend; sourceTree = "<group>"; };
@@ -166,7 +164,7 @@
 				1B17B64B237DCAA100998F2F /* art.scnassets */,
 				1B17B64D237DCAA100998F2F /* GameViewController.swift */,
 				1BCD732D23BA641C006570C8 /* Missile.swift */,
-				1BA4B05923C24273007CE2E1 /* MissileMinimapNode.swift */,
+				1BA4B05923C24273007CE2E1 /* Minimap.swift */,
 				1BCD733323BA88CC006570C8 /* ExplosionNode.swift */,
 				1BCD732F23BA7875006570C8 /* UISource.swift */,
 				1BCD733123BA78A3006570C8 /* MissileTargetUI.swift */,
@@ -182,7 +180,6 @@
 				1B17B657237DCAA300998F2F /* Info.plist */,
 				1BBE26152391C844002A97BA /* Sounds.xcassets */,
 				1BCD731A23B13737006570C8 /* SKSpriteButtonNode.swift */,
-				1BA4B05723C0BA5B007CE2E1 /* PlaneMinimapNode.swift */,
 			);
 			path = 3DMissileCommand;
 			sourceTree = "<group>";
@@ -302,7 +299,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BA4B05823C0BA5B007CE2E1 /* PlaneMinimapNode.swift in Sources */,
 				1B17B64E237DCAA100998F2F /* GameViewController.swift in Sources */,
 				1BBE260A23906094002A97BA /* City.swift in Sources */,
 				1BCD733023BA7875006570C8 /* UISource.swift in Sources */,
@@ -311,7 +307,7 @@
 				1BCD731F23B4D8EB006570C8 /* ButtonNode.swift in Sources */,
 				1BD3491723A2D91F0017BE72 /* MainMenuViewController.swift in Sources */,
 				1B17B64A237DCAA100998F2F /* AppDelegate.swift in Sources */,
-				1BA4B05A23C24273007CE2E1 /* MissileMinimapNode.swift in Sources */,
+				1BA4B05A23C24273007CE2E1 /* Minimap.swift in Sources */,
 				1BCD731B23B13737006570C8 /* SKSpriteButtonNode.swift in Sources */,
 				1B0E8DF52394491C0012DB0E /* PlayerController.swift in Sources */,
 				1B0D5E22239AAB25005D6544 /* CollisionBitmasks.swift in Sources */,
