@@ -66,7 +66,7 @@ class MissileNode : SCNNode {
 
     var targetNode: TargetNode? = nil
 
-    let minimapNode: MissileMinimapNode
+    var minimapNode: MinimapNode? = nil
 
     var collisionCallback: (SCNNode) -> Void
 
@@ -99,11 +99,6 @@ class MissileNode : SCNNode {
 
         collisionCallback = { (missile: SCNNode) -> Void in
         }
-
-        minimapNode = MissileMinimapNode(planeSize: CGSize(width: 400, height: 200))
-//        let tmp = SKShapeNode(circleOfRadius: 5)
-//        tmp.fillColor = .red
-//        minimapNode.addChild(tmp)
 
         super.init()
 
@@ -165,12 +160,12 @@ class MissileNode : SCNNode {
         self.addChildNode(explosionNode!)
         self.state = .EXPLODING
         self.collisionCallback(self)
-        minimapNode.removeFromParent()
+        minimapNode?.removeFromParent()
     }
 
     func updateMinimap() {
         let planePosition = missileNode.convertPosition(missileNode.presentation.position, to: self.parent)
-        minimapNode.position = CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y))
+        minimapNode?.position = CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y))
     }
 
 
@@ -193,6 +188,7 @@ class MissileNode : SCNNode {
 class PlayerMissile : MissileNode {
     override init() {
         super.init()
+        minimapNode = PlayerMissileMinimapNode(planeSize: CGSize(width: 400, height: 200))
         missileNode.physicsBody?.categoryBitMask = COLLISION_BITMASK.PLAYER_MISSILE
     }
 
@@ -206,6 +202,7 @@ class EnemyMissile : MissileNode {
         super.init()
         missileNode.physicsBody?.categoryBitMask = COLLISION_BITMASK.ENEMY_MISSILE
         missileNode.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.HOUSE
+        minimapNode = EnemyMissileMinimapNode()
     }
 
     required init?(coder: NSCoder) {

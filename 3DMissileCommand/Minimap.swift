@@ -14,21 +14,23 @@ func convertToPlane(point: CGPoint) -> CGPoint {
 
 class PlaneMinimapNode: SKNode {
 
-    let borderNode: SKShapeNode
+//    let borderNode: SKShapeNode
     let bgNode: SKShapeNode
 
     override init() {
-        borderNode = SKShapeNode(rect: CGRect(x: 0, y: 0, width: 400, height: 200))
-        borderNode.lineWidth = 3
-        borderNode.strokeColor = .red
+//        borderNode = SKShapeNode(rect: CGRect(x: 0, y: 0, width: 400, height: 200))
+//        borderNode.lineWidth = 3
+//        borderNode.strokeColor = .red
 
         bgNode = SKShapeNode(rect: CGRect(x: 0, y: 0, width: 400, height: 200))
         bgNode.fillColor = UIColor.red.withAlphaComponent(0.2)
+        bgNode.strokeColor = .red
+        bgNode.lineWidth = 3
 
         super.init()
 
         addChild(bgNode)
-        addChild(borderNode)
+//        addChild(borderNode)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -47,17 +49,35 @@ class MinimapNode : SKNode {
     }
 }
 
-class MissileMinimapNode : MinimapNode {
+class PlayerMissileMinimapNode : MinimapNode {
 
     init(planeSize: CGSize) {
         super.init()
         let tmp = SKShapeNode(circleOfRadius: 5)
         tmp.fillColor = .red
+        tmp.strokeColor = .clear
         self.addChild(tmp)
     }
 
     func update() {
 
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class EnemyMissileMinimapNode : MinimapNode {
+    override init() {
+        super.init()
+
+        var points = [CGPoint(x: -1, y: 0), CGPoint(x: 1, y: 0), CGPoint(x: 0, y: 1.7), CGPoint(x: -1, y: 0)]
+        let tmp = SKShapeNode(points: &points, count: points.count)
+        tmp.fillColor = .red
+        tmp.strokeColor = .clear
+        tmp.setScale(7)
+        addChild(tmp)
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -8,6 +8,7 @@
 
 import Foundation
 import SceneKit
+import SpriteKit
 
 /*
  Class describing an enemy controller which fires missiles at houses in the scene
@@ -21,15 +22,16 @@ class EnemyController {
     let targetCity: CityNode
     var lastUpdate: TimeInterval = -1.0
 
-    var explodingMissiles: Array<MissileNode> = []
-
+    var missiles: Array<MissileNode> = []
+    let minimapNode: SKNode
 
     /// Initialise Enemy Controller
     /// - Parameters:
     ///   - city: The City that the enemy controller should attack
-    init(city: CityNode, spawnNode: SCNNode) {
+    init(city: CityNode, spawnNode: SCNNode, minimap: SKNode) {
         self.spawnNode = spawnNode
         self.targetCity = city
+        self.minimapNode = minimap
     }
 
 
@@ -53,6 +55,8 @@ class EnemyController {
 
                 print("Enemy targetting: \(target.position) | \(target.worldPosition) (building: \(targetBuilding.position) | \(targetBuilding.worldPosition)")
                 missile.fire(targetNode: target, speed: EnemyController.SPEED_SCALER)
+                missiles.append(missile)
+                minimapNode.addChild(missile.minimapNode!)
 
                 print("missile location: \(missile.worldPosition) | target location: \(target.worldPosition)")
             }
@@ -63,10 +67,10 @@ class EnemyController {
         }
 
         var i: Int = 0
-        while i < explodingMissiles.count {
-            let missile = explodingMissiles[i]
+        while i < missiles.count {
+            let missile = missiles[i]
             if missile.state == .FINISHED {
-                explodingMissiles.remove(at: i)
+                missiles.remove(at: i)
                 continue
             }
             else {
@@ -77,8 +81,5 @@ class EnemyController {
     }
 
     func onEnemyMissileCollision(_ missile: SCNNode) {
-        if missile is MissileNode {
-            explodingMissiles.append(missile as! MissileNode)
-        }
     }
 }

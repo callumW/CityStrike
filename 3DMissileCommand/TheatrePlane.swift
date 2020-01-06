@@ -86,7 +86,7 @@ class TheatrePlane: SCNNode {
         enemySpawn = SCNNode(geometry: nil)
         enemySpawn.position = SCNVector3(0, 20, 0)
         planeNode.addChildNode(enemySpawn)
-        enemyController = EnemyController(city: city, spawnNode: enemySpawn)
+        enemyController = EnemyController(city: city, spawnNode: enemySpawn, minimap: minimapParentNode)
 
         targettingUI = MissileTargetUI()
 
@@ -147,7 +147,7 @@ class TheatrePlane: SCNNode {
                     self.addChildNode(target)
                     let missile = playerController.getMissile()
 
-                    minimapParentNode.addChild(missile.minimapNode)
+                    minimapParentNode.addChild(missile.minimapNode!)
 
                     self.addChildNode(missile)
 
@@ -169,7 +169,7 @@ class TheatrePlane: SCNNode {
         city.cleanUp()
         processUserInput()
         playerController.update(time)
-        //enemyController.update(time)
+        enemyController.update(time)
     }
 
     func houseWasDestroyed(_ house: SCNNode) {
