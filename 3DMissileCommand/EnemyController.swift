@@ -22,16 +22,19 @@ class EnemyController {
     let targetCity: CityNode
     var lastUpdate: TimeInterval = -1.0
 
-    var missiles: Array<MissileNode> = []
+    var missiles: Array<EnemyMissile> = []
     let minimapNode: SKNode
+
+    let plane: SCNNode
 
     /// Initialise Enemy Controller
     /// - Parameters:
     ///   - city: The City that the enemy controller should attack
-    init(city: CityNode, spawnNode: SCNNode, minimap: SKNode) {
+    init(city: CityNode, spawnNode: SCNNode, minimap: SKNode, plane: SCNNode) {
         self.spawnNode = spawnNode
         self.targetCity = city
         self.minimapNode = minimap
+        self.plane = plane
     }
 
 
@@ -45,7 +48,7 @@ class EnemyController {
             // target & fire a missile
             if let targetBuilding = targetCity.getRandomHouse() {
                 print("Enemy: firing missile")
-                let missile = EnemyMissile()
+                let missile = EnemyMissile(planeNode: self.plane)
                 missile.setCollisionCallback(callback: self.onEnemyMissileCollision)
                 spawnNode.addChildNode(missile)
                 let target = TargetNode(uiNode: nil)

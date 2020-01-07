@@ -177,7 +177,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         scnView.preferredFramesPerSecond = 30
 
-        // scnView.debugOptions.insert(.showBoundingBoxes)
+        scnView.debugOptions.insert(.showBoundingBoxes)
 
         overlayScene = SKScene(fileNamed: "UIOverlay.sks")
         overlayScene.isPaused = false

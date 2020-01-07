@@ -86,7 +86,7 @@ class TheatrePlane: SCNNode {
         enemySpawn = SCNNode(geometry: nil)
         enemySpawn.position = SCNVector3(0, 20, 0)
         planeNode.addChildNode(enemySpawn)
-        enemyController = EnemyController(city: city, spawnNode: enemySpawn, minimap: minimapParentNode)
+        enemyController = EnemyController(city: city, spawnNode: enemySpawn, minimap: minimapParentNode, plane: planeNode)
 
         targettingUI = MissileTargetUI()
 

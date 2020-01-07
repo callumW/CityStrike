@@ -164,6 +164,7 @@ class MissileNode : SCNNode {
     }
 
     func updateMinimap() {
+        print("missile is at: \(self.worldPosition), missilenode is at \(missileNode.worldPosition) | \(missileNode.presentation.worldPosition)")
         let planePosition = missileNode.convertPosition(missileNode.presentation.position, to: self.parent)
         minimapNode?.position = CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y))
     }
@@ -198,7 +199,9 @@ class PlayerMissile : MissileNode {
 }
 
 class EnemyMissile : MissileNode {
-    override init () {
+    let planeNode: SCNNode
+    init (planeNode: SCNNode) {
+        self.planeNode = planeNode
         super.init()
         missileNode.physicsBody?.categoryBitMask = COLLISION_BITMASK.ENEMY_MISSILE
         missileNode.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.HOUSE
@@ -207,5 +210,10 @@ class EnemyMissile : MissileNode {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func updateMinimap() {
+        let planePosition = self.convertPosition(missileNode.presentation.position, to: self.planeNode)
+        minimapNode?.position = CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y))
     }
 }
