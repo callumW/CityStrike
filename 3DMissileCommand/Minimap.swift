@@ -49,10 +49,20 @@ class MinimapNode : SKNode {
     }
 }
 
-class PlayerMissileMinimapNode : MinimapNode {
-
-    init(planeSize: CGSize) {
+class MissileMinimapNode : MinimapNode {
+    init(startPosition: CGPoint, endPosition: CGPoint) {
         super.init()
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class PlayerMissileMinimapNode : MissileMinimapNode {
+
+    override init(startPosition: CGPoint, endPosition: CGPoint) {
+        super.init(startPosition: startPosition, endPosition: endPosition)
         let tmp = SKShapeNode(circleOfRadius: 5)
         tmp.fillColor = .red
         tmp.strokeColor = .clear
@@ -68,9 +78,9 @@ class PlayerMissileMinimapNode : MinimapNode {
     }
 }
 
-class EnemyMissileMinimapNode : MinimapNode {
-    override init() {
-        super.init()
+class EnemyMissileMinimapNode : MissileMinimapNode {
+    override init(startPosition: CGPoint, endPosition: CGPoint) {
+        super.init(startPosition: startPosition, endPosition: endPosition)
 
         var points = [CGPoint(x: -1, y: 0), CGPoint(x: 1, y: 0), CGPoint(x: 0, y: 1.7), CGPoint(x: -1, y: 0)]
         let tmp = SKShapeNode(points: &points, count: points.count)
