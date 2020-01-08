@@ -189,7 +189,7 @@ class MissileNode : SCNNode {
 class PlayerMissile : MissileNode {
     override init() {
         super.init()
-        minimapNode = PlayerMissileMinimapNode(planeSize: CGSize(width: 400, height: 200))
+        minimapNode = PlayerMissileMinimapNode(startPosition: CGPoint(x: 0, y: 0))
         missileNode.physicsBody?.categoryBitMask = COLLISION_BITMASK.PLAYER_MISSILE
     }
 
@@ -205,7 +205,7 @@ class EnemyMissile : MissileNode {
         super.init()
         missileNode.physicsBody?.categoryBitMask = COLLISION_BITMASK.ENEMY_MISSILE
         missileNode.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.HOUSE
-        minimapNode = EnemyMissileMinimapNode()
+        minimapNode = EnemyMissileMinimapNode(startPosition: CGPoint(x: 0, y: 0))
     }
 
     required init?(coder: NSCoder) {

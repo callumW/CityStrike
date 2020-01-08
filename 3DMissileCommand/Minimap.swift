@@ -50,8 +50,35 @@ class MinimapNode : SKNode {
 }
 
 class MissileMinimapNode : MinimapNode {
-    init(startPosition: CGPoint, endPosition: CGPoint) {
+    var lineNode: SKShapeNode? = nil
+    let startPosition: CGPoint
+
+    override var position: CGPoint {
+        didSet {
+            updateLine(endPosition: position)
+        }
+    }
+
+    init(startPosition: CGPoint) {
+       self.startPosition = startPosition
+
         super.init()
+    }
+
+    func updateLine(endPosition: CGPoint) {
+        if lineNode != nil {
+            lineNode?.removeFromParent()
+        }
+
+        if endPosition == startPosition {
+            return
+        }
+
+        var points = [startPosition, endPosition]
+        lineNode = SKShapeNode(points: &points, count: points.count)
+        lineNode?.strokeColor = .red
+        lineNode?.lineWidth = 3
+        self.parent?.addChild(lineNode!)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -61,8 +88,8 @@ class MissileMinimapNode : MinimapNode {
 
 class PlayerMissileMinimapNode : MissileMinimapNode {
 
-    override init(startPosition: CGPoint, endPosition: CGPoint) {
-        super.init(startPosition: startPosition, endPosition: endPosition)
+    override init(startPosition: CGPoint) {
+        super.init(startPosition: startPosition)
         let tmp = SKShapeNode(circleOfRadius: 5)
         tmp.fillColor = .red
         tmp.strokeColor = .clear
@@ -79,8 +106,8 @@ class PlayerMissileMinimapNode : MissileMinimapNode {
 }
 
 class EnemyMissileMinimapNode : MissileMinimapNode {
-    override init(startPosition: CGPoint, endPosition: CGPoint) {
-        super.init(startPosition: startPosition, endPosition: endPosition)
+    override init(startPosition: CGPoint) {
+        super.init(startPosition: startPosition)
 
         var points = [CGPoint(x: -1, y: 0), CGPoint(x: 1, y: 0), CGPoint(x: 0, y: 1.7), CGPoint(x: -1, y: 0)]
         let tmp = SKShapeNode(points: &points, count: points.count)
