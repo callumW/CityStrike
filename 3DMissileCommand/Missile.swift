@@ -189,8 +189,13 @@ class MissileNode : SCNNode {
 class PlayerMissile : MissileNode {
     override init() {
         super.init()
-        minimapNode = PlayerMissileMinimapNode(startPosition: CGPoint(x: 0, y: 0))
         missileNode.physicsBody?.categoryBitMask = COLLISION_BITMASK.PLAYER_MISSILE
+    }
+
+    override func fire(targetNode: TargetNode, speed: Float) {
+        super.fire(targetNode: targetNode, speed: speed)
+        let planePosition = missileNode.convertPosition(missileNode.position, to: self.parent)
+        minimapNode = PlayerMissileMinimapNode(startPosition: convertToPlane(point: CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y))))
     }
 
     required init?(coder: NSCoder) {
@@ -205,7 +210,12 @@ class EnemyMissile : MissileNode {
         super.init()
         missileNode.physicsBody?.categoryBitMask = COLLISION_BITMASK.ENEMY_MISSILE
         missileNode.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.HOUSE
-        minimapNode = EnemyMissileMinimapNode(startPosition: CGPoint(x: 0, y: 0))
+    }
+
+    override func fire(targetNode: TargetNode, speed: Float) {
+        super.fire(targetNode: targetNode, speed: speed)
+        let planePosition = self.planeNode.convertPosition(self.position, from: self.parent!)
+        minimapNode = EnemyMissileMinimapNode(startPosition: convertToPlane(point: CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y))))
     }
 
     required init?(coder: NSCoder) {

@@ -147,12 +147,10 @@ class TheatrePlane: SCNNode {
                     self.addChildNode(target)
                     let missile = playerController.getMissile()
 
-                    minimapParentNode.addChild(missile.minimapNode!)
-
                     self.addChildNode(missile)
 
                     missile.fire(targetNode: target, speed: PlayerController.PLAYER_MISSILE_SPEED_SCALER)
-                    print("end of scope for missile")
+                    minimapParentNode.addChild(missile.minimapNode!)
                 }
                 else {
                     print("skipping inactive plane")
