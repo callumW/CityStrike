@@ -14,6 +14,7 @@ class BuildingNode : SCNNode {
 
     let houseNode: SCNNode
     let collisionCallback: (BuildingNode) -> Void
+    let minimapNode: MinimapNode
 
     init(collisionCallback: @escaping (BuildingNode) -> Void) {
         self.collisionCallback = collisionCallback
@@ -42,6 +43,8 @@ class BuildingNode : SCNNode {
         }
         houseNode = BuildingNode.buildingReference!.clone()
 
+        minimapNode = BuildingMinimapNode()
+
         super.init()
 
         self.addChildNode(houseNode)
@@ -53,6 +56,18 @@ class BuildingNode : SCNNode {
 
     func collidesWithMissile() {
         self.collisionCallback(self)
+        minimapNode.removeFromParent()
+    }
+
+    override var worldPosition: SCNVector3 {
+        didSet {
+            if self.parent != nil && self.parent!.parent != nil {
+
+                let pos = self.parent!.parent!.convertPosition(self.position, from: self.parent!)
+                print("building setting position \(pos)")
+                minimapNode.position = CGPoint(x: CGFloat(pos.x), y: CGFloat(pos.y))
+            }
+        }
     }
 
 }

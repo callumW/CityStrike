@@ -80,7 +80,7 @@ class TheatrePlane: SCNNode {
 
         playerController = PlayerController(scene: gameScene, ui: ui, planeNode: planeNode)
 
-        city = CityNode()
+        city = CityNode(minimap: minimapParentNode)
         planeNode.addChildNode(city)
 
         enemySpawn = SCNNode(geometry: nil)
@@ -96,6 +96,8 @@ class TheatrePlane: SCNNode {
         super.init()
 
         self.addChildNode(planeNode)
+
+
 
         print("Initialised Plane")
     }

@@ -8,6 +8,7 @@
 
 import Foundation
 import SceneKit
+import SpriteKit
 
 
 /// City class contains all the houses in the scene and provides automatic targetting for the enemy controller
@@ -18,9 +19,13 @@ class CityNode: SCNNode {
 
     /// Initialiser
     /// - Parameter parent: Parent Node of the City
-    override init() {
+    init(minimap: SKNode) {
         super.init()
         generate()
+
+        for house in houses {
+            minimap.addChild((house as! BuildingNode).minimapNode)
+        }
     }
 
     required init?(coder: NSCoder) {

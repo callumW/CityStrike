@@ -49,6 +49,24 @@ class MinimapNode : SKNode {
     }
 }
 
+class BuildingMinimapNode : MinimapNode {
+    override init() {
+        let tmp = SKShapeNode(rect: CGRect(x:0, y:0, width: 5, height: 20))
+        tmp.fillColor = .red
+        tmp.strokeColor = .clear
+
+        super.init()
+
+        self.addChild(tmp)
+
+        position = CGPoint(x: 0, y: 0)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 class MissileMinimapNode : MinimapNode {
     var lineNode: SKShapeNode? = nil
     let startPosition: CGPoint

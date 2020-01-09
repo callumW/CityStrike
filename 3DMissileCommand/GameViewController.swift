@@ -105,7 +105,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
          */
         _ = MissileNode()
 
-        _ = CityNode()
+        _ = CityNode(minimap: SKNode())
 
         _ = ExplosionNode(time: 0)
     }
