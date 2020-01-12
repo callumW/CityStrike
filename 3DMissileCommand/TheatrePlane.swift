@@ -41,6 +41,7 @@ class TheatrePlane: SCNNode {
     init?(gameScene: SCNScene, ui: SKScene, view: SCNView) {
 
         containingView = view
+        uiScene = ui
 
         if TheatrePlane.scene == nil {
             print("Template TheatrePlane scene not loaded")
@@ -66,22 +67,28 @@ class TheatrePlane: SCNNode {
             return nil
         }
 
-        minimapParentNode = PlaneMinimapNode()
+
+        // TODO how do we work out the size when the plane isn't in the scene yet!
+        minimapParentNode = PlaneMinimapNode(planeSize: CGSize(width: 26.68, height: 8.82))
 
         // Get missile silos
         for node in planeNode.childNodes {
             if node.name != nil && node.name! == "missile_battery" {
                 playerMissileBatteries.append(node)
                 let tmp = MissileBatteryNode()
-                tmp.position = CGPoint(x: CGFloat(node.position.x), y: CGFloat(node.position.y))
+                let posInTargetPlane = node.parent!.convertPosition(node.position, to: targetPlane)
+                tmp.position = CGPoint(x: CGFloat(posInTargetPlane.x), y: CGFloat(posInTargetPlane.y))
                 minimapParentNode.addChild(tmp)
+                print("added missile battery to \(tmp.position) (\(posInTargetPlane))")
             }
         }
 
         playerController = PlayerController(scene: gameScene, ui: ui, planeNode: planeNode)
 
-        city = CityNode(minimap: minimapParentNode)
+        city = CityNode()
         planeNode.addChildNode(city)
+
+        minimapParentNode.addChild(city.minimapNode)
 
         enemySpawn = SCNNode(geometry: nil)
         enemySpawn.position = SCNVector3(0, 20, 0)
@@ -91,7 +98,6 @@ class TheatrePlane: SCNNode {
         targettingUI = MissileTargetUI()
 
         uiParentNode = SKNode()
-        uiScene = ui
 
         super.init()
 
@@ -100,6 +106,42 @@ class TheatrePlane: SCNNode {
 
 
         print("Initialised Plane")
+    }
+
+    func getViewableSize() -> CGSize {
+        let topLeftPoint = CGPoint(x: 0, y: 5)
+        let topRightPoint = CGPoint(x: uiScene.size.width, y: 5)
+        var topLeftPosition: SCNVector3? = nil
+        var topRightPosition: SCNVector3? = nil
+
+        var height: CGFloat = 0
+
+        let topLeftResults = containingView.hitTest(topLeftPoint, options: [SCNHitTestOption.categoryBitMask: COLLISION_BITMASK.TARGET_PANE, SCNHitTestOption.ignoreHiddenNodes: false, SCNHitTestOption.backFaceCulling: false, SCNHitTestOption.searchMode: 1])
+
+        for result in topLeftResults {
+            if result.node == targetPlane {
+                topLeftPosition = result.localCoordinates
+                break
+            }
+        }
+
+        let topRightResults = containingView.hitTest(topRightPoint, options: [SCNHitTestOption.categoryBitMask: COLLISION_BITMASK.TARGET_PANE, SCNHitTestOption.ignoreHiddenNodes: false, SCNHitTestOption.backFaceCulling: false, SCNHitTestOption.searchMode: 1])
+
+        for result in topRightResults {
+            if result.node == targetPlane {
+                topRightPosition = result.localCoordinates
+                height = CGFloat(result.worldCoordinates.y)
+                break
+            }
+        }
+
+        if topRightPosition == nil || topLeftPosition == nil {
+            return CGSize(width: 0, height: 0)
+        }
+
+        // print("top left: \(topLeftPosition) | top right: \(topRightPosition)")
+
+        return CGSize(width: CGFloat(topRightPosition!.x - topLeftPosition!.x), height: height)
     }
 
     func getTexture(view: SKView) -> SKTexture {
@@ -138,7 +180,7 @@ class TheatrePlane: SCNNode {
 
             for result in results {
                 if result.node == targetPlane {
-                    print("Tap hits \(result.node.name ?? "no_name") @ \(result.worldCoordinates)")
+                    print("Tap \(tap) hits \(result.node.name ?? "no_name") @ \(result.worldCoordinates)")
 
                     let targetUiNode = SKSpriteNode(imageNamed: "target_hint.png")
                     targetUiNode.position = uiScene.convertPoint(fromView: tap)
@@ -152,7 +194,7 @@ class TheatrePlane: SCNNode {
                     self.addChildNode(missile)
 
                     missile.fire(targetNode: target, speed: PlayerController.PLAYER_MISSILE_SPEED_SCALER)
-                    minimapParentNode.addChild(missile.minimapNode!)
+                    minimapParentNode.addChild(missile.minimapNode)
                 }
                 else {
                     print("skipping inactive plane")
@@ -160,7 +202,15 @@ class TheatrePlane: SCNNode {
             }
         }
 
+        // print("Viewable area: \(getViewableSize())")
+
         taps.removeAll()
+    }
+
+    func updateMinimap() {
+        playerController.updateMinimap(relativeTo: targetPlane)
+        enemyController.updateMinimap(relativeTo: targetPlane)
+        city.updatePosition(relativeTo: targetPlane)
     }
 
     /// Update the TheatrePlane and its contents
@@ -170,6 +220,7 @@ class TheatrePlane: SCNNode {
         processUserInput()
         playerController.update(time)
         enemyController.update(time)
+        updateMinimap()
     }
 
     func houseWasDestroyed(_ house: SCNNode) {

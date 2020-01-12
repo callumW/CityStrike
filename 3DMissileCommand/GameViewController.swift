@@ -105,7 +105,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
          */
         _ = MissileNode()
 
-        _ = CityNode(minimap: SKNode())
+        _ = CityNode()
 
         _ = ExplosionNode(time: 0)
     }
@@ -121,7 +121,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         let padding = CGFloat(10)
         let margin = CGFloat(50)
-
 
         let plane1Button = ButtonNode(node: planes[0].minimapParentNode, callback: self.setPlaneOne)
         plane1Button.setScale(0.25)

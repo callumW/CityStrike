@@ -7,13 +7,23 @@
 //
 
 import SceneKit
+import SpriteKit
 
-class BuildingNode : SCNNode {
+class BuildingNode : SCNNode, Mappable3DNode {
+
+    func updatePosition(relativeTo: SCNNode) {
+        if let parentNode = self.parent {
+            let relativePosition = parentNode.convertPosition(position, to: relativeTo)
+            minimapNode.position = CGPoint(x: CGFloat(relativePosition.x), y: CGFloat(relativePosition.y))
+        }
+    }
+
 
     static var buildingReference: SCNNode? = nil
 
     let houseNode: SCNNode
     let collisionCallback: (BuildingNode) -> Void
+
     let minimapNode: MinimapNode
 
     init(collisionCallback: @escaping (BuildingNode) -> Void) {
@@ -50,6 +60,14 @@ class BuildingNode : SCNNode {
         self.addChildNode(houseNode)
     }
 
+    override var position: SCNVector3 {
+        didSet {
+            if self.parent != nil && self.parent!.parent != nil {
+                
+            }
+        }
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -57,17 +75,6 @@ class BuildingNode : SCNNode {
     func collidesWithMissile() {
         self.collisionCallback(self)
         minimapNode.removeFromParent()
-    }
-
-    override var worldPosition: SCNVector3 {
-        didSet {
-            if self.parent != nil && self.parent!.parent != nil {
-
-                let pos = self.parent!.parent!.convertPosition(self.position, from: self.parent!)
-                print("building setting position \(pos)")
-                minimapNode.position = CGPoint(x: CGFloat(pos.x), y: CGFloat(pos.y))
-            }
-        }
     }
 
 }

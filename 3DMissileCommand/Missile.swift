@@ -52,7 +52,7 @@ class TargetNode : SCNNode {
     }
 }
 
-class MissileNode : SCNNode {
+class MissileNode : SCNNode, Mappable3DNode {
 
     static let MISSILE_SPEED: Float = 5
     static var missileReference: SCNNode? = nil
@@ -66,7 +66,7 @@ class MissileNode : SCNNode {
 
     var targetNode: TargetNode? = nil
 
-    var minimapNode: MinimapNode? = nil
+    var minimapNode: MinimapNode
 
     var collisionCallback: (SCNNode) -> Void
 
@@ -99,6 +99,8 @@ class MissileNode : SCNNode {
 
         collisionCallback = { (missile: SCNNode) -> Void in
         }
+
+        minimapNode = MinimapNode()
 
         super.init()
 
@@ -160,13 +162,12 @@ class MissileNode : SCNNode {
         self.addChildNode(explosionNode!)
         self.state = .EXPLODING
         self.collisionCallback(self)
-        minimapNode?.removeFromParent()
+        minimapNode.removeFromParent()
     }
 
     func updateMinimap() {
-        print("missile is at: \(self.worldPosition), missilenode is at \(missileNode.worldPosition) | \(missileNode.presentation.worldPosition)")
         let planePosition = missileNode.convertPosition(missileNode.presentation.position, to: self.parent)
-        minimapNode?.position = CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y))
+        minimapNode.position = CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y))
     }
 
 
@@ -181,7 +182,15 @@ class MissileNode : SCNNode {
             }
         }
 
-        updateMinimap()
+        // updateMinimap()
+    }
+
+
+    func updatePosition(relativeTo: SCNNode) {
+        if let parentNode = self.parent {
+            let relativePosition = relativeTo.convertPosition(missileNode.presentation.position, from: parentNode)
+            minimapNode.position = CGPoint(x: CGFloat(relativePosition.x), y: CGFloat(relativePosition.y))
+        }
     }
 
 }
@@ -195,7 +204,7 @@ class PlayerMissile : MissileNode {
     override func fire(targetNode: TargetNode, speed: Float) {
         super.fire(targetNode: targetNode, speed: speed)
         let planePosition = missileNode.convertPosition(missileNode.position, to: self.parent)
-        minimapNode = PlayerMissileMinimapNode(startPosition: convertToPlane(point: CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y))))
+        minimapNode = PlayerMissileMinimapNode(startPosition: CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y)))
     }
 
     required init?(coder: NSCoder) {
@@ -215,15 +224,11 @@ class EnemyMissile : MissileNode {
     override func fire(targetNode: TargetNode, speed: Float) {
         super.fire(targetNode: targetNode, speed: speed)
         let planePosition = self.planeNode.convertPosition(self.position, from: self.parent!)
-        minimapNode = EnemyMissileMinimapNode(startPosition: convertToPlane(point: CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y))))
+        print("enemy missile start: \(planePosition)")
+        minimapNode = EnemyMissileMinimapNode(startPosition: CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y)))
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func updateMinimap() {
-        let planePosition = self.convertPosition(missileNode.presentation.position, to: self.planeNode)
-        minimapNode?.position = CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y))
     }
 }

@@ -47,7 +47,6 @@ class EnemyController {
         if time - lastUpdate > EnemyController.FIRE_INTERVAL {
             // target & fire a missile
             if let targetBuilding = targetCity.getRandomHouse() {
-                print("Enemy: firing missile")
                 let missile = EnemyMissile(planeNode: self.plane)
                 missile.setCollisionCallback(callback: self.onEnemyMissileCollision)
                 spawnNode.addChildNode(missile)
@@ -56,12 +55,9 @@ class EnemyController {
 
                 target.position = spawnNode.convertPosition(targetBuilding.worldPosition, from: nil)
 
-                print("Enemy targetting: \(target.position) | \(target.worldPosition) (building: \(targetBuilding.position) | \(targetBuilding.worldPosition)")
                 missile.fire(targetNode: target, speed: EnemyController.SPEED_SCALER)
                 missiles.append(missile)
-                minimapNode.addChild(missile.minimapNode!)
-
-                print("missile location: \(missile.worldPosition) | target location: \(target.worldPosition)")
+                minimapNode.addChild(missile.minimapNode)
             }
             else {
                 print("no house to target")
@@ -84,5 +80,11 @@ class EnemyController {
     }
 
     func onEnemyMissileCollision(_ missile: SCNNode) {
+    }
+
+    func updateMinimap(relativeTo: SCNNode) {
+        for missile in missiles {
+            missile.updatePosition(relativeTo: relativeTo)
+        }
     }
 }

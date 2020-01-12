@@ -113,4 +113,10 @@ class PlayerController {
         // explodingMissiles.append(missile as! MissileNode)
         return false
     }
+
+    func updateMinimap(relativeTo: SCNNode) {
+        for missile in missiles {
+            missile.updatePosition(relativeTo: relativeTo)
+        }
+    }
 }

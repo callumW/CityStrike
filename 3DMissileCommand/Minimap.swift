@@ -7,30 +7,70 @@
 //
 
 import SpriteKit
+import SceneKit
 
 func convertToPlane(point: CGPoint) -> CGPoint {
     return CGPoint(x: ((point.x + 14) / 26) * 400, y: (point.y / 9) * 200)
 }
 
+
+
+protocol Mappable3DNode {
+    var minimapNode: MinimapNode { get }
+
+    func updatePosition(relativeTo: SCNNode)
+}
+
+
 class PlaneMinimapNode: SKNode {
 
 //    let borderNode: SKShapeNode
     let bgNode: SKShapeNode
+    let planeSize: CGSize
+    let planeXScale: Double
+    let planeYScale: Double
 
-    override init() {
+    let width: CGFloat = 400
+    let height: CGFloat = 200
+
+    /// Init the top level Plane Minimap node.
+    /// - Parameter planeSize: actual size of the 3D plane this is representing
+    init(planeSize: CGSize) {
+        self.planeSize = planeSize
 //        borderNode = SKShapeNode(rect: CGRect(x: 0, y: 0, width: 400, height: 200))
 //        borderNode.lineWidth = 3
 //        borderNode.strokeColor = .red
 
-        bgNode = SKShapeNode(rect: CGRect(x: 0, y: 0, width: 400, height: 200))
+
+        self.planeXScale = Double(width) / Double(planeSize.width)
+        self.planeYScale = Double(height) / Double(planeSize.height)
+
+        bgNode = SKShapeNode(rectOf: CGSize(width: width, height: height))
         bgNode.fillColor = UIColor.red.withAlphaComponent(0.2)
         bgNode.strokeColor = .red
         bgNode.lineWidth = 3
 
         super.init()
 
+        let tmp = SKShapeNode(circleOfRadius: 10)
+        tmp.fillColor = .green
+        addChild(tmp)
+
         addChild(bgNode)
 //        addChild(borderNode)
+    }
+
+    func convertToPlanePosition(point: CGPoint) -> CGPoint {
+
+        // let ret = CGPoint(x: CGFloat(Double(point.x + (planeSize.width / 2)) * self.planeXScale), y: CGFloat(Double(point.y) * self.planeYScale))
+        let ret = CGPoint(x: CGFloat(Double(point.x) * self.planeXScale), y: CGFloat(Double(point.y) * self.planeYScale))
+        //print("converted \(point) to \(ret)")
+        return ret
+    }
+
+    override func addChild(_ node: SKNode) {
+        node.position = convertToPlanePosition(point: node.position)
+        super.addChild(node)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -41,7 +81,14 @@ class PlaneMinimapNode: SKNode {
 class MinimapNode : SKNode {
     override var position: CGPoint {
         set {
-            super.position = convertToPlane(point: newValue)
+            if let parentNode = self.parent {
+                if parentNode is PlaneMinimapNode {
+                    let planeNode = parentNode as! PlaneMinimapNode
+                    super.position = planeNode.convertToPlanePosition(point: newValue)
+                    return
+                }
+            }
+            super.position = newValue
         }
         get {
             return super.position
@@ -59,7 +106,7 @@ class BuildingMinimapNode : MinimapNode {
 
         self.addChild(tmp)
 
-        position = CGPoint(x: 0, y: 0)
+        position = CGPoint(x: 0, y: 0) 
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -91,8 +138,17 @@ class MissileMinimapNode : MinimapNode {
         if endPosition == startPosition {
             return
         }
+        var points: Array<CGPoint> = []
+        if self.parent != nil && self.parent is PlaneMinimapNode {
+            let parentPlane = self.parent! as! PlaneMinimapNode
+            points.append(parentPlane.convertToPlanePosition(point: startPosition))
+        }
+        else {
+            points.append(startPosition)
+        }
 
-        var points = [startPosition, endPosition]
+        points.append(endPosition)
+
         lineNode = SKShapeNode(points: &points, count: points.count)
         lineNode?.strokeColor = .red
         lineNode?.lineWidth = 3

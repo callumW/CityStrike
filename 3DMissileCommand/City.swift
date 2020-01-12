@@ -12,19 +12,28 @@ import SpriteKit
 
 
 /// City class contains all the houses in the scene and provides automatic targetting for the enemy controller
-class CityNode: SCNNode {
+class CityNode: SCNNode, Mappable3DNode {
+    func updatePosition(relativeTo: SCNNode) {
+        for building in houses {
+            building.updatePosition(relativeTo: relativeTo)
+        }
+    }
 
-    var houses:Set<SCNNode> = []
-    var destoryedHouses:Array<SCNNode> = []
+
+    var houses:Set<BuildingNode> = []
+    var destoryedHouses:Array<BuildingNode> = []
+
+    var minimapNode: MinimapNode    // unused
 
     /// Initialiser
     /// - Parameter parent: Parent Node of the City
-    init(minimap: SKNode) {
+    override init() {
+        minimapNode = MinimapNode()
         super.init()
         generate()
 
         for house in houses {
-            minimap.addChild((house as! BuildingNode).minimapNode)
+            minimapNode.addChild(house.minimapNode)
         }
     }
 
@@ -58,9 +67,12 @@ class CityNode: SCNNode {
     /// - Parameter house: The house that was destroyed
     /// - Returns: True if house was in the city and successfuly destroyed, false otherwise
     func houseWasDestroyed(_ house: SCNNode) -> Void {
-        if let removed = houses.remove(house){
-            print("removed house @ \(house.worldPosition) from set! count now: \(houses.count)")
-            destoryedHouses.append(removed)
+        if house is BuildingNode {
+            let building = house as! BuildingNode 
+            if let removed = houses.remove(building){
+                print("removed house @ \(building.worldPosition) from set! count now: \(houses.count)")
+                destoryedHouses.append(removed)
+            }
         }
     }
 
@@ -71,4 +83,5 @@ class CityNode: SCNNode {
         self.houses.insert(house)
         self.addChildNode(house)
     }
+
 }
