@@ -144,9 +144,6 @@ class TheatrePlane: SCNNode {
         return CGSize(width: CGFloat(topRightPosition!.x - topLeftPosition!.x), height: height)
     }
 
-    func getTexture(view: SKView) -> SKTexture {
-        return view.texture(from: minimapParentNode)!
-    }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

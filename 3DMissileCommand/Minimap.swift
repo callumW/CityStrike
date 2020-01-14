@@ -37,10 +37,6 @@ class PlaneMinimapNode: SKNode {
     /// - Parameter planeSize: actual size of the 3D plane this is representing
     init(planeSize: CGSize) {
         self.planeSize = planeSize
-//        borderNode = SKShapeNode(rect: CGRect(x: 0, y: 0, width: 400, height: 200))
-//        borderNode.lineWidth = 3
-//        borderNode.strokeColor = .red
-
 
         self.planeXScale = Double(width) / Double(planeSize.width)
         self.planeYScale = Double(height) / Double(planeSize.height)
@@ -49,27 +45,33 @@ class PlaneMinimapNode: SKNode {
         bgNode.fillColor = UIColor.red.withAlphaComponent(0.2)
         bgNode.strokeColor = .red
         bgNode.lineWidth = 3
+        bgNode.position = CGPoint(x: 0, y: 0)
 
         super.init()
 
         let tmp = SKShapeNode(circleOfRadius: 10)
         tmp.fillColor = .green
-        addChild(tmp)
+        tmp.position = CGPoint(x: 0, y: -100)
+        addChildNoConvert(tmp)
 
-        addChild(bgNode)
-//        addChild(borderNode)
+        addChildNoConvert(bgNode)
     }
 
     func convertToPlanePosition(point: CGPoint) -> CGPoint {
 
         // let ret = CGPoint(x: CGFloat(Double(point.x + (planeSize.width / 2)) * self.planeXScale), y: CGFloat(Double(point.y) * self.planeYScale))
-        let ret = CGPoint(x: CGFloat(Double(point.x) * self.planeXScale), y: CGFloat(Double(point.y) * self.planeYScale))
-        //print("converted \(point) to \(ret)")
+        // let preScalePoint = CGPoint(x: point.x, y: CGFloat(Double(((20 - 8.82) / 2) + point.y)))
+        let ret = CGPoint(x: CGFloat(Double(point.x) * self.planeXScale), y: CGFloat(Double(point.y + ((20 - 8.82) / 2)) * self.planeYScale))
+        // print("converted \(point) -> \(preScalePoint) -> \(ret)")
         return ret
     }
 
     override func addChild(_ node: SKNode) {
         node.position = convertToPlanePosition(point: node.position)
+        super.addChild(node)
+    }
+
+    func addChildNoConvert(_ node: SKNode) {
         super.addChild(node)
     }
 
@@ -142,17 +144,22 @@ class MissileMinimapNode : MinimapNode {
         if self.parent != nil && self.parent is PlaneMinimapNode {
             let parentPlane = self.parent! as! PlaneMinimapNode
             points.append(parentPlane.convertToPlanePosition(point: startPosition))
+            points.append(endPosition)
+
+            lineNode = SKShapeNode(points: &points, count: points.count)
+            lineNode?.strokeColor = .red
+            lineNode?.lineWidth = 3
+            parentPlane.addChildNoConvert(lineNode!)
         }
         else {
             points.append(startPosition)
+            points.append(endPosition)
+
+            lineNode = SKShapeNode(points: &points, count: points.count)
+            lineNode?.strokeColor = .red
+            lineNode?.lineWidth = 3
+            self.parent?.addChild(lineNode!)
         }
-
-        points.append(endPosition)
-
-        lineNode = SKShapeNode(points: &points, count: points.count)
-        lineNode?.strokeColor = .red
-        lineNode?.lineWidth = 3
-        self.parent?.addChild(lineNode!)
     }
 
     override func removeFromParent() {

@@ -203,7 +203,7 @@ class PlayerMissile : MissileNode {
 
     override func fire(targetNode: TargetNode, speed: Float) {
         super.fire(targetNode: targetNode, speed: speed)
-        let planePosition = missileNode.convertPosition(missileNode.position, to: self.parent)
+        let planePosition = position
         minimapNode = PlayerMissileMinimapNode(startPosition: CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y)))
     }
 
