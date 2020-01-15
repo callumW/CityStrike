@@ -83,7 +83,7 @@ class TheatrePlane: SCNNode {
             }
         }
 
-        playerController = PlayerController(scene: gameScene, ui: ui, planeNode: planeNode)
+        playerController = PlayerController(scene: gameScene, ui: ui, planeNode: planeNode, targetPlane: targetPlane)
 
         city = CityNode()
         planeNode.addChildNode(city)
@@ -216,7 +216,7 @@ class TheatrePlane: SCNNode {
         city.cleanUp()
         processUserInput()
         playerController.update(time)
-        enemyController.update(time)
+        // enemyController.update(time)
         updateMinimap()
     }
 

@@ -165,11 +165,6 @@ class MissileNode : SCNNode, Mappable3DNode {
         minimapNode.removeFromParent()
     }
 
-    func updateMinimap() {
-        let planePosition = missileNode.convertPosition(missileNode.presentation.position, to: self.parent)
-        minimapNode.position = CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y))
-    }
-
 
     /// Update the missile explosion
     /// - Parameter time: current time
@@ -181,14 +176,12 @@ class MissileNode : SCNNode, Mappable3DNode {
                 self.removeFromParentNode()
             }
         }
-
-        // updateMinimap()
     }
 
 
     func updatePosition(relativeTo: SCNNode) {
         if let parentNode = self.parent {
-            let relativePosition = relativeTo.convertPosition(missileNode.presentation.position, from: parentNode)
+            let relativePosition = relativeTo.convertPosition(missileNode.presentation.worldPosition, from: nil)
             minimapNode.position = CGPoint(x: CGFloat(relativePosition.x), y: CGFloat(relativePosition.y))
         }
     }
@@ -204,6 +197,7 @@ class PlayerMissile : MissileNode {
     override func fire(targetNode: TargetNode, speed: Float) {
         super.fire(targetNode: targetNode, speed: speed)
         let planePosition = position
+        print("setting player missile start pos as: \(planePosition)")
         minimapNode = PlayerMissileMinimapNode(startPosition: CGPoint(x: CGFloat(planePosition.x), y: CGFloat(planePosition.y)))
     }
 

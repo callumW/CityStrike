@@ -60,9 +60,9 @@ class PlaneMinimapNode: SKNode {
     func convertToPlanePosition(point: CGPoint) -> CGPoint {
 
         // let ret = CGPoint(x: CGFloat(Double(point.x + (planeSize.width / 2)) * self.planeXScale), y: CGFloat(Double(point.y) * self.planeYScale))
-        // let preScalePoint = CGPoint(x: point.x, y: CGFloat(Double(((20 - 8.82) / 2) + point.y)))
+        let preScalePoint = CGPoint(x: point.x, y: CGFloat(Double(((20 - 8.82) / 2) + point.y)))
         let ret = CGPoint(x: CGFloat(Double(point.x) * self.planeXScale), y: CGFloat(Double(point.y + ((20 - 8.82) / 2)) * self.planeYScale))
-        // print("converted \(point) -> \(preScalePoint) -> \(ret)")
+//        print("converted \(point) -> \(preScalePoint) -> \(ret)")
         return ret
     }
 
@@ -188,6 +188,12 @@ class PlayerMissileMinimapNode : MissileMinimapNode {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override var position: CGPoint {
+        didSet {
+            print("Set player missile pos to: \(position)")
+        }
     }
 }
 

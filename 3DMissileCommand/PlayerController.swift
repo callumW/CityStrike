@@ -26,6 +26,7 @@ class PlayerController {
     let gameScene: SCNScene
     let uiOverlay: SKScene
     let planeNode: SCNNode
+    let targetPlaneNode: SCNNode
 
     var missileBatteries: Array<SCNNode> = []
     var explodingMissiles: Array<MissileNode> = []
@@ -38,10 +39,11 @@ class PlayerController {
     let targetHintAction: SKAction
 
 
-    init(scene: SCNScene, ui: SKScene, planeNode: SCNNode) {
+    init(scene: SCNScene, ui: SKScene, planeNode: SCNNode, targetPlane: SCNNode) {
         gameScene = scene
         uiOverlay = ui
         self.planeNode = planeNode
+        self.targetPlaneNode = targetPlane
         /* Setup action to animate ui target hints */
         let scaleAction = SKAction.scale(by: 1.5, duration: 0.2)
         let pulseAction = SKAction.sequence([scaleAction, scaleAction.reversed()])
@@ -74,8 +76,10 @@ class PlayerController {
     func getMissile() -> MissileNode {
         let missile = PlayerMissile()
         let source = missileBatteries.randomElement()!
-        let sourcePosition = source.position
-        missile.position = sourcePosition
+
+        // TODO the parent of the missile is the planeNode, not the targetPlaneNode.
+        missile.position = targetPlaneNode.convertPosition(source.position, from: planeNode)
+        print("spawn player missile at: \(missile.position)")
 
         missile.setCollisionCallback(callback: { (missile: SCNNode) -> Void in
             self.onPlayerMissileCollision(missile: missile)
