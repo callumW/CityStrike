@@ -77,9 +77,10 @@ class CityNode: SCNNode {
     func generate() {
         // TODO add basic city generation (literally just place two houses at predefined points
         let house = BuildingNode(collisionCallback: self.houseWasDestroyed)
+        self.addChildNode(house)
+
         house.position = SCNVector3(-1, 0, 0)
         self.houses.insert(house)
-        self.addChildNode(house)
     }
 
 }

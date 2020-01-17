@@ -98,6 +98,7 @@ class CityBuildingMinimapNode : MinimapNode {
             if child is MinimapNode {
                 let tmp = child as! MinimapNode
                 tmp.updatePosition(relativeTo: relativeTo, transform: transform)
+                print("new building pos: \(tmp.position)")
             }
         }
     }
@@ -115,8 +116,6 @@ class BuildingMinimapNode : MinimapNode {
 
         position = CGPoint(x: 0, y: 0) 
     }
-
-    
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

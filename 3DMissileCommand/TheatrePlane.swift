@@ -217,7 +217,7 @@ class TheatrePlane: SCNNode {
         city.cleanUp()
         processUserInput()
         playerController.update(time)
-        // enemyController.update(time)
+        enemyController.update(time)
         updateMinimap()
     }
 

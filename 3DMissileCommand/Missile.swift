@@ -214,7 +214,7 @@ class EnemyMissile : MissileNode {
 
     override func fire(targetNode: TargetNode, speed: Float) {
         super.fire(targetNode: targetNode, speed: speed)
-        minimapNode = EnemyMissileMinimapNode(startPosition: position)
+        minimapNode = EnemyMissileMinimapNode(startPosition: worldPosition)
     }
 
     required init?(coder: NSCoder) {
