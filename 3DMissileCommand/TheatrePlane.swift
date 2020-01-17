@@ -36,7 +36,7 @@ class TheatrePlane: SCNNode {
     let uiParentNode: SKNode
     let uiScene: SKScene
 
-    let minimapParentNode: SKNode
+    let minimapParentNode: PlaneMinimapNode
 
     init?(gameScene: SCNScene, ui: SKScene, view: SCNView) {
 
@@ -77,7 +77,8 @@ class TheatrePlane: SCNNode {
                 playerMissileBatteries.append(node)
                 let tmp = MissileBatteryNode()
                 let posInTargetPlane = node.parent!.convertPosition(node.position, to: targetPlane)
-                tmp.position = CGPoint(x: CGFloat(posInTargetPlane.x), y: CGFloat(posInTargetPlane.y))
+                tmp.scenePosition = posInTargetPlane
+                tmp.sceneParent = targetPlane
                 minimapParentNode.addChild(tmp)
                 print("added missile battery to \(tmp.position) (\(posInTargetPlane))")
             }
@@ -207,7 +208,7 @@ class TheatrePlane: SCNNode {
     func updateMinimap() {
         playerController.updateMinimap(relativeTo: targetPlane)
         enemyController.updateMinimap(relativeTo: targetPlane)
-        city.updatePosition(relativeTo: targetPlane)
+        minimapParentNode.updateNodes(targetPlane: targetPlane)
     }
 
     /// Update the TheatrePlane and its contents

@@ -9,16 +9,7 @@
 import SceneKit
 import SpriteKit
 
-class BuildingNode : SCNNode, Mappable3DNode {
-
-    func updatePosition(relativeTo: SCNNode) {
-        if let parentNode = self.parent {
-            let relativePosition = relativeTo.convertPosition(worldPosition, from: nil)
-            print("building world position: \(worldPosition) | relative position: \(relativePosition)")
-            minimapNode.position = CGPoint(x: CGFloat(relativePosition.x), y: CGFloat(relativePosition.y))
-            print("building minimap pos: \(minimapNode.position)")
-        }
-    }
+class BuildingNode : SCNNode {
 
 
     static var buildingReference: SCNNode? = nil
@@ -60,6 +51,14 @@ class BuildingNode : SCNNode, Mappable3DNode {
         super.init()
 
         self.addChildNode(houseNode)
+    }
+
+    override var position: SCNVector3 {
+        didSet {
+            print("set building position \(position)")
+            minimapNode.scenePosition = position
+            minimapNode.sceneParent = parent
+        }
     }
 
     required init?(coder: NSCoder) {

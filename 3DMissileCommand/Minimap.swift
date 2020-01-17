@@ -9,18 +9,6 @@
 import SpriteKit
 import SceneKit
 
-func convertToPlane(point: CGPoint) -> CGPoint {
-    return CGPoint(x: ((point.x + 14) / 26) * 400, y: (point.y / 9) * 200)
-}
-
-
-
-protocol Mappable3DNode {
-    var minimapNode: MinimapNode { get }
-
-    func updatePosition(relativeTo: SCNNode)
-}
-
 
 class PlaneMinimapNode: SKNode {
 
@@ -52,9 +40,9 @@ class PlaneMinimapNode: SKNode {
         let tmp = SKShapeNode(circleOfRadius: 10)
         tmp.fillColor = .green
         tmp.position = CGPoint(x: 0, y: -100)
-        addChildNoConvert(tmp)
+        addChild(tmp)
 
-        addChildNoConvert(bgNode)
+        addChild(bgNode)
     }
 
     func convertToPlanePosition(point: CGPoint) -> CGPoint {
@@ -62,18 +50,19 @@ class PlaneMinimapNode: SKNode {
         // let ret = CGPoint(x: CGFloat(Double(point.x + (planeSize.width / 2)) * self.planeXScale), y: CGFloat(Double(point.y) * self.planeYScale))
         let preScalePoint = CGPoint(x: point.x, y: CGFloat(Double(((20 - 8.82) / 2) + point.y)))
         let ret = CGPoint(x: CGFloat(Double(point.x) * self.planeXScale), y: CGFloat(Double(point.y + ((20 - 8.82) / 2)) * self.planeYScale))
-//        print("converted \(point) -> \(preScalePoint) -> \(ret)")
+        print("converted \(point) -> \(preScalePoint) -> \(ret)")
         return ret
     }
 
-    override func addChild(_ node: SKNode) {
-        node.position = convertToPlanePosition(point: node.position)
-        super.addChild(node)
+    func updateNodes(targetPlane: SCNNode) {
+        for child in children {
+            if child is MinimapNode {
+                let tmp = child as! MinimapNode
+                tmp.updatePosition(relativeTo: targetPlane, transform: convertToPlanePosition)
+            }
+        }
     }
 
-    func addChildNoConvert(_ node: SKNode) {
-        super.addChild(node)
-    }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -81,19 +70,35 @@ class PlaneMinimapNode: SKNode {
 }
 
 class MinimapNode : SKNode {
-    override var position: CGPoint {
-        set {
-            if let parentNode = self.parent {
-                if parentNode is PlaneMinimapNode {
-                    let planeNode = parentNode as! PlaneMinimapNode
-                    super.position = planeNode.convertToPlanePosition(point: newValue)
-                    return
-                }
+
+    var scenePosition: SCNVector3 = SCNVector3()    // position of the 3D object in its parent coordinate system
+    var sceneParent: SCNNode? = nil     // parent of the 3D object this node represents
+
+    /// Calculate the nodes position based on the 3D object it represents position relative to the passed node
+    /// - Parameter relativeTo: Node which represents the minimap in 3D space
+    func getPosition(relativeTo: SCNNode) -> CGPoint {
+        let convertedPos = relativeTo.convertPosition(scenePosition, from: sceneParent)
+
+        print("converted \(scenePosition) to \(convertedPos)")
+
+        let point = CGPoint(x: CGFloat(convertedPos.x), y: CGFloat(convertedPos.y))
+
+        return point
+    }
+
+    func updatePosition(relativeTo: SCNNode, transform: (CGPoint) -> CGPoint) {
+        position = transform(getPosition(relativeTo: relativeTo))
+    }
+}
+
+class CityBuildingMinimapNode : MinimapNode {
+
+    override func updatePosition(relativeTo: SCNNode, transform: (CGPoint) -> CGPoint) {
+        for child in children {
+            if child is MinimapNode {
+                let tmp = child as! MinimapNode
+                tmp.updatePosition(relativeTo: relativeTo, transform: transform)
             }
-            super.position = newValue
-        }
-        get {
-            return super.position
         }
     }
 }
@@ -111,6 +116,8 @@ class BuildingMinimapNode : MinimapNode {
         position = CGPoint(x: 0, y: 0) 
     }
 
+    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -118,18 +125,19 @@ class BuildingMinimapNode : MinimapNode {
 
 class MissileMinimapNode : MinimapNode {
     var lineNode: SKShapeNode? = nil
-    let startPosition: CGPoint
+    var startPoint: CGPoint = CGPoint.zero
+    let startPosition: SCNVector3
 
-    override var position: CGPoint {
-        didSet {
-            updateLine(endPosition: position)
-        }
-    }
-
-    init(startPosition: CGPoint) {
-       self.startPosition = startPosition
-
+    init(startPosition: SCNVector3) {
+        self.startPosition = startPosition
         super.init()
+    }
+    override func updatePosition(relativeTo: SCNNode, transform: (CGPoint) -> CGPoint) {
+        super.updatePosition(relativeTo: relativeTo, transform: transform)
+        let convertedPos = relativeTo.convertPosition(startPosition, from: sceneParent)
+        let point = CGPoint(x: CGFloat(convertedPos.x), y: CGFloat(convertedPos.y))
+        startPoint = transform(point)
+        updateLine(endPosition: position)
     }
 
     func updateLine(endPosition: CGPoint) {
@@ -137,29 +145,17 @@ class MissileMinimapNode : MinimapNode {
             lineNode?.removeFromParent()
         }
 
-        if endPosition == startPosition {
+        if endPosition == startPoint {
             return
         }
         var points: Array<CGPoint> = []
-        if self.parent != nil && self.parent is PlaneMinimapNode {
-            let parentPlane = self.parent! as! PlaneMinimapNode
-            points.append(parentPlane.convertToPlanePosition(point: startPosition))
-            points.append(endPosition)
+        points.append(startPoint)
+        points.append(endPosition)
 
-            lineNode = SKShapeNode(points: &points, count: points.count)
-            lineNode?.strokeColor = .red
-            lineNode?.lineWidth = 3
-            parentPlane.addChildNoConvert(lineNode!)
-        }
-        else {
-            points.append(startPosition)
-            points.append(endPosition)
-
-            lineNode = SKShapeNode(points: &points, count: points.count)
-            lineNode?.strokeColor = .red
-            lineNode?.lineWidth = 3
-            self.parent?.addChild(lineNode!)
-        }
+        lineNode = SKShapeNode(points: &points, count: points.count)
+        lineNode?.strokeColor = .red
+        lineNode?.lineWidth = 3
+        self.parent?.addChild(lineNode!)
     }
 
     override func removeFromParent() {
@@ -174,7 +170,7 @@ class MissileMinimapNode : MinimapNode {
 
 class PlayerMissileMinimapNode : MissileMinimapNode {
 
-    override init(startPosition: CGPoint) {
+    override init(startPosition: SCNVector3) {
         super.init(startPosition: startPosition)
         let tmp = SKShapeNode(circleOfRadius: 5)
         tmp.fillColor = .red
@@ -182,23 +178,14 @@ class PlayerMissileMinimapNode : MissileMinimapNode {
         self.addChild(tmp)
     }
 
-    func update() {
-
-    }
-
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override var position: CGPoint {
-        didSet {
-            print("Set player missile pos to: \(position)")
-        }
-    }
 }
 
 class EnemyMissileMinimapNode : MissileMinimapNode {
-    override init(startPosition: CGPoint) {
+    override init(startPosition: SCNVector3) {
         super.init(startPosition: startPosition)
 
         var points = [CGPoint(x: -1, y: 0), CGPoint(x: 1, y: 0), CGPoint(x: 0, y: 1.7), CGPoint(x: -1, y: 0)]

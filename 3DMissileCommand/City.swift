@@ -12,23 +12,21 @@ import SpriteKit
 
 
 /// City class contains all the houses in the scene and provides automatic targetting for the enemy controller
-class CityNode: SCNNode, Mappable3DNode {
+class CityNode: SCNNode {
     func updatePosition(relativeTo: SCNNode) {
-        for building in houses {
-            building.updatePosition(relativeTo: relativeTo)
-        }
+
     }
 
 
     var houses:Set<BuildingNode> = []
     var destoryedHouses:Array<BuildingNode> = []
 
-    var minimapNode: MinimapNode    // unused
+    var minimapNode: CityBuildingMinimapNode
 
     /// Initialiser
     /// - Parameter parent: Parent Node of the City
     override init() {
-        minimapNode = MinimapNode()
+        minimapNode = CityBuildingMinimapNode()
         super.init()
         generate()
 

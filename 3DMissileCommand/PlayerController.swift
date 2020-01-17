@@ -78,7 +78,7 @@ class PlayerController {
         let source = missileBatteries.randomElement()!
 
         // TODO the parent of the missile is the planeNode, not the targetPlaneNode.
-        missile.position = targetPlaneNode.convertPosition(source.position, from: planeNode)
+        missile.position = source.position
         print("spawn player missile at: \(missile.position)")
 
         missile.setCollisionCallback(callback: { (missile: SCNNode) -> Void in
