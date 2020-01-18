@@ -114,27 +114,29 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         print("UI Scene: \(overlayScene.size)")
 
-        let maxX = overlayScene.size.width / 2
-        let minX = 0 - maxX
+        var plane1Placeholder: SKNode? = nil
+        var plane2Placeholder: SKNode? = nil
 
-        let maxY = overlayScene.size.height / 2
+        for child in overlayScene.children {
+            if child.name == "plane1pos" {
+                plane1Placeholder = child
+            }
+            else if child.name == "plane2pos" {
+                plane2Placeholder = child
+            }
+        }
 
-        let padding = CGFloat(10)
-        let margin = CGFloat(50)
+        if plane1Placeholder == nil || plane2Placeholder == nil {
+            fatalError("Failed to find minimap placeholders")
+        }
 
-        let plane1Button = ButtonNode(node: planes[0].minimapParentNode, callback: self.setPlaneOne)
-        plane1Button.setScale(0.25)
-        let plane1Size = plane1Button.calculateAccumulatedFrame()
-        print("button size: \(plane1Size)")
-        let plane1Pos = CGPoint(x: minX + margin + (plane1Size.width / 2), y: maxY - margin - (plane1Size.height / 2))
-        let plane2Pos = CGPoint(x: plane1Pos.x + (plane1Size.width / 2) + padding + (plane1Size.width / 2), y: plane1Pos.y)
-        plane1Button.position = plane1Pos
+
+
+        let plane1Button = ButtonNode(node: planes[0].minimapParentNode, callback: self.setPlaneOne, replace: plane1Placeholder!)
         overlayScene.addChild(plane1Button)
         uiButtons.append(plane1Button)
 
-        let plane2Button = ButtonNode(node: planes[1].minimapParentNode, callback: self.setPlaneTwo)
-        plane2Button.setScale(0.25)
-        plane2Button.position = plane2Pos
+        let plane2Button = ButtonNode(node: planes[1].minimapParentNode, callback: self.setPlaneTwo, replace: plane2Placeholder!)
         overlayScene.addChild(plane2Button)
         uiButtons.append(plane2Button)
 

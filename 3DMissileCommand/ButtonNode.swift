@@ -26,10 +26,25 @@ class ButtonNode : SKNode {
         }
     }
 
-    init(node: SKNode, callback: @escaping () -> Void) {
+    init(node: SKNode, callback: @escaping () -> Void, replace: SKNode) {
         upNode = node
+
+        let dstSize = replace.calculateAccumulatedFrame()
+
+        let srcSize = upNode.calculateAccumulatedFrame()
+
+        let yScale = dstSize.height / srcSize.height
+        let xScale = dstSize.width / srcSize.width
+
+        upNode.xScale = xScale
+        upNode.yScale = yScale
+
+
         self.callback = callback
         super.init()
+
+        position = replace.position
+        replace.removeFromParent()
         self.addChild(upNode)
     }
 
