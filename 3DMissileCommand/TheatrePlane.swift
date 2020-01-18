@@ -155,12 +155,14 @@ class TheatrePlane: SCNNode {
     func activate(camera: SCNNode, uiScene: SKScene) {
         self.cameraNode.addChildNode(camera)
         uiScene.addChild(self.uiParentNode)
+        self.minimapParentNode.select()
     }
 
 
     /// Deactivate the plane
     func deactivate() {
         self.uiParentNode.removeFromParent()
+        self.minimapParentNode.unselect()
     }
 
     func notifyTap(point: CGPoint) {

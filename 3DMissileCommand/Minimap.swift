@@ -21,6 +21,8 @@ class PlaneMinimapNode: SKNode {
     let width: CGFloat = 400
     let height: CGFloat = 200
 
+    let selectedHint: SKShapeNode
+
     /// Init the top level Plane Minimap node.
     /// - Parameter planeSize: actual size of the 3D plane this is representing
     init(planeSize: CGSize) {
@@ -35,6 +37,11 @@ class PlaneMinimapNode: SKNode {
         bgNode.lineWidth = 3
         bgNode.position = CGPoint(x: 0, y: 0)
 
+        selectedHint = SKShapeNode(rect: CGRect(x: 0 - width / 2, y: height / 2 + 10, width: width, height: 10), cornerRadius: 5)
+        selectedHint.fillColor = bgNode.strokeColor
+        selectedHint.strokeColor = .clear
+        selectedHint.isHidden = true
+
         super.init()
 
         let tmp = SKShapeNode(circleOfRadius: 10)
@@ -43,6 +50,15 @@ class PlaneMinimapNode: SKNode {
         addChild(tmp)
 
         addChild(bgNode)
+        addChild(selectedHint)
+    }
+
+    func select() {
+        selectedHint.isHidden = false
+    }
+
+    func unselect() {
+        selectedHint.isHidden = true
     }
 
     func convertToPlanePosition(point: CGPoint) -> CGPoint {
@@ -58,7 +74,7 @@ class PlaneMinimapNode: SKNode {
         for child in children {
             if child is MinimapNode {
                 let tmp = child as! MinimapNode
-                tmp.updatePosition(relativeTo: targetPlane, transform: convertToPlanePosition)
+                tmp.updatePosition(relativeTo: targetPlane, transform: convertToPlanePosition, viewRect: bgNode.calculateAccumulatedFrame())
             }
         }
     }
@@ -86,18 +102,18 @@ class MinimapNode : SKNode {
         return point
     }
 
-    func updatePosition(relativeTo: SCNNode, transform: (CGPoint) -> CGPoint) {
+    func updatePosition(relativeTo: SCNNode, transform: (CGPoint) -> CGPoint, viewRect: CGRect? = nil) {
         position = transform(getPosition(relativeTo: relativeTo))
     }
 }
 
 class CityBuildingMinimapNode : MinimapNode {
 
-    override func updatePosition(relativeTo: SCNNode, transform: (CGPoint) -> CGPoint) {
+    override func updatePosition(relativeTo: SCNNode, transform: (CGPoint) -> CGPoint, viewRect: CGRect?) {
         for child in children {
             if child is MinimapNode {
                 let tmp = child as! MinimapNode
-                tmp.updatePosition(relativeTo: relativeTo, transform: transform)
+                tmp.updatePosition(relativeTo: relativeTo, transform: transform, viewRect: viewRect)
                 print("new building pos: \(tmp.position)")
             }
         }
@@ -131,15 +147,15 @@ class MissileMinimapNode : MinimapNode {
         self.startPosition = startPosition
         super.init()
     }
-    override func updatePosition(relativeTo: SCNNode, transform: (CGPoint) -> CGPoint) {
-        super.updatePosition(relativeTo: relativeTo, transform: transform)
+    override func updatePosition(relativeTo: SCNNode, transform: (CGPoint) -> CGPoint, viewRect: CGRect?) {
+        super.updatePosition(relativeTo: relativeTo, transform: transform, viewRect: viewRect)
         let convertedPos = relativeTo.convertPosition(startPosition, from: sceneParent)
         let point = CGPoint(x: CGFloat(convertedPos.x), y: CGFloat(convertedPos.y))
         startPoint = transform(point)
-        updateLine(endPosition: position)
+        updateLine(endPosition: position, viewRect: viewRect)
     }
 
-    func updateLine(endPosition: CGPoint) {
+    func updateLine(endPosition: CGPoint, viewRect: CGRect? = nil) {
         if lineNode != nil {
             lineNode?.removeFromParent()
         }
@@ -148,13 +164,46 @@ class MissileMinimapNode : MinimapNode {
             return
         }
         var points: Array<CGPoint> = []
-        points.append(startPoint)
+
+        var lineStart = startPoint
+        if !(viewRect?.contains(startPoint) ?? true) {
+
+            if endPosition.x == startPoint.x {
+                lineStart = CGPoint(x: startPoint.x, y: viewRect!.maxY)
+            }
+            else {
+                // find intersection with rect?
+                let deltaY = startPoint.y - (endPosition.y)
+
+                let minorDeltaY = startPoint.y - viewRect!.maxY
+
+                let ratio = minorDeltaY / deltaY
+
+                lineStart.y = viewRect!.maxY
+
+                if (endPosition.x < startPoint.x) {
+                    lineStart.x = startPoint.x - (startPoint.x - endPosition.x) * ratio
+                }
+                else {
+                    lineStart.x = startPoint.x + (endPosition.x - startPoint.x) * ratio
+                }
+            }
+        }
+
+        points.append(lineStart)
         points.append(endPosition)
 
         lineNode = SKShapeNode(points: &points, count: points.count)
         lineNode?.strokeColor = .red
         lineNode?.lineWidth = 3
-        self.parent?.addChild(lineNode!)
+
+        if !(viewRect?.contains(endPosition) ?? true) {
+            self.isHidden = true
+        }
+        else {
+            self.isHidden = false
+            self.parent?.addChild(lineNode!)
+        }
     }
 
     override func removeFromParent() {
