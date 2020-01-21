@@ -8,57 +8,83 @@
 
 import Foundation
 import SceneKit
+import SpriteKit
 
 /*
  Class describing an enemy controller which fires missiles at houses in the scene
  */
-class EnemyController: MissileController {
+class EnemyController {
 
     static let FIRE_INTERVAL: TimeInterval = 2
-    static let SPEED_SCALER: Float = 5
+    static let SPEED_SCALER: Float = 0.5
 
-    let gameScene:SCNScene
-    let missileFactory:MissileFactory
-    let targetCity:City
+    let spawnNode: SCNNode
+    let targetCity: CityNode
     var lastUpdate: TimeInterval = -1.0
 
+    var missiles: Array<EnemyMissile> = []
+    let minimapNode: SKNode
+
+    let plane: SCNNode
 
     /// Initialise Enemy Controller
     /// - Parameters:
-    ///   - gameScene: Scene which the enemy will operate within
-    ///   - missileFactory: The missile factory which the enemy will use to create missiles.
     ///   - city: The City that the enemy controller should attack
-    init(gameScene:SCNScene, missileFactory: MissileFactory, city: City) {
-        self.gameScene = gameScene
-        self.missileFactory = missileFactory
+    init(city: CityNode, spawnNode: SCNNode, minimap: SKNode, plane: SCNNode) {
+        self.spawnNode = spawnNode
         self.targetCity = city
+        self.minimapNode = minimap
+        self.plane = plane
     }
 
 
     /// Update the enemy controller, if necessary the enemy controller will fire a missile at a house. This function should be called on the renderer call.
     /// - Parameter time: current time
-    override func update(_ time: TimeInterval) {
+    func update(_ time: TimeInterval) {
         if lastUpdate == -1 {
             lastUpdate = time
         }
         if time - lastUpdate > EnemyController.FIRE_INTERVAL {
             // target & fire a missile
-            if let target = targetCity.getRandomHouse() {
-                let missile = missileFactory.spawnEnemyMissile()
+            if let targetBuilding = targetCity.getRandomHouse() {
+                let missile = EnemyMissile(planeNode: self.plane)
+                missile.setCollisionCallback(callback: self.onEnemyMissileCollision)
+                spawnNode.addChildNode(missile)
+                let target = TargetNode(uiNode: nil)
+                spawnNode.addChildNode(target)
 
-                missile.physicsBody?.categoryBitMask |= COLLISION_BITMASK.ENEMY_MISSILE
-                missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.HOUSE
-                missile.physicsBody?.contactTestBitMask |= COLLISION_BITMASK.FLOOR
+                target.position = spawnNode.convertPosition(targetBuilding.worldPosition, from: nil)
 
-                super.prepareMissile(missile: missile, target: target, forceScale: EnemyController.SPEED_SCALER)
-
-                gameScene.rootNode.addChildNode(missile)
-                missileFactory.addEngineSound(to: missile)
+                missile.fire(targetNode: target, speed: EnemyController.SPEED_SCALER)
+                missiles.append(missile)
+                minimapNode.addChild(missile.minimapNode)
             }
             else {
                 print("no house to target")
             }
             lastUpdate = time
+        }
+
+        var i: Int = 0
+        while i < missiles.count {
+            let missile = missiles[i]
+            if missile.state == .FINISHED {
+                missiles.remove(at: i)
+                continue
+            }
+            else {
+                missile.update(time)
+            }
+            i += 1
+        }
+    }
+
+    func onEnemyMissileCollision(_ missile: SCNNode) {
+    }
+
+    func updateMinimap(relativeTo: SCNNode) {
+        for missile in missiles {
+            missile.updatePosition(relativeTo: relativeTo)
         }
     }
 }

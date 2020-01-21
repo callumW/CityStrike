@@ -74,7 +74,9 @@ class MainMenuViewController: UIViewController {
 
         let position = placeholderPlayButton.position
 
-        playButton = ButtonNode(upImage: "play_button_front", downImage: "play_button_back", position: position, scale: 0.25, callback: self.onPlayButton)
+        playButton = ButtonNode(upImage: "play_button_front", downImage: "play_button_back", callback: self.onPlayButton)
+        playButton.position = position
+        playButton.setScale(0.25)
         placeholderPlayButton.removeFromParent()
 
         self.overlayScene.addChild(playButton)

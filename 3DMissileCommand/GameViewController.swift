@@ -34,14 +34,8 @@ func normalise(_ vec: SCNVector3) -> SCNVector3 {
 
 class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysicsContactDelegate {
 
-    var missileFactory: MissileFactory!
-    var city:City!
-    var enemyController: EnemyController!
-    var playerController: PlayerController!
     var lastUpdateTime: TimeInterval = 0.0
     var startTime: TimeInterval = 0.0
-
-    var hitTestPlane: SCNNode!
 
     var gameScene: SCNScene!
 
@@ -49,8 +43,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
     var timeLabel: SKLabelNode!
     var scoreLabel: SKLabelNode!
-    var silo1Label: SKLabelNode!
-    var silo2Label: SKLabelNode!
     var overlayScene: SKScene!
 
     var score: Int = 0
@@ -61,10 +53,118 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
     var listenerPosition: SCNNode!
 
+    var activePlane: TheatrePlane? = nil
+
+    var planes: Array<TheatrePlane> = []
+
+    var uiButtons: Array<SKNode> = []
+
+    var mainCamera: SCNNode? = nil
+
+    let globalViewPosition: SCNNode = SCNNode()
+
+    var spriteView: SKView? = nil
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         loadGameScene()
+
+        globalViewPosition.position = SCNVector3(8, 15, 8)
+        gameScene.rootNode.addChildNode(globalViewPosition)
+
+
+        if let newPlane = TheatrePlane(gameScene: gameScene, ui: overlayScene, view: self.view as! SCNView) {
+            newPlane.position = SCNVector3(-15, 0, 0)
+            gameScene.rootNode.addChildNode(newPlane)
+            planes.append(newPlane)
+        }
+        else {
+            fatalError("Failed to create TheatrePlane")
+        }
+
+        if let tmp = TheatrePlane(gameScene: gameScene, ui: overlayScene, view: self.view as! SCNView) {
+            tmp.position = SCNVector3(-15, 0, 2)
+            tmp.rotation = SCNVector4(0, Float.pi / 3, 0, 1)
+            gameScene.rootNode.addChildNode(tmp)
+            planes.append(tmp)
+        }
+        else {
+            fatalError("Failed to create TheatrePlane")
+        }
+
+        spriteView = SKView()
+
+        planes[0].activate(camera: mainCamera!, uiScene: overlayScene)
+        activePlane = planes[0]
+
+        loadStaticVariables()
+
+        loadButtons()
+    }
+
+    func loadStaticVariables() {
+        /*
+         Note: we need to load nodes that load models from scenes (via SCNReferenceNode) outside of the
+            render call, otherwise we get an error. Therefore, we create an instance of these nodes which
+            will cause the static reference node to be loaded
+         */
+        _ = MissileNode()
+
+        _ = CityNode()
+
+        _ = ExplosionNode(time: 0)
+    }
+
+    func loadButtons() {
+
+        print("UI Scene: \(overlayScene.size)")
+
+        var plane1Placeholder: SKNode? = nil
+        var plane2Placeholder: SKNode? = nil
+
+        for child in overlayScene.children {
+            if child.name == "plane1pos" {
+                plane1Placeholder = child
+            }
+            else if child.name == "plane2pos" {
+                plane2Placeholder = child
+            }
+        }
+
+        if plane1Placeholder == nil || plane2Placeholder == nil {
+            fatalError("Failed to find minimap placeholders")
+        }
+
+
+
+        let plane1Button = ButtonNode(node: planes[0].minimapParentNode, callback: self.setPlaneOne, replace: plane1Placeholder!)
+        overlayScene.addChild(plane1Button)
+        uiButtons.append(plane1Button)
+
+        let plane2Button = ButtonNode(node: planes[1].minimapParentNode, callback: self.setPlaneTwo, replace: plane2Placeholder!)
+        overlayScene.addChild(plane2Button)
+        uiButtons.append(plane2Button)
+
+
+    }
+
+    func setPlaneOne() {
+        print("set plane 1")
+        if activePlane != planes[0] {
+            activePlane?.deactivate()
+            planes[0].activate(camera: mainCamera!, uiScene: overlayScene)
+            activePlane = planes[0]
+        }
+    }
+
+    func setPlaneTwo() {
+        print("set plane 2")
+        if activePlane != planes[1] {
+            activePlane?.deactivate()
+            planes[1].activate(camera: mainCamera!, uiScene: overlayScene)
+            activePlane = planes[1]
+        }
     }
 
     func loadGameScene() {
@@ -88,19 +188,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         overlayScene = SKScene(fileNamed: "UIOverlay.sks")
         overlayScene.isPaused = false
+        overlayScene.isUserInteractionEnabled = true
+
         scnView.overlaySKScene = overlayScene
-
-        // setup missile factory
-        missileFactory = MissileFactory(gameScene)
-        if missileFactory == nil {
-            fatalError("Unable to create missile factory")
-        }
-
-        city = City(gameScene)
-
-        enemyController = EnemyController(gameScene: gameScene, missileFactory: missileFactory,city: city)
-
-        playerController = PlayerController(scene: gameScene, factory: missileFactory, ui: overlayScene)
 
         gameScene?.physicsWorld.contactDelegate = self  // register for phsysics contact callback
 
@@ -118,12 +208,11 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         ambientLightNode.light!.color = UIColor.darkGray
         gameScene.rootNode.addChildNode(ambientLightNode)
 
+        mainCamera = SCNNode(geometry: nil)
+        mainCamera!.camera = SCNCamera()
+        scnView.pointOfView = mainCamera
 
-        if let cam = gameScene.rootNode.childNode(withName: "audio_listener", recursively: true) {
-            print("setting listener to position \(cam.position) rotation: \(cam.rotation)")
-
-            scnView.audioListener = cam
-        }
+        scnView.audioListener = mainCamera
 
         if let node = scnView.overlaySKScene!.childNode(withName: "time_label") {
             if node is SKLabelNode {
@@ -139,18 +228,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         if let node = gameScene.rootNode.childNode(withName: "game_over_text", recursively: true) {
             gameOverTextNode = node
-        }
-
-        if let node = scnView.overlaySKScene!.childNode(withName: "silo_0_heat") {
-            if node is SKLabelNode {
-                silo1Label = node as? SKLabelNode
-            }
-        }
-
-        if let node = scnView.overlaySKScene!.childNode(withName: "silo_1_heat") {
-            if node is SKLabelNode {
-                silo2Label = node as? SKLabelNode
-            }
         }
 
         if let source = SCNAudioSource(fileNamed: "game_over.wav") {
@@ -175,14 +252,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         tapRecognizer.addTarget(self, action: #selector(GameViewController.handleTap(sender:)))
         scnView.addGestureRecognizer(tapRecognizer)
 
-        // get hitTestPlane
-        hitTestPlane = gameScene.rootNode.childNode(withName: "hit_test_plane", recursively: false)
-
-        if hitTestPlane == nil {
-            print("Failed to find hit test plane")
-        }
-
-        missileFactory.preloadAudio()
     }
 
     @objc
@@ -191,9 +260,22 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             // handling code
 
             let point = sender.location(in: self.view)
-            // print("tap @ \(point)")
+            print("tap @ \(point)")
 
-            taps.append(point)
+            var tapHandled = false
+            let convertedPoint = overlayScene.convertPoint(fromView: point)
+
+            let uiNodes = overlayScene.nodes(at: convertedPoint)
+            for node in uiNodes {
+                if node is ButtonNode {
+                    print("hit button!")
+                    tapHandled = true
+                }
+            }
+
+            if !tapHandled {
+                activePlane?.notifyTap(point: point)
+            }
         }
     }
 
@@ -214,63 +296,45 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             scoreLabel.text = "Score: \(score)"
         }
     }
+    func triggerGameOver() {
+        // TODO activate overview camera
+        globalViewPosition.addChildNode(mainCamera!)
+        mainCamera?.look(at: gameOverTextNode.position)
+        gamePlaying = false
+        print("game over")
+
+        if gameOverTextNode != nil {
+            gameOverTextNode.isHidden = false
+            let player = SCNAudioPlayer(source: gameOverAudioSource)
+
+            gameOverTextNode.addAudioPlayer(player)
+        }
+
+        let animation = CABasicAnimation(keyPath: "rotation")
+        animation.fromValue = SCNVector4(x: 0, y: 1, z: 0, w: 0)
+        animation.toValue = SCNVector4(x: 0, y: 1, z: 0, w: Float(2 * Float.pi))
+        animation.duration = 3
+        animation.repeatCount = .greatestFiniteMagnitude
+
+        gameOverTextNode.addAnimation(animation, forKey: nil)
+    }
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if gamePlaying {
+
             lastUpdateTime = time
-            enemyController.update(time)
-            missileFactory.update(time)
-            playerController.update(time)
-            city.cleanUp()
-
-            if silo1Label != nil {
-                silo1Label.text = String(format: "Silo 1: %.01f", playerController.getSiloHeatLevel(0))
-            }
-
-            if silo2Label != nil {
-                silo2Label.text = String(format: "Silo 2: %.01f", playerController.getSiloHeatLevel(1))
-            }
-
-            if city.houseCount() > 0 {
-
-                updateUI(time: time)
-
-                while (taps.count > 0) {
-
-                    let point = taps.removeFirst()
-
-        //            print("evaluating tap  \(point)")
-
-                    let results = renderer.hitTest(point, options: [SCNHitTestOption.categoryBitMask: 16, SCNHitTestOption.ignoreHiddenNodes: false, SCNHitTestOption.backFaceCulling: false])
-
-                    for result in results {
-        //                print("hit plane @ \(result.worldCoordinates)")
-                        playerController.fireMissile(at: result.worldCoordinates, tapPoint: point)
-                        // addTargetHint(at: point)
-                    }
-
+            var allHousesDestroyed : Bool = true
+            for plane in planes {
+                plane.update(time: time)
+                if plane.hasHouses() {
+                    allHousesDestroyed = false
                 }
             }
-            else {  // game over
-                gamePlaying = false
-                print("game over")
 
-                if gameOverTextNode != nil {
-                    gameOverTextNode.isHidden = false
-                    let player = SCNAudioPlayer(source: gameOverAudioSource)
-
-                    gameOverTextNode.addAudioPlayer(player)
-                }
-
-                let animation = CABasicAnimation(keyPath: "rotation")
-                animation.fromValue = SCNVector4(x: 0, y: 1, z: 0, w: 0)
-                animation.toValue = SCNVector4(x: 0, y: 1, z: 0, w: Float(2 * Float.pi))
-                animation.duration = 3
-                animation.repeatCount = .greatestFiniteMagnitude
-
-                gameOverTextNode.addAnimation(animation, forKey: nil)
-
+            if allHousesDestroyed {
+                triggerGameOver()
             }
+            updateUI(time: time)
         }
     }
 
@@ -282,59 +346,61 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         /* Player Missile */
         if nodeABody.categoryBitMask & COLLISION_BITMASK.PLAYER_MISSILE != 0 {
-            if nodeBBody.categoryBitMask & COLLISION_BITMASK.PLAYER_TARGET_NODE != 0 {
-                contact.nodeB.removeFromParentNode()
-                if contact.nodeA.parent != nil {    // if we hit a target node, set the explosion as the position of the target node
-                    missileFactory.addExplosion(at: contact.nodeB.presentation.position, time: lastUpdateTime)
+            if contact.nodeA.parent != nil {
+                let parentNode = contact.nodeA.parent!
+                if parentNode is PlayerMissile {
+                    let missile = parentNode as! PlayerMissile
+                    missile.explode(time: self.lastUpdateTime)
+                }
+                else {
+                    print("contact is not missile node")
                 }
             }
-            else if contact.nodeA.parent != nil {
-                missileFactory.addExplosion(at: contact.nodeA.presentation.position, time: lastUpdateTime)
-            }
-            playerController.onPlayerMissileCollision(contact.nodeA)
         }
         else if nodeBBody.categoryBitMask & COLLISION_BITMASK.PLAYER_MISSILE != 0 {
-            if nodeABody.categoryBitMask & COLLISION_BITMASK.PLAYER_TARGET_NODE != 0 {
-                contact.nodeA.removeFromParentNode()
-                if contact.nodeB.parent != nil {
-                     missileFactory.addExplosion(at: contact.nodeA.presentation.position, time: lastUpdateTime)
-                 }
+            if contact.nodeB.parent != nil {
+                let parentNode = contact.nodeB.parent!
+                if parentNode is PlayerMissile {
+                    let missile = parentNode as! PlayerMissile
+                    missile.explode(time: self.lastUpdateTime)
+                }
+                else {
+                    print("contact is not missile node")
+                }
             }
-            else if contact.nodeB.parent != nil {
-                missileFactory.addExplosion(at: contact.nodeB.presentation.position, time: lastUpdateTime)
-            }
-            playerController.onPlayerMissileCollision(contact.nodeB)
         }
 
         /* Enemy Missile */
         if nodeABody.categoryBitMask & COLLISION_BITMASK.ENEMY_MISSILE != 0 {
             if nodeBBody.categoryBitMask & COLLISION_BITMASK.HOUSE != 0 {
-                if city.houseWasDestroyed(contact.nodeB) {
-                    score -= 10
+                if contact.nodeB.parent != nil && contact.nodeB.parent is BuildingNode {
+                    let house = contact.nodeB.parent as! BuildingNode
+                    house.collidesWithMissile()
                 }
-            }
-            else if contact.nodeA.parent != nil {
-                score += 1
             }
 
             if contact.nodeA.parent != nil {
-                missileFactory.addExplosion(at: contact.nodeA.presentation.position, time: lastUpdateTime)
-                contact.nodeA.removeFromParentNode()
+                let parentNode = contact.nodeA.parent!
+                if parentNode is MissileNode {
+                    let missile = parentNode as! MissileNode
+                    missile.explode(time: self.lastUpdateTime)
+                }
             }
         }
         else if nodeBBody.categoryBitMask & COLLISION_BITMASK.ENEMY_MISSILE != 0 {
             if nodeABody.categoryBitMask & COLLISION_BITMASK.HOUSE != 0 {
-                if city.houseWasDestroyed(contact.nodeA) {
-                    score -= 10
+                if contact.nodeA.parent != nil && contact.nodeA.parent is BuildingNode {
+                    let house = contact.nodeA.parent as! BuildingNode
+                    house.collidesWithMissile()
                 }
-            }
-            else if contact.nodeB.parent != nil {
-                score += 1
             }
 
             if contact.nodeB.parent != nil {
-                missileFactory.addExplosion(at: contact.nodeB.presentation.position, time: lastUpdateTime)
-                contact.nodeB.removeFromParentNode()
+                let parentNode = contact.nodeB.parent!
+                if parentNode is MissileNode {
+                    let missile = parentNode as! MissileNode
+                    missile.explode(time: self.lastUpdateTime)
+                }
             }
         }
     }

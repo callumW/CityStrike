@@ -10,7 +10,6 @@
 		1B0D5E1E239A68BE005D6544 /* UIOverlay.sks in Resources */ = {isa = PBXBuildFile; fileRef = 1B0D5E1D239A68BE005D6544 /* UIOverlay.sks */; };
 		1B0D5E22239AAB25005D6544 /* CollisionBitmasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0D5E21239AAB25005D6544 /* CollisionBitmasks.swift */; };
 		1B0E8DF12392D0690012DB0E /* explosion_sound_v2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1B0E8DF02392D0690012DB0E /* explosion_sound_v2.wav */; };
-		1B0E8DF3239448830012DB0E /* MissileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0E8DF2239448830012DB0E /* MissileController.swift */; };
 		1B0E8DF52394491C0012DB0E /* PlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B0E8DF42394491C0012DB0E /* PlayerController.swift */; };
 		1B0E8E03239998780012DB0E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B0E8E01239998780012DB0E /* LaunchScreen.storyboard */; };
 		1B0E8E04239998780012DB0E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B0E8E02239998780012DB0E /* Main.storyboard */; };
@@ -19,11 +18,13 @@
 		1B17B64C237DCAA100998F2F /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B17B64B237DCAA100998F2F /* art.scnassets */; };
 		1B17B64E237DCAA100998F2F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B17B64D237DCAA100998F2F /* GameViewController.swift */; };
 		1B17B653237DCAA300998F2F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B17B652237DCAA300998F2F /* Assets.xcassets */; };
+		1BA4B05623BEA175007CE2E1 /* BuildingNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B05523BEA175007CE2E1 /* BuildingNode.swift */; };
+		1BA4B05A23C24273007CE2E1 /* Minimap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4B05923C24273007CE2E1 /* Minimap.swift */; };
+		1BA4B05C23C273C2007CE2E1 /* explosion.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BA4B05B23C273C2007CE2E1 /* explosion.png */; };
 		1BA942A5239AC1A80073C912 /* game_over.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942A4239AC1A80073C912 /* game_over.wav */; };
 		1BA942B4239AD5610073C912 /* rocket_sound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942B3239AD5610073C912 /* rocket_sound.wav */; };
 		1BA942B6239AE2BF0073C912 /* rocket_sound_mono.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942B5239AE2BF0073C912 /* rocket_sound_mono.wav */; };
 		1BA942DA239AFD190073C912 /* explosion_sound_v2_mono.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BA942D9239AFD190073C912 /* explosion_sound_v2_mono.wav */; };
-		1BBE2606238F1873002A97BA /* MissileFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BBE2605238F1873002A97BA /* MissileFactory.swift */; };
 		1BBE260823905B84002A97BA /* EnemyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BBE260723905B84002A97BA /* EnemyController.swift */; };
 		1BBE260A23906094002A97BA /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BBE260923906094002A97BA /* City.swift */; };
 		1BBE26162391C844002A97BA /* Sounds.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BBE26152391C844002A97BA /* Sounds.xcassets */; };
@@ -33,6 +34,11 @@
 		1BCD731F23B4D8EB006570C8 /* ButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD731E23B4D8EB006570C8 /* ButtonNode.swift */; };
 		1BCD732223B606FD006570C8 /* building_1.blend in Resources */ = {isa = PBXBuildFile; fileRef = 1BCD732123B606FD006570C8 /* building_1.blend */; };
 		1BCD732423B60923006570C8 /* skyscraper_1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1BCD732323B60923006570C8 /* skyscraper_1.jpg */; };
+		1BCD732C23B7C647006570C8 /* TheatrePlane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD732B23B7C647006570C8 /* TheatrePlane.swift */; };
+		1BCD732E23BA641C006570C8 /* Missile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD732D23BA641C006570C8 /* Missile.swift */; };
+		1BCD733023BA7875006570C8 /* UISource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD732F23BA7875006570C8 /* UISource.swift */; };
+		1BCD733223BA78A3006570C8 /* MissileTargetUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD733123BA78A3006570C8 /* MissileTargetUI.swift */; };
+		1BCD733423BA88CC006570C8 /* ExplosionNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BCD733323BA88CC006570C8 /* ExplosionNode.swift */; };
 		1BD3490D23A2C80A0017BE72 /* target_hint.png in Resources */ = {isa = PBXBuildFile; fileRef = 1BD3490C23A2C8090017BE72 /* target_hint.png */; };
 		1BD3491723A2D91F0017BE72 /* MainMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD3491623A2D91F0017BE72 /* MainMenuViewController.swift */; };
 /* End PBXBuildFile section */
@@ -41,24 +47,25 @@
 		1B0D5E1D239A68BE005D6544 /* UIOverlay.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = UIOverlay.sks; sourceTree = "<group>"; };
 		1B0D5E21239AAB25005D6544 /* CollisionBitmasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionBitmasks.swift; sourceTree = "<group>"; };
 		1B0E8DF02392D0690012DB0E /* explosion_sound_v2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = explosion_sound_v2.wav; sourceTree = "<group>"; };
-		1B0E8DF2239448830012DB0E /* MissileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissileController.swift; sourceTree = "<group>"; };
 		1B0E8DF42394491C0012DB0E /* PlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerController.swift; sourceTree = "<group>"; };
 		1B0E8DFB23970A110012DB0E /* missile_battery.blend */ = {isa = PBXFileReference; lastKnownFileType = file; path = missile_battery.blend; sourceTree = "<group>"; };
 		1B0E8E01239998780012DB0E /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1B0E8E02239998780012DB0E /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		1B0E8E052399AA890012DB0E /* arroway.de_concrete-53_d100.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "arroway.de_concrete-53_d100.png"; sourceTree = "<group>"; };
-		1B17B646237DCAA100998F2F /* 3DMissileCommand.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 3DMissileCommand.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B17B646237DCAA100998F2F /* City Strike.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "City Strike.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B17B649237DCAA100998F2F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1B17B64B237DCAA100998F2F /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		1B17B64D237DCAA100998F2F /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		1B17B652237DCAA300998F2F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1B17B657237DCAA300998F2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1BA4B05523BEA175007CE2E1 /* BuildingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildingNode.swift; sourceTree = "<group>"; };
+		1BA4B05923C24273007CE2E1 /* Minimap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Minimap.swift; sourceTree = "<group>"; };
+		1BA4B05B23C273C2007CE2E1 /* explosion.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = explosion.png; sourceTree = "<group>"; };
 		1BA942A4239AC1A80073C912 /* game_over.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = game_over.wav; sourceTree = "<group>"; };
 		1BA942B0239ACB4F0073C912 /* game_over.blend */ = {isa = PBXFileReference; lastKnownFileType = file; path = game_over.blend; sourceTree = "<group>"; };
 		1BA942B3239AD5610073C912 /* rocket_sound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = rocket_sound.wav; sourceTree = "<group>"; };
 		1BA942B5239AE2BF0073C912 /* rocket_sound_mono.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = rocket_sound_mono.wav; sourceTree = "<group>"; };
 		1BA942D9239AFD190073C912 /* explosion_sound_v2_mono.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = explosion_sound_v2_mono.wav; sourceTree = "<group>"; };
-		1BBE2605238F1873002A97BA /* MissileFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissileFactory.swift; sourceTree = "<group>"; };
 		1BBE260723905B84002A97BA /* EnemyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyController.swift; sourceTree = "<group>"; };
 		1BBE260923906094002A97BA /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
 		1BBE26152391C844002A97BA /* Sounds.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Sounds.xcassets; sourceTree = "<group>"; };
@@ -69,6 +76,11 @@
 		1BCD732023B507C2006570C8 /* play_button.xcf */ = {isa = PBXFileReference; lastKnownFileType = file; path = play_button.xcf; sourceTree = "<group>"; };
 		1BCD732123B606FD006570C8 /* building_1.blend */ = {isa = PBXFileReference; lastKnownFileType = file; path = building_1.blend; sourceTree = "<group>"; };
 		1BCD732323B60923006570C8 /* skyscraper_1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = skyscraper_1.jpg; sourceTree = "<group>"; };
+		1BCD732B23B7C647006570C8 /* TheatrePlane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheatrePlane.swift; sourceTree = "<group>"; };
+		1BCD732D23BA641C006570C8 /* Missile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Missile.swift; sourceTree = "<group>"; };
+		1BCD732F23BA7875006570C8 /* UISource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UISource.swift; sourceTree = "<group>"; };
+		1BCD733123BA78A3006570C8 /* MissileTargetUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissileTargetUI.swift; sourceTree = "<group>"; };
+		1BCD733323BA88CC006570C8 /* ExplosionNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplosionNode.swift; sourceTree = "<group>"; };
 		1BD3490923A2C2C50017BE72 /* target_hint.xcf */ = {isa = PBXFileReference; lastKnownFileType = file; path = target_hint.xcf; sourceTree = "<group>"; };
 		1BD3490C23A2C8090017BE72 /* target_hint.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = target_hint.png; sourceTree = "<group>"; };
 		1BD3491623A2D91F0017BE72 /* MainMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuViewController.swift; sourceTree = "<group>"; };
@@ -107,6 +119,7 @@
 		1B0E8E072399AA9F0012DB0E /* Textures */ = {
 			isa = PBXGroup;
 			children = (
+				1BA4B05B23C273C2007CE2E1 /* explosion.png */,
 				1BCD732323B60923006570C8 /* skyscraper_1.jpg */,
 				1BD3490C23A2C8090017BE72 /* target_hint.png */,
 				1B0E8E052399AA890012DB0E /* arroway.de_concrete-53_d100.png */,
@@ -130,7 +143,7 @@
 		1B17B647237DCAA100998F2F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1B17B646237DCAA100998F2F /* 3DMissileCommand.app */,
+				1B17B646237DCAA100998F2F /* City Strike.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -146,12 +159,17 @@
 				1B17B649237DCAA100998F2F /* AppDelegate.swift */,
 				1B17B64B237DCAA100998F2F /* art.scnassets */,
 				1B17B64D237DCAA100998F2F /* GameViewController.swift */,
+				1BCD732D23BA641C006570C8 /* Missile.swift */,
+				1BA4B05923C24273007CE2E1 /* Minimap.swift */,
+				1BCD733323BA88CC006570C8 /* ExplosionNode.swift */,
+				1BCD732F23BA7875006570C8 /* UISource.swift */,
+				1BCD733123BA78A3006570C8 /* MissileTargetUI.swift */,
+				1BCD732B23B7C647006570C8 /* TheatrePlane.swift */,
 				1BBE260723905B84002A97BA /* EnemyController.swift */,
-				1B0E8DF2239448830012DB0E /* MissileController.swift */,
 				1B0E8DF42394491C0012DB0E /* PlayerController.swift */,
 				1BBE260923906094002A97BA /* City.swift */,
+				1BA4B05523BEA175007CE2E1 /* BuildingNode.swift */,
 				1B0D5E21239AAB25005D6544 /* CollisionBitmasks.swift */,
-				1BBE2605238F1873002A97BA /* MissileFactory.swift */,
 				1B17B652237DCAA300998F2F /* Assets.xcassets */,
 				1B17B657237DCAA300998F2F /* Info.plist */,
 				1BBE26152391C844002A97BA /* Sounds.xcassets */,
@@ -206,7 +224,7 @@
 			);
 			name = 3DMissileCommand;
 			productName = 3DMissileCommand;
-			productReference = 1B17B646237DCAA100998F2F /* 3DMissileCommand.app */;
+			productReference = 1B17B646237DCAA100998F2F /* City Strike.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -250,6 +268,7 @@
 				1BA942B4239AD5610073C912 /* rocket_sound.wav in Resources */,
 				1BCD732223B606FD006570C8 /* building_1.blend in Resources */,
 				1B0E8DF12392D0690012DB0E /* explosion_sound_v2.wav in Resources */,
+				1BA4B05C23C273C2007CE2E1 /* explosion.png in Resources */,
 				1BA942DA239AFD190073C912 /* explosion_sound_v2_mono.wav in Resources */,
 				1B0E8E062399AA890012DB0E /* arroway.de_concrete-53_d100.png in Resources */,
 				1BA942B6239AE2BF0073C912 /* rocket_sound_mono.wav in Resources */,
@@ -276,15 +295,20 @@
 			files = (
 				1B17B64E237DCAA100998F2F /* GameViewController.swift in Sources */,
 				1BBE260A23906094002A97BA /* City.swift in Sources */,
+				1BCD733023BA7875006570C8 /* UISource.swift in Sources */,
+				1BCD732C23B7C647006570C8 /* TheatrePlane.swift in Sources */,
+				1BCD733223BA78A3006570C8 /* MissileTargetUI.swift in Sources */,
 				1BCD731F23B4D8EB006570C8 /* ButtonNode.swift in Sources */,
 				1BD3491723A2D91F0017BE72 /* MainMenuViewController.swift in Sources */,
 				1B17B64A237DCAA100998F2F /* AppDelegate.swift in Sources */,
+				1BA4B05A23C24273007CE2E1 /* Minimap.swift in Sources */,
 				1BCD731B23B13737006570C8 /* SKSpriteButtonNode.swift in Sources */,
 				1B0E8DF52394491C0012DB0E /* PlayerController.swift in Sources */,
 				1B0D5E22239AAB25005D6544 /* CollisionBitmasks.swift in Sources */,
+				1BCD733423BA88CC006570C8 /* ExplosionNode.swift in Sources */,
+				1BA4B05623BEA175007CE2E1 /* BuildingNode.swift in Sources */,
 				1BBE260823905B84002A97BA /* EnemyController.swift in Sources */,
-				1B0E8DF3239448830012DB0E /* MissileController.swift in Sources */,
-				1BBE2606238F1873002A97BA /* MissileFactory.swift in Sources */,
+				1BCD732E23BA641C006570C8 /* Missile.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,12 +436,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ZD78LQ5BAL;
 				INFOPLIST_FILE = 3DMissileCommand/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Howling-Pass.-DMissileCommand";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = "Howling-Pass-City-Strike";
+				PRODUCT_NAME = "City Strike";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -430,12 +455,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ZD78LQ5BAL;
 				INFOPLIST_FILE = 3DMissileCommand/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "Howling-Pass.-DMissileCommand";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = "Howling-Pass-City-Strike";
+				PRODUCT_NAME = "City Strike";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
