@@ -227,4 +227,8 @@ class TheatrePlane: SCNNode {
         _ = city.houseWasDestroyed(house)
     }
 
+    func hasHouses() -> Bool {
+        return self.city.houseCount() > 0
+    }
+
 }

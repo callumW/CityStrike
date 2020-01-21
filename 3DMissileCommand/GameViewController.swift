@@ -61,12 +61,18 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
     var mainCamera: SCNNode? = nil
 
+    let globalViewPosition: SCNNode = SCNNode()
+
     var spriteView: SKView? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         loadGameScene()
+
+        globalViewPosition.position = SCNVector3(8, 15, 8)
+        gameScene.rootNode.addChildNode(globalViewPosition)
+
 
         if let newPlane = TheatrePlane(gameScene: gameScene, ui: overlayScene, view: self.view as! SCNView) {
             newPlane.position = SCNVector3(-15, 0, 0)
@@ -290,58 +296,45 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             scoreLabel.text = "Score: \(score)"
         }
     }
+    func triggerGameOver() {
+        // TODO activate overview camera
+        globalViewPosition.addChildNode(mainCamera!)
+        mainCamera?.look(at: gameOverTextNode.position)
+        gamePlaying = false
+        print("game over")
+
+        if gameOverTextNode != nil {
+            gameOverTextNode.isHidden = false
+            let player = SCNAudioPlayer(source: gameOverAudioSource)
+
+            gameOverTextNode.addAudioPlayer(player)
+        }
+
+        let animation = CABasicAnimation(keyPath: "rotation")
+        animation.fromValue = SCNVector4(x: 0, y: 1, z: 0, w: 0)
+        animation.toValue = SCNVector4(x: 0, y: 1, z: 0, w: Float(2 * Float.pi))
+        animation.duration = 3
+        animation.repeatCount = .greatestFiniteMagnitude
+
+        gameOverTextNode.addAnimation(animation, forKey: nil)
+    }
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if gamePlaying {
 
             lastUpdateTime = time
+            var allHousesDestroyed : Bool = true
             for plane in planes {
                 plane.update(time: time)
+                if plane.hasHouses() {
+                    allHousesDestroyed = false
+                }
+            }
+
+            if allHousesDestroyed {
+                triggerGameOver()
             }
             updateUI(time: time)
-
-//            if city.houseCount() > 0 {
-//
-//                updateUI(time: time)
-//
-//                while (taps.count > 0) {
-//
-//                    let point = taps.removeFirst()
-//
-//        //            print("evaluating tap  \(point)")
-//
-//                    let results = renderer.hitTest(point, options: [SCNHitTestOption.categoryBitMask: 16,
-//                                                                    SCNHitTestOption.ignoreHiddenNodes: false,
-//                                                                    SCNHitTestOption.backFaceCulling: false])
-//
-//                    for result in results {
-//        //                print("hit plane @ \(result.worldCoordinates)")
-//                        playerController.fireMissile(at: result.worldCoordinates, tapPoint: point)
-//                        // addTargetHint(at: point)
-//                    }
-//
-//                }
-//            }
-//            else {  // game over
-//                gamePlaying = false
-//                print("game over")
-//
-//                if gameOverTextNode != nil {
-//                    gameOverTextNode.isHidden = false
-//                    let player = SCNAudioPlayer(source: gameOverAudioSource)
-//
-//                    gameOverTextNode.addAudioPlayer(player)
-//                }
-//
-//                let animation = CABasicAnimation(keyPath: "rotation")
-//                animation.fromValue = SCNVector4(x: 0, y: 1, z: 0, w: 0)
-//                animation.toValue = SCNVector4(x: 0, y: 1, z: 0, w: Float(2 * Float.pi))
-//                animation.duration = 3
-//                animation.repeatCount = .greatestFiniteMagnitude
-//
-//                gameOverTextNode.addAnimation(animation, forKey: nil)
-//
-//            }
         }
     }
 
