@@ -19,6 +19,10 @@ func -(left: SCNVector3, right: SCNVector3) -> SCNVector3 {
     return SCNVector3(x: left.x - right.x, y: left.y - right.y, z: left.z - right.z)
 }
 
+func +(left: SCNVector3, right: SCNVector3) -> SCNVector3 {
+    return SCNVector3(x: left.x + right.x, y: left.y + right.y, z: left.z + right.z)
+}
+
 func magnitude(_ vec: SCNVector3) -> Float {
     let sqrSum = (vec.x * vec.x) + (vec.y * vec.y) + (vec.z * vec.z)
     return sqrtf(sqrSum)
@@ -53,17 +57,10 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
     var listenerPosition: SCNNode!
 
-    var activePlane: TheatrePlane? = nil
-
-    var planes: Array<TheatrePlane> = []
-
-    var uiButtons: Array<SKNode> = []
-
-    var mainCamera: SCNNode? = nil
-
     let globalViewPosition: SCNNode = SCNNode()
 
-    var spriteView: SKView? = nil
+    var cameraDolly: SCNNode? = nil
+    var cameraNode: SCNNode? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,30 +70,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         globalViewPosition.position = SCNVector3(8, 15, 8)
         gameScene.rootNode.addChildNode(globalViewPosition)
 
-
-        if let newPlane = TheatrePlane(gameScene: gameScene, ui: overlayScene, view: self.view as! SCNView) {
-            newPlane.position = SCNVector3(-15, 0, 0)
-            gameScene.rootNode.addChildNode(newPlane)
-            planes.append(newPlane)
-        }
-        else {
-            fatalError("Failed to create TheatrePlane")
-        }
-
-        if let tmp = TheatrePlane(gameScene: gameScene, ui: overlayScene, view: self.view as! SCNView) {
-            tmp.position = SCNVector3(-15, 0, 2)
-            tmp.rotation = SCNVector4(0, Float.pi / 3, 0, 1)
-            gameScene.rootNode.addChildNode(tmp)
-            planes.append(tmp)
-        }
-        else {
-            fatalError("Failed to create TheatrePlane")
-        }
-
-        spriteView = SKView()
-
-        planes[0].activate(camera: mainCamera!, uiScene: overlayScene)
-        activePlane = planes[0]
 
         loadStaticVariables()
 
@@ -111,60 +84,11 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
          */
         _ = MissileNode()
 
-        _ = CityNode()
-
         _ = ExplosionNode(time: 0)
     }
 
     func loadButtons() {
 
-        print("UI Scene: \(overlayScene.size)")
-
-        var plane1Placeholder: SKNode? = nil
-        var plane2Placeholder: SKNode? = nil
-
-        for child in overlayScene.children {
-            if child.name == "plane1pos" {
-                plane1Placeholder = child
-            }
-            else if child.name == "plane2pos" {
-                plane2Placeholder = child
-            }
-        }
-
-        if plane1Placeholder == nil || plane2Placeholder == nil {
-            fatalError("Failed to find minimap placeholders")
-        }
-
-
-
-        let plane1Button = ButtonNode(node: planes[0].minimapParentNode, callback: self.setPlaneOne, replace: plane1Placeholder!)
-        overlayScene.addChild(plane1Button)
-        uiButtons.append(plane1Button)
-
-        let plane2Button = ButtonNode(node: planes[1].minimapParentNode, callback: self.setPlaneTwo, replace: plane2Placeholder!)
-        overlayScene.addChild(plane2Button)
-        uiButtons.append(plane2Button)
-
-
-    }
-
-    func setPlaneOne() {
-        print("set plane 1")
-        if activePlane != planes[0] {
-            activePlane?.deactivate()
-            planes[0].activate(camera: mainCamera!, uiScene: overlayScene)
-            activePlane = planes[0]
-        }
-    }
-
-    func setPlaneTwo() {
-        print("set plane 2")
-        if activePlane != planes[1] {
-            activePlane?.deactivate()
-            planes[1].activate(camera: mainCamera!, uiScene: overlayScene)
-            activePlane = planes[1]
-        }
     }
 
     func loadGameScene() {
@@ -208,38 +132,10 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         ambientLightNode.light!.color = UIColor.darkGray
         gameScene.rootNode.addChildNode(ambientLightNode)
 
-        mainCamera = SCNNode(geometry: nil)
-        mainCamera!.camera = SCNCamera()
-        scnView.pointOfView = mainCamera
+        //scnView.audioListener = mainCamera
+        // TODO set listener as camera
 
-        scnView.audioListener = mainCamera
 
-        if let node = scnView.overlaySKScene!.childNode(withName: "time_label") {
-            if node is SKLabelNode {
-                timeLabel = node as? SKLabelNode
-            }
-        }
-
-        if let node = scnView.overlaySKScene!.childNode(withName: "score_label") {
-            if node is SKLabelNode {
-                scoreLabel = node as? SKLabelNode
-            }
-        }
-
-        if let node = gameScene.rootNode.childNode(withName: "game_over_text", recursively: true) {
-            gameOverTextNode = node
-        }
-
-        if let source = SCNAudioSource(fileNamed: "game_over.wav") {
-            source.isPositional = true
-            source.loops = true
-            source.volume = 0.1
-            source.load()
-
-            gameOverAudioSource = source
-        }
-
-        
         // show statistics such as fps and timing information
         scnView.showsStatistics = true
 
@@ -252,6 +148,47 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         tapRecognizer.addTarget(self, action: #selector(GameViewController.handleTap(sender:)))
         scnView.addGestureRecognizer(tapRecognizer)
 
+        let panRecognizer = UIPanGestureRecognizer()
+        panRecognizer.maximumNumberOfTouches = 1
+        panRecognizer.minimumNumberOfTouches = 1
+
+        panRecognizer.addTarget(self, action: #selector(GameViewController.handlePan(sender:)))
+        scnView.addGestureRecognizer(panRecognizer)
+
+        let zoomRecognizer = UIPinchGestureRecognizer()
+        zoomRecognizer.addTarget(self, action: #selector(GameViewController.handleZoom(sender:)))
+        scnView.addGestureRecognizer(zoomRecognizer)
+
+        if let tmp = gameScene.rootNode.childNode(withName: "camera_dolly", recursively: true) {
+            cameraDolly = tmp
+            if let other_tmp = cameraDolly!.childNode(withName: "camera_node", recursively: true) {
+                cameraNode = other_tmp
+            }
+            else {
+                fatalError("Failed to find camera in scene")
+            }
+        }
+        else {
+            fatalError("Failed to find camera dolly in scene")
+        }
+    }
+
+    @objc
+    func handleZoom(sender: UIPinchGestureRecognizer) {
+        let scalar: Float = 0.1
+
+        cameraNode!.position = cameraNode!.position - (cameraNode!.position * (scalar * Float(sender.velocity)))
+    }
+
+    @objc
+    func handlePan(sender: UIPanGestureRecognizer) {
+        let velocity = sender.velocity(in: self.view)
+
+        let scalar: Float = 0.0003 * cameraNode!.position.y
+
+        let dolly_pos = cameraDolly!.position
+
+        cameraDolly!.position = SCNVector3(x: dolly_pos.x - Float(velocity.x) * scalar, y: dolly_pos.y, z: dolly_pos.z - Float(velocity.y) * scalar)
     }
 
     @objc
@@ -274,7 +211,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             }
 
             if !tapHandled {
-                activePlane?.notifyTap(point: point)
             }
         }
     }
@@ -283,58 +219,14 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         if startTime == 0 {
             startTime = time
         }
-
-        // set time label
-        if timeLabel != nil {
-            timeLabel.text = String(format: "Time: %.01fs", time - startTime)
-        }
-        else {
-            print("no time label")
-        }
-
-        if scoreLabel != nil {
-            scoreLabel.text = "Score: \(score)"
-        }
     }
     func triggerGameOver() {
-        // TODO activate overview camera
-        globalViewPosition.addChildNode(mainCamera!)
-        mainCamera?.look(at: gameOverTextNode.position)
-        gamePlaying = false
-        print("game over")
 
-        if gameOverTextNode != nil {
-            gameOverTextNode.isHidden = false
-            let player = SCNAudioPlayer(source: gameOverAudioSource)
-
-            gameOverTextNode.addAudioPlayer(player)
-        }
-
-        let animation = CABasicAnimation(keyPath: "rotation")
-        animation.fromValue = SCNVector4(x: 0, y: 1, z: 0, w: 0)
-        animation.toValue = SCNVector4(x: 0, y: 1, z: 0, w: Float(2 * Float.pi))
-        animation.duration = 3
-        animation.repeatCount = .greatestFiniteMagnitude
-
-        gameOverTextNode.addAnimation(animation, forKey: nil)
     }
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if gamePlaying {
-
             lastUpdateTime = time
-            var allHousesDestroyed : Bool = true
-            for plane in planes {
-                plane.update(time: time)
-                if plane.hasHouses() {
-                    allHousesDestroyed = false
-                }
-            }
-
-            if allHousesDestroyed {
-                triggerGameOver()
-            }
-            updateUI(time: time)
         }
     }
 

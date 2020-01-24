@@ -66,7 +66,6 @@ class MissileNode : SCNNode {
 
     var targetNode: TargetNode? = nil
 
-    var minimapNode: MinimapNode
 
     var collisionCallback: (SCNNode) -> Void
 
@@ -99,8 +98,6 @@ class MissileNode : SCNNode {
 
         collisionCallback = { (missile: SCNNode) -> Void in
         }
-
-        minimapNode = MinimapNode()
 
         super.init()
 
@@ -162,7 +159,6 @@ class MissileNode : SCNNode {
         self.addChildNode(explosionNode!)
         self.state = .EXPLODING
         self.collisionCallback(self)
-        minimapNode.removeFromParent()
     }
 
 
@@ -179,12 +175,6 @@ class MissileNode : SCNNode {
     }
 
 
-    func updatePosition(relativeTo: SCNNode) {
-        let relativePosition = relativeTo.convertPosition(missileNode.presentation.worldPosition, from: nil)
-        minimapNode.scenePosition = missileNode.presentation.worldPosition
-        minimapNode.sceneParent = nil
-    }
-
 }
 
 class PlayerMissile : MissileNode {
@@ -195,7 +185,6 @@ class PlayerMissile : MissileNode {
 
     override func fire(targetNode: TargetNode, speed: Float) {
         super.fire(targetNode: targetNode, speed: speed)
-        minimapNode = PlayerMissileMinimapNode(startPosition: worldPosition)
     }
 
     required init?(coder: NSCoder) {
@@ -214,7 +203,6 @@ class EnemyMissile : MissileNode {
 
     override func fire(targetNode: TargetNode, speed: Float) {
         super.fire(targetNode: targetNode, speed: speed)
-        minimapNode = EnemyMissileMinimapNode(startPosition: worldPosition)
     }
 
     required init?(coder: NSCoder) {

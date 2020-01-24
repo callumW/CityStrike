@@ -17,7 +17,6 @@ class BuildingNode : SCNNode {
     let houseNode: SCNNode
     let collisionCallback: (BuildingNode) -> Void
 
-    let minimapNode: MinimapNode
 
     init(collisionCallback: @escaping (BuildingNode) -> Void) {
         self.collisionCallback = collisionCallback
@@ -46,20 +45,12 @@ class BuildingNode : SCNNode {
         }
         houseNode = BuildingNode.buildingReference!.clone()
 
-        minimapNode = BuildingMinimapNode()
 
         super.init()
 
         self.addChildNode(houseNode)
     }
 
-    override var position: SCNVector3 {
-        didSet {
-            print("set building position \(position)")
-            minimapNode.scenePosition = position
-            minimapNode.sceneParent = parent
-        }
-    }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -67,7 +58,6 @@ class BuildingNode : SCNNode {
 
     func collidesWithMissile() {
         self.collisionCallback(self)
-        minimapNode.removeFromParent()
     }
 
 }
