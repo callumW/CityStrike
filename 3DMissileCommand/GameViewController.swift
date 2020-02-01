@@ -59,13 +59,14 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
     let globalViewPosition: SCNNode = SCNNode()
 
-    var cameraDolly: SCNNode? = nil
-    var cameraNode: SCNNode? = nil
+    var game: Game? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         loadGameScene()
+
+        game = Game(gameScene: self.gameScene, view: self.view as! SCNView)
 
         globalViewPosition.position = SCNVector3(8, 15, 8)
         gameScene.rootNode.addChildNode(globalViewPosition)
@@ -110,12 +111,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         scnView.debugOptions.insert(.showBoundingBoxes)
 
-        overlayScene = SKScene(fileNamed: "UIOverlay.sks")
-        overlayScene.isPaused = false
-        overlayScene.isUserInteractionEnabled = true
-
-        scnView.overlaySKScene = overlayScene
-
         gameScene?.physicsWorld.contactDelegate = self  // register for phsysics contact callback
 
         // create and add a light to the scene
@@ -139,7 +134,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         // show statistics such as fps and timing information
         scnView.showsStatistics = true
 
-
         // Setup tap handler
         let tapRecognizer = UITapGestureRecognizer()
         tapRecognizer.numberOfTapsRequired = 1
@@ -156,63 +150,33 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         scnView.addGestureRecognizer(panRecognizer)
 
         let zoomRecognizer = UIPinchGestureRecognizer()
-        zoomRecognizer.addTarget(self, action: #selector(GameViewController.handleZoom(sender:)))
+        zoomRecognizer.addTarget(self, action: #selector(GameViewController.handlePinch(sender:)))
         scnView.addGestureRecognizer(zoomRecognizer)
 
-        if let tmp = gameScene.rootNode.childNode(withName: "camera_dolly", recursively: true) {
-            cameraDolly = tmp
-            if let other_tmp = cameraDolly!.childNode(withName: "camera_node", recursively: true) {
-                cameraNode = other_tmp
-            }
-            else {
-                fatalError("Failed to find camera in scene")
-            }
-        }
-        else {
-            fatalError("Failed to find camera dolly in scene")
-        }
+        let longPressRecognizer = UILongPressGestureRecognizer()
+        longPressRecognizer.addTarget(self, action: #selector(GameViewController.handleLongPress(sender:)))
+        longPressRecognizer.numberOfTouchesRequired = 1
+        scnView.addGestureRecognizer(longPressRecognizer)
     }
 
     @objc
-    func handleZoom(sender: UIPinchGestureRecognizer) {
-        let scalar: Float = 0.1
+    func handleLongPress(sender: UILongPressGestureRecognizer) {
+        _ = game?.handleLongPress(sender: sender)
+    }
 
-        cameraNode!.position = cameraNode!.position - (cameraNode!.position * (scalar * Float(sender.velocity)))
+    @objc
+    func handlePinch(sender: UIPinchGestureRecognizer) {
+        _ = game?.handlePinch(sender: sender)
     }
 
     @objc
     func handlePan(sender: UIPanGestureRecognizer) {
-        let velocity = sender.velocity(in: self.view)
-
-        let scalar: Float = 0.0003 * cameraNode!.position.y
-
-        let dolly_pos = cameraDolly!.position
-
-        cameraDolly!.position = SCNVector3(x: dolly_pos.x - Float(velocity.x) * scalar, y: dolly_pos.y, z: dolly_pos.z - Float(velocity.y) * scalar)
+        _ = game?.handlePan(sender: sender)
     }
 
     @objc
     func handleTap(sender: UITapGestureRecognizer) {
-        if sender.state == .ended {
-            // handling code
-
-            let point = sender.location(in: self.view)
-            print("tap @ \(point)")
-
-            var tapHandled = false
-            let convertedPoint = overlayScene.convertPoint(fromView: point)
-
-            let uiNodes = overlayScene.nodes(at: convertedPoint)
-            for node in uiNodes {
-                if node is ButtonNode {
-                    print("hit button!")
-                    tapHandled = true
-                }
-            }
-
-            if !tapHandled {
-            }
-        }
+        _ = game?.handleTap(sender: sender)
     }
 
     func updateUI(time: TimeInterval) {

@@ -43,12 +43,13 @@ class BuildingNode : SCNNode {
             }
 
         }
-        houseNode = BuildingNode.buildingReference!.clone()
+        houseNode = BuildingNode.buildingReference!.flattenedClone()
 
 
         super.init()
 
         self.addChildNode(houseNode)
+
     }
 
 

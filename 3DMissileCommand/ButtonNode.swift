@@ -26,6 +26,22 @@ class ButtonNode : SKNode {
         }
     }
 
+    /// Create ButtonNode from another SKNode (i.e. a sprite node placed in the scene via the editor)
+    /// - Parameters:
+    ///   - replaceNode: The Node to become a button (this object takes ownership of it)
+    ///   - callback: callback for button event
+    init(replaceNode: SKNode, callback: @escaping () -> Void) {
+        self.callback = callback
+        upNode = replaceNode
+
+        super.init()
+
+        position = replaceNode.position
+        replaceNode.position = CGPoint.zero
+        replaceNode.removeFromParent()
+        self.addChild(replaceNode)
+    }
+
     init(node: SKNode, callback: @escaping () -> Void, replace: SKNode) {
         upNode = node
 
