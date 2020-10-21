@@ -182,9 +182,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         scnView.delegate = self
 
-        scnView.preferredFramesPerSecond = 30
+        scnView.preferredFramesPerSecond = 60
 
-        scnView.debugOptions.insert(.showBoundingBoxes)
+//        scnView.debugOptions.insert(.showBoundingBoxes)
 
         overlayScene = SKScene(fileNamed: "UIOverlay.sks")
         overlayScene.isPaused = false
@@ -241,7 +241,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
 
         
         // show statistics such as fps and timing information
-        scnView.showsStatistics = true
+//        scnView.showsStatistics = true
 
 
         // Setup tap handler
